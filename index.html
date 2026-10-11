@@ -443,11 +443,11 @@
             background: var(--card-bg);
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 650px;
+            max-width: 520px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: var(--shadow-lg);
-            padding: 28px;
+            padding: 32px;
             position: relative;
         }
 
@@ -510,7 +510,7 @@
             cursor: pointer;
         }
 
-        /* Clean FAQ Accordion & Contact Styling within Modal */
+        /* FAQ Accordion Styling within Modal */
         details {
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
@@ -570,6 +570,33 @@
 
         .contact-link:hover {
             text-decoration: underline;
+        }
+
+        /* Detailed Welcome List */
+        .welcome-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin: 20px 0 24px 0;
+            text-align: left;
+        }
+
+        .welcome-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .welcome-row .icon {
+            font-size: 1.1rem;
+            padding-top: 1px;
+        }
+
+        .welcome-row strong {
+            color: var(--text-main);
         }
 
         footer {
@@ -756,11 +783,38 @@
     <!-- Clean Footer with Modal Triggers -->
     <footer role="contentinfo">
         <p>&copy; CoinTrack.io - Private Coin Collection Ledger. All data remains saved locally in your browser.</p>
-        <p><a href="#faq" id="openFaqLink">FAQ</a> &bull; <a href="#contact" id="openContactLink">Contact</a></p>
+        <p><a id="openWelcomeLink">Welcome</a> &bull; <a id="openFaqLink">FAQ</a> &bull; <a id="openContactLink">Contact</a></p>
     </footer>
 </div>
 
-<!-- Modal Dialog Templates -->
+<!-- Detailed & Minimal Welcome Modal Dialog -->
+<div id="welcomeModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-card" style="text-align: center;">
+        <button class="modal-close" onclick="closeModal('welcomeModal')">✕</button>
+        <span style="font-size: 2.2rem; display: block; margin-bottom: 6px;">🪙</span>
+        <h2 style="margin: 0 0 4px 0; font-size: 1.25rem;">CoinTrack.io</h2>
+        <p style="margin: 0; font-size: 0.825rem; color: var(--text-muted);">Private Numismatic Portfolio &amp; Inventory Ledger</p>
+
+        <div class="welcome-list">
+            <div class="welcome-row">
+                <span class="icon">🔒</span>
+                <div><strong>100% Local &amp; Private:</strong> No accounts required. All data is saved directly in your browser storage with zero external tracking.</div>
+            </div>
+            <div class="welcome-row">
+                <span class="icon">📋</span>
+                <div><strong>Quick Clipboard Paste:</strong> Instantly paste obverse, reverse, or receipt images directly into coin forms using <kbd style="background:#f1f5f9; padding:1px 5px; border-radius:4px; border:1px solid var(--border-color); font-size:0.75rem;">Ctrl+V</kbd>.</div>
+            </div>
+            <div class="welcome-row">
+                <span class="icon">💾</span>
+                <div><strong>Full Portability:</strong> Export or import a secure JSON backup file at any time to move your collection across devices safely.</div>
+            </div>
+        </div>
+
+        <button onclick="closeModal('welcomeModal')" style="width: 100%; padding: 10px; font-size: 0.9rem;">Get Started</button>
+    </div>
+</div>
+
+<!-- FAQ Modal Dialog -->
 <div id="faqModal" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal-card">
         <button class="modal-close" onclick="closeModal('faqModal')">✕</button>
@@ -788,6 +842,7 @@
     </div>
 </div>
 
+<!-- Contact Modal Dialog -->
 <div id="contactModal" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal-card">
         <button class="modal-close" onclick="closeModal('contactModal')">✕</button>
@@ -823,6 +878,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         let coins = JSON.parse(localStorage.getItem('cointrack_collection')) || [];
 
+        // Check if first time visitor, show welcome modal
+        if (!localStorage.getItem('cointrack_welcomed')) {
+            openModal('welcomeModal');
+            localStorage.setItem('cointrack_welcomed', 'true');
+        }
+
         const toggleFormBtn = document.getElementById('toggleFormBtn');
         const cancelFormBtn = document.getElementById('cancelFormBtn');
         const coinFormCard = document.getElementById('coinFormCard');
@@ -852,6 +913,11 @@
         const receiptText = document.getElementById('receiptPasteText');
 
         // Modal triggers
+        document.getElementById('openWelcomeLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal('welcomeModal');
+        });
+
         document.getElementById('openFaqLink').addEventListener('click', (e) => {
             e.preventDefault();
             openModal('faqModal');
