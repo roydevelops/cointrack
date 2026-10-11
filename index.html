@@ -14,7 +14,7 @@
 
     <!-- Favicon & PWA Icons -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪙</text></svg>">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#0f172a">
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
@@ -45,189 +45,250 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
+            --bg: #0b1120;
+            --bg-elevated: #111827;
+            --surface: #1e293b;
+            --surface-hover: #273449;
+            --border: #334155;
+            --border-subtle: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-light: #eff6ff;
-            --secondary: #475569;
-            --secondary-hover: #334155;
-            --danger: #ef4444;
-            --danger-hover: #dc2626;
-            --radius-lg: 12px;
-            --radius-md: 8px;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-soft: rgba(59, 130, 246, 0.12);
+            --primary-glow: rgba(59, 130, 246, 0.25);
+            --danger: #f87171;
+            --danger-bg: rgba(248, 113, 113, 0.1);
+            --danger-border: rgba(248, 113, 113, 0.25);
+            --success: #34d399;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --radius-xs: 8px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+            --transition: 0.18s ease;
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 32px 20px;
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Subtle background gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% -10%, rgba(59, 130, 246, 0.08), transparent),
+                radial-gradient(ellipse 60% 40% at 90% 10%, rgba(99, 102, 241, 0.05), transparent);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
-            max-width: 1140px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 28px 20px 60px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Modern App Header */
+        /* ── Header ── */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
+            margin-bottom: 32px;
             flex-wrap: wrap;
             gap: 16px;
         }
 
-        .brand-container {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .brand-icon {
-            font-size: 2.2rem;
-            line-height: 1;
-            background: #ffffff;
-            padding: 10px;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border-color);
+            width: 48px;
+            height: 48px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
             box-shadow: var(--shadow-sm);
         }
 
-        .header-title h1 {
-            margin: 0;
-            font-size: 1.6rem;
+        .brand h1 {
+            font-size: 1.45rem;
             font-weight: 700;
-            letter-spacing: -0.025em;
-            color: var(--text-main);
+            letter-spacing: -0.03em;
+            color: var(--text);
         }
 
-        .tagline {
-            margin: 2px 0 0 0;
-            font-size: 0.85rem;
+        .brand .tagline {
+            font-size: 0.8rem;
             color: var(--text-muted);
             font-weight: 500;
+            margin-top: 1px;
         }
 
         .actions-bar {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        button {
+        /* ── Buttons ── */
+        button, .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            background-color: var(--primary);
-            color: white;
+            background: var(--primary);
+            color: #fff;
             border: none;
-            padding: 10px 18px;
-            border-radius: var(--radius-md);
-            font-size: 0.875rem;
+            padding: 10px 16px;
+            border-radius: var(--radius-xs);
+            font-size: 0.85rem;
             font-family: inherit;
-            cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s ease;
-            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
-        button:hover {
-            background-color: var(--primary-hover);
+        button:hover, .btn:hover {
+            background: var(--primary-hover);
             transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 12px var(--primary-glow);
         }
 
-        button:active {
+        button:active, .btn:active {
             transform: translateY(0);
         }
 
         button.secondary {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            box-shadow: none;
         }
+
         button.secondary:hover {
-            background-color: #f8fafc;
-            border-color: #cbd5e1;
+            background: var(--surface-hover);
+            border-color: #475569;
+            box-shadow: none;
+            transform: translateY(-1px);
         }
 
         button.danger {
-            background-color: #fef2f2;
+            background: var(--danger-bg);
             color: var(--danger);
-            border: 1px solid #fecaca;
+            border: 1px solid var(--danger-border);
             box-shadow: none;
         }
+
         button.danger:hover {
-            background-color: var(--danger);
-            color: white;
+            background: var(--danger);
+            color: #fff;
             border-color: var(--danger);
         }
 
-        /* Metric Dashboard Cards */
+        button.ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            box-shadow: none;
+            padding: 8px 12px;
+        }
+
+        button.ghost:hover {
+            color: var(--text);
+            background: var(--surface);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-sm {
+            padding: 6px 11px;
+            font-size: 0.775rem;
+            border-radius: 7px;
+        }
+
+        /* ── Stats ── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
         }
 
         .stat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 20px 24px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 22px;
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-            position: relative;
-            overflow: hidden;
+            align-items: center;
+            gap: 16px;
+            transition: border-color var(--transition);
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--primary);
+        .stat-card:hover {
+            border-color: #475569;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
         }
 
         .stat-card .label {
-            font-size: 0.775rem;
+            font-size: 0.72rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
         }
 
         .stat-card .value {
-            font-size: 1.85rem;
+            font-size: 1.65rem;
             font-weight: 700;
-            color: var(--text-main);
             letter-spacing: -0.03em;
+            color: var(--text);
+            line-height: 1.2;
         }
 
+        /* ── Form Card ── */
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
             margin-bottom: 28px;
             box-shadow: var(--shadow-sm);
         }
@@ -236,12 +297,24 @@
             display: none !important;
         }
 
-        /* Form Controls */
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .form-header h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 18px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
         }
 
         .form-group {
@@ -250,182 +323,298 @@
             gap: 6px;
         }
 
+        .form-group.span-2 {
+            grid-column: span 2;
+        }
+
         label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text-secondary);
+            letter-spacing: 0.01em;
         }
 
         input, select, textarea {
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
+            padding: 10px 13px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
             font-size: 0.9rem;
             font-family: inherit;
-            background: #ffffff;
-            color: var(--text-main);
-            transition: all 0.2s ease;
+            background: var(--bg-elevated);
+            color: var(--text);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--text-muted);
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        /* Paste boxes */
+        .paste-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
         }
 
         .paste-box {
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 16px;
+            border: 1.5px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
             text-align: center;
-            background: #f8fafc;
+            background: var(--bg-elevated);
             cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            min-height: 90px;
+            transition: all var(--transition);
+            min-height: 100px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 6px;
+            position: relative;
         }
 
-        .paste-box:focus, .paste-box:hover {
+        .paste-box:hover, .paste-box:focus {
             border-color: var(--primary);
-            background: var(--primary-light);
+            background: var(--primary-soft);
             outline: none;
         }
 
         .paste-box p {
-            margin: 0;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            line-height: 1.4;
+        }
+
+        .paste-box strong {
+            color: var(--text-secondary);
+        }
+
+        .paste-preview {
+            max-height: 72px;
+            max-width: 110px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            max-width: 340px;
+        }
+
+        .search-wrap svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
             color: var(--text-muted);
             pointer-events: none;
         }
 
-        .paste-preview {
-            max-height: 70px;
-            max-width: 110px;
-            object-fit: cover;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* Toolbar & Controls */
-        .toolbar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
         .search-box {
             width: 100%;
-            max-width: 320px;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
+            padding: 10px 14px 10px 36px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
             font-size: 0.875rem;
-            background: #ffffff;
-            box-shadow: var(--shadow-sm);
+            background: var(--surface);
+            color: var(--text);
+            transition: border-color var(--transition), box-shadow var(--transition);
         }
 
-        /* Modern Table Styling */
-        .table-container {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 32px;
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.875rem;
-        }
-
-        caption {
-            display: none;
-        }
-
-        th, td {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-        }
-
-        th {
-            background-color: #f8fafc;
-            font-weight: 600;
+        .search-box::placeholder {
             color: var(--text-muted);
-            text-transform: uppercase;
-            font-size: 0.725rem;
-            letter-spacing: 0.05em;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        /* ── Coin Grid ── */
+        .coin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
         }
 
-        tr:hover td {
-            background-color: #f8fafc;
+        .coin-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+            display: flex;
+            flex-direction: column;
         }
 
-        .coin-thumb {
-            width: 42px;
-            height: 42px;
+        .coin-card:hover {
+            border-color: #475569;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .coin-card-photos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            height: 140px;
+        }
+
+        .coin-card-photos img,
+        .coin-card-photos .no-img {
+            width: 100%;
+            height: 140px;
             object-fit: cover;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            background-color: #f1f5f9;
+            background: var(--bg-elevated);
+            cursor: pointer;
+            transition: opacity var(--transition);
+        }
+
+        .coin-card-photos img:hover {
+            opacity: 0.85;
+        }
+
+        .coin-card-photos .no-img {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            cursor: pointer;
-            transition: transform 0.15s ease;
+            cursor: default;
         }
 
-        .coin-thumb:hover {
-            transform: scale(1.08);
-            border-color: var(--primary);
+        .coin-card-body {
+            padding: 16px 18px 14px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .badge-year {
+        .coin-card-title {
+            font-size: 1rem;
             font-weight: 700;
-            color: var(--text-main);
+            letter-spacing: -0.02em;
+            color: var(--text);
+            line-height: 1.3;
         }
 
-        .actions-cell {
-            white-space: nowrap;
-            text-align: right;
+        .coin-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.775rem;
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 9px;
             border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 48px 20px;
+        .chip.year {
+            background: var(--primary-soft);
+            color: var(--primary);
+            border-color: transparent;
+        }
+
+        .coin-values {
+            display: flex;
+            gap: 16px;
+            margin-top: auto;
+            padding-top: 4px;
+        }
+
+        .coin-values .val-label {
+            font-size: 0.68rem;
             color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 600;
         }
 
-        /* Modal Overlay */
+        .coin-values .val-num {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .coin-card-actions {
+            display: flex;
+            gap: 6px;
+            padding: 0 18px 16px;
+        }
+
+        .coin-card-actions button {
+            flex: 1;
+        }
+
+        /* Empty state */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 64px 24px;
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .empty-state h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .empty-state p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        /* ── Modals ── */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(4px);
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -440,48 +629,61 @@
         }
 
         .modal-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
             width: 100%;
             max-width: 520px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow);
             padding: 32px;
             position: relative;
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .modal-close {
             position: absolute;
-            top: 20px; right: 20px;
-            background: none;
+            top: 16px;
+            right: 16px;
+            background: transparent;
             border: none;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             cursor: pointer;
             color: var(--text-muted);
             box-shadow: none;
-            padding: 4px 8px;
-        }
-        .modal-close:hover {
-            color: var(--text-main);
-            background: #f1f5f9;
-            transform: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            line-height: 1;
         }
 
+        .modal-close:hover {
+            color: var(--text);
+            background: var(--bg-elevated);
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Details modal */
         .details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin: 20px 0;
-            background: #f8fafc;
+            gap: 12px;
+            margin: 18px 0;
+            background: var(--bg-elevated);
             padding: 16px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
         }
 
         .detail-item label {
             display: block;
-            font-size: 0.725rem;
+            font-size: 0.68rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -490,34 +692,51 @@
 
         .detail-item span {
             font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-main);
+            font-size: 0.9rem;
+            color: var(--text);
         }
 
         .modal-photos {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-top: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
         }
 
         .modal-photo-box img {
             width: 100%;
-            height: 140px;
+            height: 130px;
             object-fit: cover;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
             cursor: pointer;
+            transition: opacity var(--transition);
         }
 
-        /* FAQ Accordion Styling within Modal */
+        .modal-photo-box img:hover {
+            opacity: 0.85;
+        }
+
+        .modal-photo-box .placeholder {
+            height: 130px;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* FAQ */
         details {
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            margin-bottom: 10px;
-            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            margin-bottom: 8px;
+            background: var(--bg-elevated);
             overflow: hidden;
-            transition: border-color 0.2s ease;
+            transition: border-color var(--transition);
         }
 
         details[open] {
@@ -530,7 +749,7 @@
             font-size: 0.875rem;
             cursor: pointer;
             user-select: none;
-            color: var(--text-main);
+            color: var(--text);
             outline: none;
             list-style: none;
             display: flex;
@@ -538,9 +757,7 @@
             align-items: center;
         }
 
-        summary::-webkit-details-marker {
-            display: none;
-        }
+        summary::-webkit-details-marker { display: none; }
 
         summary::after {
             content: '+';
@@ -555,11 +772,10 @@
         }
 
         .faq-answer {
-            padding: 0 16px 14px 16px;
+            padding: 0 16px 14px;
             font-size: 0.85rem;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             line-height: 1.6;
-            margin: 0;
         }
 
         .contact-link {
@@ -572,40 +788,114 @@
             text-decoration: underline;
         }
 
-        /* Detailed Welcome List */
+        /* Welcome modal */
+        .welcome-modal {
+            max-width: 560px;
+            text-align: center;
+            padding: 40px 36px 32px;
+        }
+
+        .welcome-hero {
+            margin-bottom: 28px;
+        }
+
+        .welcome-icon {
+            font-size: 3.2rem;
+            line-height: 1;
+            margin-bottom: 14px;
+            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.25));
+        }
+
+        .welcome-hero h2 {
+            margin: 0 0 6px;
+            font-size: 1.55rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        .welcome-tagline {
+            margin: 0 0 16px;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+
         .welcome-list {
             display: flex;
             flex-direction: column;
             gap: 14px;
-            margin: 20px 0 24px 0;
+            margin: 0 0 28px;
             text-align: left;
         }
 
         .welcome-row {
             display: flex;
-            gap: 12px;
+            gap: 14px;
             align-items: flex-start;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            line-height: 1.5;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            padding: 12px 14px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
         }
 
         .welcome-row .icon {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             padding-top: 1px;
+            flex-shrink: 0;
         }
 
         .welcome-row strong {
-            color: var(--text-main);
+            color: var(--text);
         }
 
+        .welcome-cta {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+        }
+
+        kbd {
+            background: var(--surface);
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            font-size: 0.72rem;
+            font-family: inherit;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
         footer {
             margin-top: 48px;
             text-align: center;
-            font-size: 0.825rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-subtle);
             padding-top: 24px;
+        }
+
+        footer p {
+            margin-bottom: 8px;
         }
 
         footer a {
@@ -614,20 +904,45 @@
             text-decoration: none;
             font-weight: 500;
             cursor: pointer;
+            transition: color var(--transition);
         }
 
         footer a:hover {
             color: var(--primary);
-            text-decoration: underline;
+        }
+
+        /* Image lightbox */
+        .lightbox img {
+            max-width: 92%;
+            max-height: 88vh;
+            border-radius: 14px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            .paste-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.span-2 {
+                grid-column: span 1;
+            }
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            .coin-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media print {
-            .actions-bar, .search-box, .actions-cell, #coinFormCard, footer {
+            .actions-bar, .toolbar, .coin-card-actions, #coinFormCard, footer {
                 display: none !important;
             }
             body {
                 background: white;
-                padding: 0;
+                color: black;
             }
         }
     </style>
@@ -636,39 +951,48 @@
 
 <div class="container">
     <header role="banner">
-        <div class="brand-container">
+        <div class="brand">
             <div class="brand-icon">🪙</div>
-            <div class="header-title">
+            <div>
                 <h1>CoinTrack.io</h1>
                 <p class="tagline">Local &amp; Private Coin Collection Manager</p>
             </div>
         </div>
         <div class="actions-bar">
             <button id="toggleFormBtn" aria-expanded="false" aria-controls="coinFormCard">
-                <span>+</span> Add New Coin
+                <span>+</span> Add Coin
             </button>
-            <button id="exportBtn" class="secondary">Export Backup</button>
-            <button id="importBtn" class="secondary">Import Backup</button>
+            <button id="exportBtn" class="secondary">Export</button>
+            <button id="importBtn" class="secondary">Import</button>
             <input type="file" id="importFile" class="hidden" accept=".json" aria-label="Import Backup File">
         </div>
     </header>
 
     <main role="main">
-        <!-- Stat Cards -->
+        <!-- Stats -->
         <section class="stats-grid" aria-label="Collection Statistics">
             <div class="stat-card">
-                <span class="label">Total Coins</span>
-                <span class="value" id="totalCoins">0</span>
+                <div class="stat-icon">🪙</div>
+                <div>
+                    <div class="label">Total Coins</div>
+                    <div class="value" id="totalCoins">0</div>
+                </div>
             </div>
             <div class="stat-card">
-                <span class="label">Est. Total Value</span>
-                <span class="value" id="totalValue">$0.00</span>
+                <div class="stat-icon">💰</div>
+                <div>
+                    <div class="label">Est. Total Value</div>
+                    <div class="value" id="totalValue">$0.00</div>
+                </div>
             </div>
         </section>
 
         <!-- Add/Edit Form -->
         <section id="coinFormCard" class="card hidden" aria-labelledby="formTitle">
-            <h2 id="formTitle" style="margin-top: 0; margin-bottom: 20px; font-size: 1.25rem;">Add New Coin</h2>
+            <div class="form-header">
+                <h2 id="formTitle">Add New Coin</h2>
+                <button type="button" id="cancelFormBtn" class="ghost" aria-label="Close form">✕</button>
+            </div>
             <form id="coinForm">
                 <input type="hidden" id="coinId">
                 <div class="form-grid">
@@ -704,18 +1028,18 @@
                         <label for="coinPurchaseDate">Purchase Date</label>
                         <input type="date" id="coinPurchaseDate">
                     </div>
-                    <div class="form-group" style="grid-column: span 2;">
+                    <div class="form-group span-2">
                         <label for="coinSource">Source / Purchased From</label>
                         <input type="text" id="coinSource" placeholder="e.g. Local Coin Shop, eBay, Auction">
                     </div>
                 </div>
 
-                <!-- Paste Upload Area (Front, Back, Receipt) -->
-                <div class="form-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+                <!-- Photo paste areas -->
+                <div class="paste-grid">
                     <div class="form-group">
                         <label>Front Photo (Obverse)</label>
                         <div class="paste-box" tabindex="0" id="frontPasteBox" aria-label="Paste or upload front photo">
-                            <p id="frontPasteText">Click &amp; Press <strong>Ctrl+V</strong> to Paste<br>or click to select file</p>
+                            <p id="frontPasteText">Click &amp; <strong>Ctrl+V</strong><br>or select file</p>
                             <img id="frontPreview" class="paste-preview hidden" alt="Coin Front Preview">
                         </div>
                         <input type="file" id="coinFrontInput" class="hidden" accept="image/*" aria-label="Upload front photo">
@@ -724,16 +1048,16 @@
                     <div class="form-group">
                         <label>Back Photo (Reverse)</label>
                         <div class="paste-box" tabindex="0" id="backPasteBox" aria-label="Paste or upload back photo">
-                            <p id="backPasteText">Click &amp; Press <strong>Ctrl+V</strong> to Paste<br>or click to select file</p>
+                            <p id="backPasteText">Click &amp; <strong>Ctrl+V</strong><br>or select file</p>
                             <img id="backPreview" class="paste-preview hidden" alt="Coin Back Preview">
                         </div>
                         <input type="file" id="coinBackInput" class="hidden" accept="image/*" aria-label="Upload back photo">
                         <input type="hidden" id="coinBackData">
                     </div>
                     <div class="form-group">
-                        <label>Proof of Purchase (Receipt)</label>
+                        <label>Proof of Purchase</label>
                         <div class="paste-box" tabindex="0" id="receiptPasteBox" aria-label="Paste or upload receipt photo">
-                            <p id="receiptPasteText">Click &amp; Press <strong>Ctrl+V</strong> to Paste<br>or click to select file</p>
+                            <p id="receiptPasteText">Click &amp; <strong>Ctrl+V</strong><br>or select file</p>
                             <img id="receiptPreview" class="paste-preview hidden" alt="Receipt Preview">
                         </div>
                         <input type="file" id="coinReceiptInput" class="hidden" accept="image/*" aria-label="Upload receipt photo">
@@ -743,118 +1067,112 @@
 
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="coinNotes">Notes</label>
-                    <textarea id="coinNotes" rows="2" placeholder="Variety, error notes, etc."></textarea>
+                    <textarea id="coinNotes" rows="2" placeholder="Variety, error notes, provenance..."></textarea>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button type="submit">Save Coin</button>
-                    <button type="button" id="cancelFormBtn" class="secondary">Cancel</button>
+                    <button type="button" id="cancelFormBtn2" class="secondary">Cancel</button>
                 </div>
             </form>
         </section>
 
-        <!-- Search Bar -->
-        <div class="toolbar-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="🔍  Search collection..." aria-label="Search collection">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="search-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search collection..." aria-label="Search collection">
+            </div>
         </div>
 
-        <!-- Inventory Table -->
-        <section class="table-container" aria-label="Coin Inventory Table">
-            <table>
-                <caption>Coin Inventory Summary</caption>
-                <thead>
-                    <tr>
-                        <th scope="col" style="width: 50px;">Front</th>
-                        <th scope="col" style="width: 50px;">Back</th>
-                        <th scope="col">Year</th>
-                        <th scope="col">Mint</th>
-                        <th scope="col">Coin Name</th>
-                        <th scope="col">Country</th>
-                        <th scope="col">Grade</th>
-                        <th scope="col">Paid</th>
-                        <th scope="col">Value</th>
-                        <th scope="col" class="actions-cell">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="coinTableBody"></tbody>
-            </table>
-        </section>
+        <!-- Coin Cards Grid -->
+        <section class="coin-grid" id="coinGrid" aria-label="Coin Inventory"></section>
     </main>
 
-    <!-- Clean Footer with Modal Triggers -->
     <footer role="contentinfo">
-        <p>&copy; CoinTrack.io - Private Coin Collection Ledger. All data remains saved locally in your browser.</p>
-        <p><a id="openWelcomeLink">Welcome</a> &bull; <a id="openFaqLink">FAQ</a> &bull; <a id="openContactLink">Contact</a></p>
+        <p>&copy; CoinTrack.io — Private Coin Collection Ledger. All data stays in your browser.</p>
+        <p>
+            <a id="openWelcomeLink">Welcome</a> ·
+            <a id="openFaqLink">FAQ</a> ·
+            <a id="openContactLink">Contact</a>
+        </p>
     </footer>
 </div>
 
-<!-- Detailed & Minimal Welcome Modal Dialog -->
+<!-- Welcome Modal -->
 <div id="welcomeModal" class="modal-overlay hidden" aria-hidden="true">
-    <div class="modal-card" style="text-align: center;">
+    <div class="modal-card welcome-modal">
         <button class="modal-close" onclick="closeModal('welcomeModal')">✕</button>
-        <span style="font-size: 2.2rem; display: block; margin-bottom: 6px;">🪙</span>
-        <h2 style="margin: 0 0 4px 0; font-size: 1.25rem;">CoinTrack.io</h2>
-        <p style="margin: 0; font-size: 0.825rem; color: var(--text-muted);">Private Numismatic Portfolio &amp; Inventory Ledger</p>
+
+        <div class="welcome-hero">
+            <div class="welcome-icon">🪙</div>
+            <h2>Welcome to CoinTrack.io</h2>
+            <p class="welcome-tagline">The private, local coin collection manager</p>
+            <div class="welcome-badge">100% Free · No Accounts · No Tracking</div>
+        </div>
 
         <div class="welcome-list">
             <div class="welcome-row">
+                <span class="icon">🆓</span>
+                <div><strong>Completely free forever.</strong> No subscriptions, no premium tiers, no hidden costs. Use every feature at no charge.</div>
+            </div>
+            <div class="welcome-row">
                 <span class="icon">🔒</span>
-                <div><strong>100% Local &amp; Private:</strong> No accounts required. All data is saved directly in your browser storage with zero external tracking.</div>
+                <div><strong>100% local &amp; private.</strong> No accounts required. Your collection never leaves your browser — zero tracking, zero servers.</div>
             </div>
             <div class="welcome-row">
                 <span class="icon">📋</span>
-                <div><strong>Quick Clipboard Paste:</strong> Instantly paste obverse, reverse, or receipt images directly into coin forms using <kbd style="background:#f1f5f9; padding:1px 5px; border-radius:4px; border:1px solid var(--border-color); font-size:0.75rem;">Ctrl+V</kbd>.</div>
+                <div><strong>Clipboard paste photos.</strong> Instantly paste obverse, reverse, or receipt images with <kbd>Ctrl+V</kbd> (or click to upload).</div>
             </div>
             <div class="welcome-row">
                 <span class="icon">💾</span>
-                <div><strong>Full Portability:</strong> Export or import a secure JSON backup file at any time to move your collection across devices safely.</div>
+                <div><strong>Full portability.</strong> Export or import a JSON backup anytime to move your collection safely between devices.</div>
             </div>
         </div>
 
-        <button onclick="closeModal('welcomeModal')" style="width: 100%; padding: 10px; font-size: 0.9rem;">Get Started</button>
+        <button onclick="closeModal('welcomeModal')" class="welcome-cta">Get Started — It’s Free</button>
     </div>
 </div>
 
-<!-- FAQ Modal Dialog -->
+<!-- FAQ Modal -->
 <div id="faqModal" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal-card">
         <button class="modal-close" onclick="closeModal('faqModal')">✕</button>
-        <h2 style="margin-top: 0; font-size: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">Frequently Asked Questions</h2>
+        <h2 style="margin: 0 0 16px; font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 12px;">Frequently Asked Questions</h2>
         
         <details>
             <summary>Where is my data stored?</summary>
             <p class="faq-answer">Everything stays locally inside your browser's private storage. No accounts, external databases, or third-party servers are used.</p>
         </details>
-
         <details>
             <summary>How does the Import feature work?</summary>
-            <p class="faq-answer">Clicking <strong>Import Backup</strong> lets you select a previously exported <code>.json</code> backup file to restore your entire collection, including all coin details and photos.</p>
+            <p class="faq-answer">Clicking <strong>Import</strong> lets you select a previously exported <code>.json</code> backup file to restore your entire collection, including all coin details and photos.</p>
         </details>
-
         <details>
             <summary>Are there monthly fees or hidden costs?</summary>
-            <p class="faq-answer">No. CoinTrack.io is 100% free and open to use without any subscriptions or recurring fees.</p>
+            <p class="faq-answer">No. CoinTrack.io is 100% free with no subscriptions or recurring fees.</p>
         </details>
-
         <details>
             <summary>How do I backup my collection?</summary>
-            <p class="faq-answer">Click the <strong>Export Backup</strong> button at the top to download a single backup file containing all your coin records and images.</p>
+            <p class="faq-answer">Click the <strong>Export</strong> button at the top to download a single backup file containing all your coin records and images.</p>
         </details>
     </div>
 </div>
 
-<!-- Contact Modal Dialog -->
+<!-- Contact Modal -->
 <div id="contactModal" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal-card">
         <button class="modal-close" onclick="closeModal('contactModal')">✕</button>
-        <h2 style="margin-top: 0; font-size: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">Contact &amp; Support</h2>
+        <h2 style="margin: 0 0 16px; font-size: 1.2rem; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 12px;">Contact &amp; Support</h2>
         
-        <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0; margin-bottom: 16px;">Have questions, feature requests, or feedback about CoinTrack.io?</p>
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0 0 16px;">Have questions, feature requests, or feedback?</p>
         
-        <p style="font-weight: 600; font-size: 0.85rem; margin: 0 0 4px 0;">Email Us:</p>
-        <p style="margin: 0 0 16px 0;"><a href="mailto:support@cointrack.io" class="contact-link">support@cointrack.io</a></p>
+        <p style="font-weight: 600; font-size: 0.85rem; margin: 0 0 4px;">Email</p>
+        <p style="margin: 0 0 18px;"><a href="mailto:support@cointrack.io" class="contact-link">support@cointrack.io</a></p>
         
-        <p style="font-weight: 600; font-size: 0.85rem; margin: 0 0 4px 0;">Privacy Guarantee:</p>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">We do not track, sell, or collect any personal information or collection data.</p>
+        <p style="font-weight: 600; font-size: 0.85rem; margin: 0 0 4px;">Privacy Guarantee</p>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">We do not track, sell, or collect any personal information or collection data.</p>
     </div>
 </div>
 
@@ -878,7 +1196,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         let coins = JSON.parse(localStorage.getItem('cointrack_collection')) || [];
 
-        // Check if first time visitor, show welcome modal
         if (!localStorage.getItem('cointrack_welcomed')) {
             openModal('welcomeModal');
             localStorage.setItem('cointrack_welcomed', 'true');
@@ -886,13 +1203,14 @@
 
         const toggleFormBtn = document.getElementById('toggleFormBtn');
         const cancelFormBtn = document.getElementById('cancelFormBtn');
+        const cancelFormBtn2 = document.getElementById('cancelFormBtn2');
         const coinFormCard = document.getElementById('coinFormCard');
         const coinForm = document.getElementById('coinForm');
         const searchInput = document.getElementById('searchInput');
         const exportBtn = document.getElementById('exportBtn');
         const importBtn = document.getElementById('importBtn');
         const importFile = document.getElementById('importFile');
-        const coinTableBody = document.getElementById('coinTableBody');
+        const coinGrid = document.getElementById('coinGrid');
 
         const frontPasteBox = document.getElementById('frontPasteBox');
         const frontInput = document.getElementById('coinFrontInput');
@@ -917,18 +1235,15 @@
             e.preventDefault();
             openModal('welcomeModal');
         });
-
         document.getElementById('openFaqLink').addEventListener('click', (e) => {
             e.preventDefault();
             openModal('faqModal');
         });
-
         document.getElementById('openContactLink').addEventListener('click', (e) => {
             e.preventDefault();
             openModal('contactModal');
         });
 
-        // Close modals when clicking overlay background
         document.querySelectorAll('.modal-overlay').forEach(modal => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
@@ -971,30 +1286,25 @@
                     dataEl.value = resizedBase64;
                     previewEl.src = resizedBase64;
                     previewEl.classList.remove('hidden');
-                    textEl.innerHTML = 'Image Loaded! <br><span style="font-size:0.7rem; color:#2563eb;">(Click or Paste to replace)</span>';
+                    textEl.innerHTML = 'Image loaded<br><span style="font-size:0.68rem;color:var(--primary)">(click or paste to replace)</span>';
                 };
             };
             reader.readAsDataURL(file);
         }
 
         function bindPhotoBox(boxEl, inputEl, dataEl, previewEl, textEl) {
-            boxEl.addEventListener('click', () => {
-                inputEl.click();
-            });
-
+            boxEl.addEventListener('click', () => inputEl.click());
             inputEl.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
                     processImageFile(e.target.files[0], dataEl, previewEl, textEl);
                 }
             });
-
             boxEl.addEventListener('paste', (e) => {
                 e.preventDefault();
                 const items = (e.clipboardData || e.originalEvent.clipboardData).items;
                 for (let item of items) {
                     if (item.type.indexOf('image') !== -1) {
-                        const file = item.getAsFile();
-                        processImageFile(file, dataEl, previewEl, textEl);
+                        processImageFile(item.getAsFile(), dataEl, previewEl, textEl);
                         break;
                     }
                 }
@@ -1014,7 +1324,7 @@
             dataEl.value = '';
             previewEl.src = '';
             previewEl.classList.add('hidden');
-            textEl.innerHTML = 'Click &amp; Press <strong>Ctrl+V</strong> to Paste<br>or click to select file';
+            textEl.innerHTML = 'Click &amp; <strong>Ctrl+V</strong><br>or select file';
         }
 
         function toggleForm() {
@@ -1027,11 +1337,11 @@
                 resetPhotoBox(receiptData, receiptPreview, receiptText);
                 document.getElementById('formTitle').innerText = 'Add New Coin';
                 coinFormCard.classList.remove('hidden');
-                toggleFormBtn.innerHTML = '<span>✕</span> Close Form';
+                toggleFormBtn.innerHTML = '<span>✕</span> Close';
                 toggleFormBtn.setAttribute('aria-expanded', 'true');
             } else {
                 coinFormCard.classList.add('hidden');
-                toggleFormBtn.innerHTML = '<span>+</span> Add New Coin';
+                toggleFormBtn.innerHTML = '<span>+</span> Add Coin';
                 toggleFormBtn.setAttribute('aria-expanded', 'false');
             }
         }
@@ -1041,72 +1351,90 @@
             const totalValue = coins.reduce((sum, c) => {
                 const val = parseFloat(c.value) || 0;
                 const paid = parseFloat(c.paidPrice) || 0;
-
-                let effectiveValue = 0;
-                if (val > 0 && paid > 0) {
-                    effectiveValue = val;
-                } else if (val > 0) {
-                    effectiveValue = val;
-                } else if (paid > 0) {
-                    effectiveValue = paid;
-                }
-
-                return sum + effectiveValue;
+                let effective = 0;
+                if (val > 0) effective = val;
+                else if (paid > 0) effective = paid;
+                return sum + effective;
             }, 0);
             
             document.getElementById('totalCoins').innerText = totalCoins;
             document.getElementById('totalValue').innerText = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        function renderTable() {
-            const searchQuery = searchInput.value.toLowerCase();
-            
+        function renderGrid() {
+            const q = searchInput.value.toLowerCase();
             const filtered = coins.filter(c => {
                 return Object.entries(c).some(([key, val]) => {
                     if (['frontPhoto', 'backPhoto', 'receiptPhoto', 'photo'].includes(key)) return false;
-                    return String(val).toLowerCase().includes(searchQuery);
+                    return String(val).toLowerCase().includes(q);
                 });
             });
 
             if (filtered.length === 0) {
-                coinTableBody.innerHTML = `<tr><td colspan="10" class="empty-state">No coins found in your collection. Click <strong>+ Add New Coin</strong> above to get started!</td></tr>`;
+                coinGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🪙</div>
+                        <h3>${coins.length === 0 ? 'Your collection is empty' : 'No matching coins'}</h3>
+                        <p>${coins.length === 0 ? 'Click “Add Coin” above to start cataloguing your collection.' : 'Try a different search term.'}</p>
+                    </div>`;
                 return;
             }
 
-            coinTableBody.innerHTML = filtered.map(c => {
-                const frontImg = c.frontPhoto || c.photo;
-                const backImg = c.backPhoto;
-
+            coinGrid.innerHTML = filtered.map(c => {
+                const frontImg = c.frontPhoto || c.photo || '';
+                const backImg = c.backPhoto || '';
                 return `
-                    <tr>
-                        <td>
-                            ${frontImg ? `<img src="${frontImg}" class="coin-thumb" onclick="openImageModal('${frontImg}')" alt="${escapeHtml(c.name)} Obverse" title="Click to enlarge front">` : `<div class="coin-thumb">No Img</div>`}
-                        </td>
-                        <td>
-                            ${backImg ? `<img src="${backImg}" class="coin-thumb" onclick="openImageModal('${backImg}')" alt="${escapeHtml(c.name)} Reverse" title="Click to enlarge back">` : `<div class="coin-thumb">No Img</div>`}
-                        </td>
-                        <td><span class="badge-year">${escapeHtml(c.year)}</span></td>
-                        <td>${escapeHtml(c.mint || '-')}</td>
-                        <td><strong>${escapeHtml(c.name)}</strong></td>
-                        <td>${escapeHtml(c.country || '-')}</td>
-                        <td>${escapeHtml(c.grade || '-')}</td>
-                        <td>${c.paidPrice ? '$' + Number(c.paidPrice).toFixed(2) : '-'}</td>
-                        <td>${c.value ? '$' + Number(c.value).toFixed(2) : '-'}</td>
-                        <td class="actions-cell">
-                            <button class="secondary btn-sm view-btn" data-id="${c.id}" aria-label="View coin ${escapeHtml(c.name)}">View</button>
-                            <button class="secondary btn-sm edit-btn" data-id="${c.id}" aria-label="Edit coin ${escapeHtml(c.name)}">Edit</button>
-                            <button class="danger btn-sm delete-btn" data-id="${c.id}" aria-label="Delete coin ${escapeHtml(c.name)}">Delete</button>
-                        </td>
-                    </tr>
-                `;
+                    <article class="coin-card">
+                        <div class="coin-card-photos">
+                            ${frontImg
+                                ? `<img src="${frontImg}" alt="${escapeHtml(c.name)} obverse" class="thumb-img" title="Click to enlarge">`
+                                : `<div class="no-img">No front</div>`}
+                            ${backImg
+                                ? `<img src="${backImg}" alt="${escapeHtml(c.name)} reverse" class="thumb-img" title="Click to enlarge">`
+                                : `<div class="no-img">No back</div>`}
+                        </div>
+                        <div class="coin-card-body">
+                            <div class="coin-card-title">${escapeHtml(c.name)}</div>
+                            <div class="coin-meta">
+                                <span class="chip year">${escapeHtml(c.year)}</span>
+                                ${c.mint ? `<span class="chip">${escapeHtml(c.mint)}</span>` : ''}
+                                ${c.grade ? `<span class="chip">${escapeHtml(c.grade)}</span>` : ''}
+                                ${c.country ? `<span class="chip">${escapeHtml(c.country)}</span>` : ''}
+                            </div>
+                            <div class="coin-values">
+                                <div>
+                                    <div class="val-label">Paid</div>
+                                    <div class="val-num">${c.paidPrice ? '$' + Number(c.paidPrice).toFixed(2) : '—'}</div>
+                                </div>
+                                <div>
+                                    <div class="val-label">Value</div>
+                                    <div class="val-num">${c.value ? '$' + Number(c.value).toFixed(2) : '—'}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="coin-card-actions">
+                            <button class="secondary btn-sm view-btn" data-id="${c.id}">View</button>
+                            <button class="secondary btn-sm edit-btn" data-id="${c.id}">Edit</button>
+                            <button class="danger btn-sm delete-btn" data-id="${c.id}">Delete</button>
+                        </div>
+                    </article>`;
             }).join('');
+
+            // Safe click handlers for photos (avoids putting huge base64 into HTML attributes)
+            coinGrid.querySelectorAll('.thumb-img').forEach(img => {
+                img.addEventListener('click', () => openImageModal(img.src));
+            });
         }
 
         window.openImageModal = function(src) {
+            if (!src) return;
             const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.innerHTML = `<img src="${src}" alt="Enlarged Photo" style="max-width:90%; max-height:85vh; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.3);">`;
-            modal.onclick = () => modal.remove();
+            modal.className = 'modal-overlay lightbox';
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Enlarged photo';
+            modal.appendChild(img);
+            modal.addEventListener('click', () => modal.remove());
             document.body.appendChild(modal);
         };
 
@@ -1117,66 +1445,120 @@
 
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
-            modal.innerHTML = `
-                <div class="modal-card">
-                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
-                    <h2 style="margin-top: 0; font-size: 1.25rem;">${escapeHtml(coin.name)}</h2>
-                    
-                    <div class="details-grid">
-                        <div class="detail-item"><label>Year</label><span>${escapeHtml(coin.year)}</span></div>
-                        <div class="detail-item"><label>Mint Mark</label><span>${escapeHtml(coin.mint || '-')}</span></div>
-                        <div class="detail-item"><label>Country</label><span>${escapeHtml(coin.country || '-')}</span></div>
-                        <div class="detail-item"><label>Grade</label><span>${escapeHtml(coin.grade || '-')}</span></div>
-                        <div class="detail-item"><label>Paid Price</label><span>${coin.paidPrice ? '$' + Number(coin.paidPrice).toFixed(2) : '-'}</span></div>
-                        <div class="detail-item"><label>Estimated Value</label><span>${coin.value ? '$' + Number(coin.value).toFixed(2) : '-'}</span></div>
-                        <div class="detail-item"><label>Purchase Date</label><span>${escapeHtml(coin.purchaseDate || '-')}</span></div>
-                        <div class="detail-item"><label>Source</label><span>${escapeHtml(coin.source || '-')}</span></div>
-                    </div>
 
-                    <div style="margin-bottom: 16px;">
-                        <label style="display: block; font-size: 0.725rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Notes</label>
-                        <p style="margin: 0; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.875rem;">${escapeHtml(coin.notes || 'No notes added.')}</p>
-                    </div>
+            const card = document.createElement('div');
+            card.className = 'modal-card';
 
-                    <div class="modal-photos">
-                        <div class="modal-photo-box">
-                            <label style="display:block; font-size:0.725rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Front Photo</label>
-                            ${frontImg ? `<img src="${frontImg}" onclick="openImageModal('${frontImg}')" alt="Front Photo">` : `<div style="height:140px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Front Photo</div>`}
-                        </div>
-                        <div class="modal-photo-box">
-                            <label style="display:block; font-size:0.725rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Back Photo</label>
-                            ${backImg ? `<img src="${backImg}" onclick="openImageModal('${backImg}')" alt="Back Photo">` : `<div style="height:140px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Back Photo</div>`}
-                        </div>
-                        <div class="modal-photo-box">
-                            <label style="display:block; font-size:0.725rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Proof of Purchase</label>
-                            ${receiptImg ? `<img src="${receiptImg}" onclick="openImageModal('${receiptImg}')" alt="Receipt Photo">` : `<div style="height:140px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Receipt</div>`}
-                        </div>
-                    </div>
-                </div>
-            `;
-            modal.onclick = (e) => {
-                if (e.target === modal) modal.remove();
-            };
+            // Close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'modal-close';
+            closeBtn.textContent = '✕';
+            closeBtn.addEventListener('click', () => modal.remove());
+            card.appendChild(closeBtn);
+
+            // Title
+            const title = document.createElement('h2');
+            title.style.cssText = 'margin:0 0 4px;font-size:1.25rem;font-weight:700;';
+            title.textContent = coin.name || '';
+            card.appendChild(title);
+
+            const subtitle = document.createElement('p');
+            subtitle.style.cssText = 'margin:0 0 16px;font-size:0.8rem;color:var(--text-muted);';
+            subtitle.textContent = (coin.year || '') + (coin.mint ? ' · ' + coin.mint : '');
+            card.appendChild(subtitle);
+
+            // Details grid
+            const grid = document.createElement('div');
+            grid.className = 'details-grid';
+            const fields = [
+                ['Country', coin.country || '—'],
+                ['Grade', coin.grade || '—'],
+                ['Paid Price', coin.paidPrice ? '$' + Number(coin.paidPrice).toFixed(2) : '—'],
+                ['Est. Value', coin.value ? '$' + Number(coin.value).toFixed(2) : '—'],
+                ['Purchase Date', coin.purchaseDate || '—'],
+                ['Source', coin.source || '—']
+            ];
+            fields.forEach(([label, value]) => {
+                const item = document.createElement('div');
+                item.className = 'detail-item';
+                const lbl = document.createElement('label');
+                lbl.textContent = label;
+                const span = document.createElement('span');
+                span.textContent = value;
+                item.appendChild(lbl);
+                item.appendChild(span);
+                grid.appendChild(item);
+            });
+            card.appendChild(grid);
+
+            // Notes
+            const notesWrap = document.createElement('div');
+            notesWrap.style.marginBottom = '16px';
+            const notesLabel = document.createElement('label');
+            notesLabel.style.cssText = 'display:block;font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;';
+            notesLabel.textContent = 'Notes';
+            const notesP = document.createElement('p');
+            notesP.style.cssText = 'margin:0;background:var(--bg-elevated);padding:12px;border-radius:8px;border:1px solid var(--border);font-size:0.875rem;color:var(--text-secondary);';
+            notesP.textContent = coin.notes || 'No notes added.';
+            notesWrap.appendChild(notesLabel);
+            notesWrap.appendChild(notesP);
+            card.appendChild(notesWrap);
+
+            // Photos
+            const photos = document.createElement('div');
+            photos.className = 'modal-photos';
+
+            function addPhotoBox(labelText, src) {
+                const box = document.createElement('div');
+                box.className = 'modal-photo-box';
+                const lbl = document.createElement('label');
+                lbl.style.cssText = 'display:block;font-size:0.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;';
+                lbl.textContent = labelText;
+                box.appendChild(lbl);
+                if (src) {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = labelText;
+                    img.style.cursor = 'pointer';
+                    img.addEventListener('click', () => openImageModal(src));
+                    box.appendChild(img);
+                } else {
+                    const ph = document.createElement('div');
+                    ph.className = 'placeholder';
+                    ph.textContent = 'No photo';
+                    box.appendChild(ph);
+                }
+                photos.appendChild(box);
+            }
+
+            addPhotoBox('Front', frontImg);
+            addPhotoBox('Back', backImg);
+            addPhotoBox('Receipt', receiptImg);
+            card.appendChild(photos);
+
+            modal.appendChild(card);
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
             document.body.appendChild(modal);
         };
 
         function escapeHtml(str) {
             if (!str) return '';
             return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         toggleFormBtn.addEventListener('click', toggleForm);
         cancelFormBtn.addEventListener('click', toggleForm);
+        cancelFormBtn2.addEventListener('click', toggleForm);
 
         coinForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const id = document.getElementById('coinId').value;
-            const existingCoin = id ? coins.find(c => c.id === parseInt(id)) : null;
+            const existing = id ? coins.find(c => c.id === parseInt(id)) : null;
 
             const coin = {
                 id: id ? parseInt(id) : Date.now(),
@@ -1190,135 +1572,133 @@
                 purchaseDate: document.getElementById('coinPurchaseDate').value,
                 source: document.getElementById('coinSource').value.trim(),
                 notes: document.getElementById('coinNotes').value.trim(),
-                frontPhoto: frontData.value || (existingCoin ? (existingCoin.frontPhoto || existingCoin.photo) : ''),
-                backPhoto: backData.value || (existingCoin ? existingCoin.backPhoto : ''),
-                receiptPhoto: receiptData.value || (existingCoin ? existingCoin.receiptPhoto : '')
+                frontPhoto: frontData.value || (existing ? (existing.frontPhoto || existing.photo) : ''),
+                backPhoto: backData.value || (existing ? existing.backPhoto : ''),
+                receiptPhoto: receiptData.value || (existing ? existing.receiptPhoto : '')
             };
 
             if (id) {
-                const index = coins.findIndex(c => c.id === coin.id);
-                if (index !== -1) coins[index] = coin;
+                const idx = coins.findIndex(c => c.id === coin.id);
+                if (idx !== -1) coins[idx] = coin;
             } else {
                 coins.unshift(coin);
             }
 
             saveToLocalStorage();
-            renderTable();
+            renderGrid();
             toggleForm();
         });
 
-        coinTableBody.addEventListener('click', function(e) {
-            const id = parseInt(e.target.getAttribute('data-id'));
-            
-            if (e.target.classList.contains('view-btn')) {
+        coinGrid.addEventListener('click', function(e) {
+            const btn = e.target.closest('[data-id]');
+            if (!btn) return;
+            const id = parseInt(btn.getAttribute('data-id'));
+
+            if (btn.classList.contains('view-btn')) {
                 const coin = coins.find(c => c.id === id);
                 if (coin) openDetailsModal(coin);
             }
 
-            if (e.target.classList.contains('edit-btn')) {
+            if (btn.classList.contains('edit-btn')) {
                 const coin = coins.find(c => c.id === id);
                 if (!coin) return;
 
                 document.getElementById('coinId').value = coin.id;
                 document.getElementById('coinName').value = coin.name;
                 document.getElementById('coinYear').value = coin.year;
-                document.getElementById('coinMint').value = coin.mint;
-                document.getElementById('coinGrade').value = coin.grade;
-                document.getElementById('coinCountry').value = coin.country;
+                document.getElementById('coinMint').value = coin.mint || '';
+                document.getElementById('coinGrade').value = coin.grade || '';
+                document.getElementById('coinCountry').value = coin.country || '';
                 document.getElementById('coinPaidPrice').value = coin.paidPrice || '';
                 document.getElementById('coinValue').value = coin.value || '';
                 document.getElementById('coinPurchaseDate').value = coin.purchaseDate || '';
                 document.getElementById('coinSource').value = coin.source || '';
-                document.getElementById('coinNotes').value = coin.notes;
-                
+                document.getElementById('coinNotes').value = coin.notes || '';
+
                 const fPhoto = coin.frontPhoto || coin.photo || '';
                 if (fPhoto) {
                     frontData.value = fPhoto;
                     frontPreview.src = fPhoto;
                     frontPreview.classList.remove('hidden');
-                    frontText.innerHTML = 'Image Loaded! <br><span style="font-size:0.7rem; color:#2563eb;">(Click or Paste to replace)</span>';
+                    frontText.innerHTML = 'Image loaded<br><span style="font-size:0.68rem;color:var(--primary)">(click or paste to replace)</span>';
                 } else {
                     resetPhotoBox(frontData, frontPreview, frontText);
                 }
 
-                const bPhoto = coin.backPhoto || '';
-                if (bPhoto) {
-                    backData.value = bPhoto;
-                    backPreview.src = bPhoto;
+                if (coin.backPhoto) {
+                    backData.value = coin.backPhoto;
+                    backPreview.src = coin.backPhoto;
                     backPreview.classList.remove('hidden');
-                    backText.innerHTML = 'Image Loaded! <br><span style="font-size:0.7rem; color:#2563eb;">(Click or Paste to replace)</span>';
+                    backText.innerHTML = 'Image loaded<br><span style="font-size:0.68rem;color:var(--primary)">(click or paste to replace)</span>';
                 } else {
                     resetPhotoBox(backData, backPreview, backText);
                 }
 
-                const rPhoto = coin.receiptPhoto || '';
-                if (rPhoto) {
-                    receiptData.value = rPhoto;
-                    receiptPreview.src = rPhoto;
+                if (coin.receiptPhoto) {
+                    receiptData.value = coin.receiptPhoto;
+                    receiptPreview.src = coin.receiptPhoto;
                     receiptPreview.classList.remove('hidden');
-                    receiptText.innerHTML = 'Image Loaded! <br><span style="font-size:0.7rem; color:#2563eb;">(Click or Paste to replace)</span>';
+                    receiptText.innerHTML = 'Image loaded<br><span style="font-size:0.68rem;color:var(--primary)">(click or paste to replace)</span>';
                 } else {
                     resetPhotoBox(receiptData, receiptPreview, receiptText);
                 }
 
                 document.getElementById('formTitle').innerText = 'Edit Coin';
                 coinFormCard.classList.remove('hidden');
-                toggleFormBtn.innerHTML = '<span>✕</span> Close Form';
+                toggleFormBtn.innerHTML = '<span>✕</span> Close';
                 toggleFormBtn.setAttribute('aria-expanded', 'true');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            if (e.target.classList.contains('delete-btn')) {
-                if (confirm('Are you sure you want to remove this coin?')) {
+            if (btn.classList.contains('delete-btn')) {
+                if (confirm('Remove this coin from your collection?')) {
                     coins = coins.filter(c => c.id !== id);
                     saveToLocalStorage();
-                    renderTable();
+                    renderGrid();
                 }
             }
         });
 
-        searchInput.addEventListener('input', renderTable);
+        searchInput.addEventListener('input', renderGrid);
 
         exportBtn.addEventListener('click', function() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(coins, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `cointrack_backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+            const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(coins, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute('href', dataStr);
+            a.setAttribute('download', `cointrack_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
         });
 
-        importBtn.addEventListener('click', function() {
-            importFile.click();
-        });
+        importBtn.addEventListener('click', () => importFile.click());
 
         importFile.addEventListener('change', function(event) {
-            const fileReader = new FileReader();
-            if (event.target.files[0]) {
-                fileReader.readAsText(event.target.files[0], "UTF-8");
-                fileReader.onload = function(e) {
-                    try {
-                        const imported = JSON.parse(e.target.result);
-                        if (Array.isArray(imported)) {
-                            if (confirm(`Replace/update your collection with ${imported.length} coins from this file?`)) {
-                                coins = imported;
-                                saveToLocalStorage();
-                                renderTable();
-                                alert('Collection loaded successfully!');
-                            }
-                        } else {
-                            alert('Invalid file format.');
+            if (!event.target.files[0]) return;
+            const reader = new FileReader();
+            reader.readAsText(event.target.files[0], 'UTF-8');
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        if (confirm(`Replace your collection with ${imported.length} coins from this file?`)) {
+                            coins = imported;
+                            saveToLocalStorage();
+                            renderGrid();
+                            alert('Collection loaded successfully!');
                         }
-                    } catch (err) {
-                        alert('Error reading backup file.');
+                    } else {
+                        alert('Invalid file format.');
                     }
-                };
-            }
+                } catch (err) {
+                    alert('Error reading backup file.');
+                }
+            };
+            importFile.value = '';
         });
 
         updateStats();
-        renderTable();
+        renderGrid();
     });
 </script>
 
