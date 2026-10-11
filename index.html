@@ -925,12 +925,30 @@
         }
 
         function updateStats() {
-            const totalCoins = coins.length;
-            const totalValue = coins.reduce((sum, c) => sum + (parseFloat(c.value) || 0), 0);
-            
-            document.getElementById('totalCoins').innerText = totalCoins;
-            document.getElementById('totalValue').innerText = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
+                    const totalCoins = coins.length;
+                    const totalValue = coins.reduce((sum, c) => {
+                        const val = parseFloat(c.value) || 0;
+                        const paid = parseFloat(c.paidPrice) || 0;
+
+                        // Fallback logic:
+                        // 1. If Value is not provided, fallback to Paid Price.
+                        // 2. Vice versa: if Paid Price is not provided, fallback to Value.
+                        // 3. If both are present, prioritize Estimated Value.
+                        let effectiveValue = 0;
+                        if (val > 0 && paid > 0) {
+                            effectiveValue = val;
+                        } else if (val > 0) {
+                            effectiveValue = val;
+                        } else if (paid > 0) {
+                            effectiveValue = paid;
+                        }
+
+                        return sum + effectiveValue;
+                    }, 0);
+                    
+                    document.getElementById('totalCoins').innerText = totalCoins;
+                    document.getElementById('totalValue').innerText = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                }
 
         function renderTable() {
             const searchQuery = searchInput.value.toLowerCase();
