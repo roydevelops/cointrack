@@ -405,6 +405,7 @@
 
         .actions-cell {
             white-space: nowrap;
+            text-align: right;
         }
 
         .btn-sm {
@@ -420,7 +421,7 @@
         }
 
         /* Modal Overlay */
-        .modal {
+        .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.75);
@@ -429,6 +430,7 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            padding: 20px;
             animation: fadeIn 0.15s ease-out;
         }
 
@@ -437,11 +439,75 @@
             to { opacity: 1; }
         }
 
-        .modal img {
-            max-width: 90%;
-            max-height: 85vh;
+        .modal-card {
+            background: var(--card-bg);
             border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: var(--shadow-lg);
+            padding: 28px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            box-shadow: none;
+            padding: 4px 8px;
+        }
+        .modal-close:hover {
+            color: var(--text-main);
+            background: #f1f5f9;
+            transform: none;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 0.725rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+
+        .detail-item span {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .modal-photos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .modal-photo-box img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
         }
 
         /* Clean FAQ Accordion & Contact Cards */
@@ -622,6 +688,10 @@
                         <input type="text" id="coinCountry" placeholder="e.g. USA">
                     </div>
                     <div class="form-group">
+                        <label for="coinPaidPrice">Paid Price ($)</label>
+                        <input type="number" step="0.01" id="coinPaidPrice" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
                         <label for="coinValue">Estimated Value ($)</label>
                         <input type="number" step="0.01" id="coinValue" placeholder="0.00">
                     </div>
@@ -678,9 +748,9 @@
                         <th scope="col">Coin Name</th>
                         <th scope="col">Country</th>
                         <th scope="col">Grade</th>
+                        <th scope="col">Paid</th>
                         <th scope="col">Value</th>
-                        <th scope="col">Notes</th>
-                        <th scope="col" style="text-align: right;">Actions</th>
+                        <th scope="col" class="actions-cell">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="coinTableBody"></tbody>
@@ -884,19 +954,20 @@
                 return `
                     <tr>
                         <td>
-                            ${frontImg ? `<img src="${frontImg}" class="coin-thumb" onclick="openModal('${frontImg}')" alt="${escapeHtml(c.name)} Obverse" title="Click to enlarge front">` : `<div class="coin-thumb">No Img</div>`}
+                            ${frontImg ? `<img src="${frontImg}" class="coin-thumb" onclick="openImageModal('${frontImg}')" alt="${escapeHtml(c.name)} Obverse" title="Click to enlarge front">` : `<div class="coin-thumb">No Img</div>`}
                         </td>
                         <td>
-                            ${backImg ? `<img src="${backImg}" class="coin-thumb" onclick="openModal('${backImg}')" alt="${escapeHtml(c.name)} Reverse" title="Click to enlarge back">` : `<div class="coin-thumb">No Img</div>`}
+                            ${backImg ? `<img src="${backImg}" class="coin-thumb" onclick="openImageModal('${backImg}')" alt="${escapeHtml(c.name)} Reverse" title="Click to enlarge back">` : `<div class="coin-thumb">No Img</div>`}
                         </td>
                         <td><span class="badge-year">${escapeHtml(c.year)}</span></td>
                         <td>${escapeHtml(c.mint || '-')}</td>
                         <td><strong>${escapeHtml(c.name)}</strong></td>
                         <td>${escapeHtml(c.country || '-')}</td>
                         <td>${escapeHtml(c.grade || '-')}</td>
+                        <td>${c.paidPrice ? '$' + Number(c.paidPrice).toFixed(2) : '-'}</td>
                         <td>${c.value ? '$' + Number(c.value).toFixed(2) : '-'}</td>
-                        <td style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(c.notes)}">${escapeHtml(c.notes || '-')}</td>
-                        <td class="actions-cell" style="text-align: right;">
+                        <td class="actions-cell">
+                            <button class="secondary btn-sm view-btn" data-id="${c.id}" aria-label="View coin ${escapeHtml(c.name)}">View</button>
                             <button class="secondary btn-sm edit-btn" data-id="${c.id}" aria-label="Edit coin ${escapeHtml(c.name)}">Edit</button>
                             <button class="danger btn-sm delete-btn" data-id="${c.id}" aria-label="Delete coin ${escapeHtml(c.name)}">Delete</button>
                         </td>
@@ -905,13 +976,54 @@
             }).join('');
         }
 
-        window.openModal = function(src) {
+        window.openImageModal = function(src) {
             const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.setAttribute('role', 'dialog');
-            modal.setAttribute('aria-label', 'Coin Image Enlargement');
-            modal.innerHTML = `<img src="${src}" alt="Enlarged Coin Photo">`;
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `<img src="${src}" alt="Enlarged Coin Photo" style="max-width:90%; max-height:85vh; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.3);">`;
             modal.onclick = () => modal.remove();
+            document.body.appendChild(modal);
+        };
+
+        window.openDetailsModal = function(coin) {
+            const frontImg = coin.frontPhoto || coin.photo || '';
+            const backImg = coin.backPhoto || '';
+
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-card">
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    <h2 style="margin-top: 0; font-size: 1.25rem;">${escapeHtml(coin.name)}</h2>
+                    
+                    <div class="details-grid">
+                        <div class="detail-item"><label>Year</label><span>${escapeHtml(coin.year)}</span></div>
+                        <div class="detail-item"><label>Mint Mark</label><span>${escapeHtml(coin.mint || '-')}</span></div>
+                        <div class="detail-item"><label>Country</label><span>${escapeHtml(coin.country || '-')}</span></div>
+                        <div class="detail-item"><label>Grade</label><span>${escapeHtml(coin.grade || '-')}</span></div>
+                        <div class="detail-item"><label>Paid Price</label><span>${coin.paidPrice ? '$' + Number(coin.paidPrice).toFixed(2) : '-'}</span></div>
+                        <div class="detail-item"><label>Estimated Value</label><span>${coin.value ? '$' + Number(coin.value).toFixed(2) : '-'}</span></div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 0.725rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Notes</label>
+                        <p style="margin: 0; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.875rem;">${escapeHtml(coin.notes || 'No notes added.')}</p>
+                    </div>
+
+                    <div class="modal-photos">
+                        <div class="modal-photo-box">
+                            <label style="display:block; font-size:0.725rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Front Photo</label>
+                            ${frontImg ? `<img src="${frontImg}" onclick="openImageModal('${frontImg}')" alt="Front Photo">` : `<div style="height:160px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Front Photo</div>`}
+                        </div>
+                        <div class="modal-photo-box">
+                            <label style="display:block; font-size:0.725rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Back Photo</label>
+                            ${backImg ? `<img src="${backImg}" onclick="openImageModal('${backImg}')" alt="Back Photo">` : `<div style="height:160px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Back Photo</div>`}
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.onclick = (e) => {
+                if (e.target === modal) modal.remove();
+            };
             document.body.appendChild(modal);
         };
 
@@ -940,6 +1052,7 @@
                 mint: document.getElementById('coinMint').value.trim(),
                 grade: document.getElementById('coinGrade').value.trim(),
                 country: document.getElementById('coinCountry').value.trim(),
+                paidPrice: parseFloat(document.getElementById('coinPaidPrice').value) || 0,
                 value: parseFloat(document.getElementById('coinValue').value) || 0,
                 notes: document.getElementById('coinNotes').value.trim(),
                 frontPhoto: frontData.value || (existingCoin ? (existingCoin.frontPhoto || existingCoin.photo) : ''),
@@ -959,8 +1072,14 @@
         });
 
         coinTableBody.addEventListener('click', function(e) {
+            const id = parseInt(e.target.getAttribute('data-id'));
+            
+            if (e.target.classList.contains('view-btn')) {
+                const coin = coins.find(c => c.id === id);
+                if (coin) openDetailsModal(coin);
+            }
+
             if (e.target.classList.contains('edit-btn')) {
-                const id = parseInt(e.target.getAttribute('data-id'));
                 const coin = coins.find(c => c.id === id);
                 if (!coin) return;
 
@@ -970,6 +1089,7 @@
                 document.getElementById('coinMint').value = coin.mint;
                 document.getElementById('coinGrade').value = coin.grade;
                 document.getElementById('coinCountry').value = coin.country;
+                document.getElementById('coinPaidPrice').value = coin.paidPrice || '';
                 document.getElementById('coinValue').value = coin.value || '';
                 document.getElementById('coinNotes').value = coin.notes;
                 
@@ -1001,7 +1121,6 @@
             }
 
             if (e.target.classList.contains('delete-btn')) {
-                const id = parseInt(e.target.getAttribute('data-id'));
                 if (confirm('Are you sure you want to remove this coin?')) {
                     coins = coins.filter(c => c.id !== id);
                     saveToLocalStorage();
