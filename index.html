@@ -443,7 +443,7 @@
             background: var(--card-bg);
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: var(--shadow-lg);
@@ -496,14 +496,14 @@
 
         .modal-photos {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 16px;
             margin-top: 16px;
         }
 
         .modal-photo-box img {
             width: 100%;
-            height: 160px;
+            height: 140px;
             object-fit: cover;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
@@ -695,10 +695,18 @@
                         <label for="coinValue">Estimated Value ($)</label>
                         <input type="number" step="0.01" id="coinValue" placeholder="0.00">
                     </div>
+                    <div class="form-group">
+                        <label for="coinPurchaseDate">Purchase Date</label>
+                        <input type="date" id="coinPurchaseDate">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="coinSource">Source / Purchased From</label>
+                        <input type="text" id="coinSource" placeholder="e.g. Local Coin Shop, eBay, Auction">
+                    </div>
                 </div>
 
-                <!-- Paste Upload Area -->
-                <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
+                <!-- Paste Upload Area (Front, Back, Receipt) -->
+                <div class="form-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
                     <div class="form-group">
                         <label>Front Photo (Obverse)</label>
                         <div class="paste-box" tabindex="0" id="frontPasteBox" aria-label="Paste or upload front photo">
@@ -717,11 +725,20 @@
                         <input type="file" id="coinBackInput" class="hidden" accept="image/*" aria-label="Upload back photo">
                         <input type="hidden" id="coinBackData">
                     </div>
+                    <div class="form-group">
+                        <label>Proof of Purchase (Receipt)</label>
+                        <div class="paste-box" tabindex="0" id="receiptPasteBox" aria-label="Paste or upload receipt photo">
+                            <p id="receiptPasteText">Click &amp; Press <strong>Ctrl+V</strong> to Paste<br>or click to select file</p>
+                            <img id="receiptPreview" class="paste-preview hidden" alt="Receipt Preview">
+                        </div>
+                        <input type="file" id="coinReceiptInput" class="hidden" accept="image/*" aria-label="Upload receipt photo">
+                        <input type="hidden" id="coinReceiptData">
+                    </div>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
                     <label for="coinNotes">Notes</label>
-                    <textarea id="coinNotes" rows="2" placeholder="Purchased from, variety, error notes, etc."></textarea>
+                    <textarea id="coinNotes" rows="2" placeholder="Variety, error notes, etc."></textarea>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button type="submit">Save Coin</button>
@@ -828,6 +845,12 @@
         const backPreview = document.getElementById('backPreview');
         const backText = document.getElementById('backPasteText');
 
+        const receiptPasteBox = document.getElementById('receiptPasteBox');
+        const receiptInput = document.getElementById('coinReceiptInput');
+        const receiptData = document.getElementById('coinReceiptData');
+        const receiptPreview = document.getElementById('receiptPreview');
+        const receiptText = document.getElementById('receiptPasteText');
+
         function processImageFile(file, dataEl, previewEl, textEl) {
             if (!file || !file.type.startsWith('image/')) return;
             const reader = new FileReader();
@@ -893,6 +916,7 @@
 
         bindPhotoBox(frontPasteBox, frontInput, frontData, frontPreview, frontText);
         bindPhotoBox(backPasteBox, backInput, backData, backPreview, backText);
+        bindPhotoBox(receiptPasteBox, receiptInput, receiptData, receiptPreview, receiptText);
 
         function saveToLocalStorage() {
             localStorage.setItem('cointrack_collection', JSON.stringify(coins));
@@ -913,6 +937,7 @@
                 document.getElementById('coinId').value = '';
                 resetPhotoBox(frontData, frontPreview, frontText);
                 resetPhotoBox(backData, backPreview, backText);
+                resetPhotoBox(receiptData, receiptPreview, receiptText);
                 document.getElementById('formTitle').innerText = 'Add New Coin';
                 coinFormCard.classList.remove('hidden');
                 toggleFormBtn.innerHTML = '<span>✕</span> Close Form';
@@ -925,37 +950,33 @@
         }
 
         function updateStats() {
-                    const totalCoins = coins.length;
-                    const totalValue = coins.reduce((sum, c) => {
-                        const val = parseFloat(c.value) || 0;
-                        const paid = parseFloat(c.paidPrice) || 0;
+            const totalCoins = coins.length;
+            const totalValue = coins.reduce((sum, c) => {
+                const val = parseFloat(c.value) || 0;
+                const paid = parseFloat(c.paidPrice) || 0;
 
-                        // Fallback logic:
-                        // 1. If Value is not provided, fallback to Paid Price.
-                        // 2. Vice versa: if Paid Price is not provided, fallback to Value.
-                        // 3. If both are present, prioritize Estimated Value.
-                        let effectiveValue = 0;
-                        if (val > 0 && paid > 0) {
-                            effectiveValue = val;
-                        } else if (val > 0) {
-                            effectiveValue = val;
-                        } else if (paid > 0) {
-                            effectiveValue = paid;
-                        }
-
-                        return sum + effectiveValue;
-                    }, 0);
-                    
-                    document.getElementById('totalCoins').innerText = totalCoins;
-                    document.getElementById('totalValue').innerText = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                let effectiveValue = 0;
+                if (val > 0 && paid > 0) {
+                    effectiveValue = val;
+                } else if (val > 0) {
+                    effectiveValue = val;
+                } else if (paid > 0) {
+                    effectiveValue = paid;
                 }
+
+                return sum + effectiveValue;
+            }, 0);
+            
+            document.getElementById('totalCoins').innerText = totalCoins;
+            document.getElementById('totalValue').innerText = '$' + totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
 
         function renderTable() {
             const searchQuery = searchInput.value.toLowerCase();
             
             const filtered = coins.filter(c => {
                 return Object.entries(c).some(([key, val]) => {
-                    if (key === 'frontPhoto' || key === 'backPhoto' || key === 'photo') return false;
+                    if (['frontPhoto', 'backPhoto', 'receiptPhoto', 'photo'].includes(key)) return false;
                     return String(val).toLowerCase().includes(searchQuery);
                 });
             });
@@ -997,7 +1018,7 @@
         window.openImageModal = function(src) {
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
-            modal.innerHTML = `<img src="${src}" alt="Enlarged Coin Photo" style="max-width:90%; max-height:85vh; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.3);">`;
+            modal.innerHTML = `<img src="${src}" alt="Enlarged Photo" style="max-width:90%; max-height:85vh; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.3);">`;
             modal.onclick = () => modal.remove();
             document.body.appendChild(modal);
         };
@@ -1005,6 +1026,7 @@
         window.openDetailsModal = function(coin) {
             const frontImg = coin.frontPhoto || coin.photo || '';
             const backImg = coin.backPhoto || '';
+            const receiptImg = coin.receiptPhoto || '';
 
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
@@ -1020,6 +1042,8 @@
                         <div class="detail-item"><label>Grade</label><span>${escapeHtml(coin.grade || '-')}</span></div>
                         <div class="detail-item"><label>Paid Price</label><span>${coin.paidPrice ? '$' + Number(coin.paidPrice).toFixed(2) : '-'}</span></div>
                         <div class="detail-item"><label>Estimated Value</label><span>${coin.value ? '$' + Number(coin.value).toFixed(2) : '-'}</span></div>
+                        <div class="detail-item"><label>Purchase Date</label><span>${escapeHtml(coin.purchaseDate || '-')}</span></div>
+                        <div class="detail-item"><label>Source</label><span>${escapeHtml(coin.source || '-')}</span></div>
                     </div>
 
                     <div style="margin-bottom: 16px;">
@@ -1030,11 +1054,15 @@
                     <div class="modal-photos">
                         <div class="modal-photo-box">
                             <label style="display:block; font-size:0.725rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Front Photo</label>
-                            ${frontImg ? `<img src="${frontImg}" onclick="openImageModal('${frontImg}')" alt="Front Photo">` : `<div style="height:160px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Front Photo</div>`}
+                            ${frontImg ? `<img src="${frontImg}" onclick="openImageModal('${frontImg}')" alt="Front Photo">` : `<div style="height:140px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Front Photo</div>`}
                         </div>
                         <div class="modal-photo-box">
                             <label style="display:block; font-size:0.725rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Back Photo</label>
-                            ${backImg ? `<img src="${backImg}" onclick="openImageModal('${backImg}')" alt="Back Photo">` : `<div style="height:160px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Back Photo</div>`}
+                            ${backImg ? `<img src="${backImg}" onclick="openImageModal('${backImg}')" alt="Back Photo">` : `<div style="height:140px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Back Photo</div>`}
+                        </div>
+                        <div class="modal-photo-box">
+                            <label style="display:block; font-size:0.725rem; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Proof of Purchase</label>
+                            ${receiptImg ? `<img src="${receiptImg}" onclick="openImageModal('${receiptImg}')" alt="Receipt Photo">` : `<div style="height:140px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted);">No Receipt</div>`}
                         </div>
                     </div>
                 </div>
@@ -1072,9 +1100,12 @@
                 country: document.getElementById('coinCountry').value.trim(),
                 paidPrice: parseFloat(document.getElementById('coinPaidPrice').value) || 0,
                 value: parseFloat(document.getElementById('coinValue').value) || 0,
+                purchaseDate: document.getElementById('coinPurchaseDate').value,
+                source: document.getElementById('coinSource').value.trim(),
                 notes: document.getElementById('coinNotes').value.trim(),
                 frontPhoto: frontData.value || (existingCoin ? (existingCoin.frontPhoto || existingCoin.photo) : ''),
-                backPhoto: backData.value || (existingCoin ? existingCoin.backPhoto : '')
+                backPhoto: backData.value || (existingCoin ? existingCoin.backPhoto : ''),
+                receiptPhoto: receiptData.value || (existingCoin ? existingCoin.receiptPhoto : '')
             };
 
             if (id) {
@@ -1109,6 +1140,8 @@
                 document.getElementById('coinCountry').value = coin.country;
                 document.getElementById('coinPaidPrice').value = coin.paidPrice || '';
                 document.getElementById('coinValue').value = coin.value || '';
+                document.getElementById('coinPurchaseDate').value = coin.purchaseDate || '';
+                document.getElementById('coinSource').value = coin.source || '';
                 document.getElementById('coinNotes').value = coin.notes;
                 
                 const fPhoto = coin.frontPhoto || coin.photo || '';
@@ -1129,6 +1162,16 @@
                     backText.innerHTML = 'Image Loaded! <br><span style="font-size:0.7rem; color:#2563eb;">(Click or Paste to replace)</span>';
                 } else {
                     resetPhotoBox(backData, backPreview, backText);
+                }
+
+                const rPhoto = coin.receiptPhoto || '';
+                if (rPhoto) {
+                    receiptData.value = rPhoto;
+                    receiptPreview.src = rPhoto;
+                    receiptPreview.classList.remove('hidden');
+                    receiptText.innerHTML = 'Image Loaded! <br><span style="font-size:0.7rem; color:#2563eb;">(Click or Paste to replace)</span>';
+                } else {
+                    resetPhotoBox(receiptData, receiptPreview, receiptText);
                 }
 
                 document.getElementById('formTitle').innerText = 'Edit Coin';
