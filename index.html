@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CoinTrack.io — Numismatic Portfolio Ledger</title>
-    <meta name="description" content="A private, local numismatic ledger for tracking your coin collection, managing purchase values, and archiving slab photos with zero subscription fees.">
+    <meta name="description" content="A private, local numismatic ledger for tracking your coin collection, managing purchase values, and archiving slab photos with zero subscription fees."[cite: 1]>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪙</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪙</text></svg>">[cite: 1]
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');[cite: 1]
 
         :root {
             --bg-base: #020617;
@@ -634,17 +634,26 @@
             color: var(--text-main);
         }
 
+        /* ==========================================================
+           REFINED FORM STYLING OVERHAUL (PROFESSIONAL FINISH)
+           ================ ========================================== */
+        #coinRecordForm {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 20px 16px;
+            margin-bottom: 0;
         }
 
         .form-field {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .form-field.full {
@@ -656,6 +665,48 @@
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Explicit styling for inputs, select, and textarea inside the form */
+        #coinRecordForm input[type="text"],
+        #coinRecordForm input[type="date"],
+        #coinRecordForm select,
+        #coinRecordForm textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.92rem;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        #coinRecordForm select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 14px;
+            padding-right: 38px;
+            cursor: pointer;
+        }
+
+        #coinRecordForm input[type="text"]:focus,
+        #coinRecordForm input[type="date"]:focus,
+        #coinRecordForm select:focus,
+        #coinRecordForm textarea:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px var(--accent-gold-soft);
+            background-color: var(--bg-surface);
+        }
+
+        #coinRecordForm textarea {
+            resize: vertical;
+            min-height: 80px;
         }
 
         /* Photo Upload Drop / Paste Zones */
@@ -663,23 +714,25 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 0;
         }
 
         .dropzone {
             background-color: var(--bg-elevated);
             border: 1.5px dashed var(--border-color);
             border-radius: var(--radius-sm);
-            padding: 16px;
+            padding: 16px 10px;
             text-align: center;
             cursor: pointer;
-            min-height: 110px;
+            min-height: 120px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
         }
 
         .dropzone:hover, .dropzone:focus {
@@ -692,15 +745,36 @@
             font-size: 0.72rem;
             color: var(--text-muted);
             line-height: 1.4;
+            margin: 0;
         }
 
         .preview-img {
-            max-height: 75px;
-            max-width: 100px;
+            max-height: 85px;
+            max-width: 100%;
             object-fit: cover;
             border-radius: 6px;
             border: 1px solid var(--border-color);
         }
+
+        /* Form Actions Button Container */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .form-actions button {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+        }
+
+        .form-actions button[type="submit"] {
+            flex: 2;
+        }
+        /* ========================================================== */
 
         /* View Details Modal Styling */
         .view-details-grid {
@@ -867,7 +941,7 @@
             }
             .form-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
+                gap: 14px;
             }
             .form-field.full {
                 grid-column: span 1;
@@ -876,6 +950,12 @@
                 grid-template-columns: 1fr;
                 gap: 12px;
             }
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+            .form-actions button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -883,7 +963,7 @@
 
 <div class="workspace">
     <!-- Mobile Sidebar Backdrop Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>[cite: 1]
 
     <!-- Sidebar Control Center -->
     <aside class="sidebar" id="appSidebar">
@@ -1103,9 +1183,9 @@
                 </div>
             </div>
 
-            <div style="display: flex; gap: 12px;">
-                <button type="submit" style="flex: 2;">Save Coin Record</button>
-                <button type="button" id="cancelModalBtn" class="btn-secondary" style="flex: 1;">Cancel</button>
+            <div class="form-actions">
+                <button type="submit">Save Coin Record</button>
+                <button type="button" id="cancelModalBtn" class="btn-secondary">Cancel</button>
             </div>
         </form>
     </div>
