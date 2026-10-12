@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CoinTrack.io — Numismatic Portfolio Ledger</title>
     <meta name="description" content="A private, local numismatic ledger for tracking your coin collection, managing purchase values, and archiving slab photos with zero subscription fees.">
     
@@ -199,7 +199,7 @@
 
         /* Main Workspace Area */
         .main-content {
-            padding: 36px 40px;
+            padding: 0 40px 36px;
             display: flex;
             flex-direction: column;
             gap: 24px;
@@ -208,11 +208,19 @@
             box-sizing: border-box;
         }
 
+        /* Sticky Content Header */
         .content-header {
+            position: sticky;
+            top: 0;
+            z-index: 80;
+            background-color: var(--bg-base);
+            padding-top: 24px;
+            padding-bottom: 16px;
             display: flex;
             flex-direction: column;
             gap: 16px;
             width: 100%;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.4);
         }
 
         .header-top-row {
@@ -354,7 +362,7 @@
             color: #fff;
         }
 
-        /* FAQ Accordion Styling (Matched to Original Theme) */
+        /* FAQ Accordion Styling */
         .faq-accordion {
             display: flex;
             flex-direction: column;
@@ -423,6 +431,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
             gap: 20px;
+            padding-top: 8px;
         }
 
         .coin-tile {
@@ -763,6 +772,10 @@
             .mobile-brand {
                 display: flex;
             }
+            /* Prevent iOS auto-zoom on input focus */
+            select, input, textarea, .search-wrapper input {
+                font-size: 16px !important;
+            }
             /* Hide Guide and FAQ from the desktop header button group on mobile */
             #openFaqBtn, #openWelcomeBtn {
                 display: none;
@@ -771,7 +784,8 @@
             .sidebar-mobile-links {
                 display: flex;
             }
-            .main-content { padding: 20px 16px; }
+            .main-content { padding: 0 16px 20px; }
+            .content-header { padding-top: 16px; }
             .form-grid, .photo-upload-matrix, .view-photos-grid { grid-template-columns: 1fr; }
             .form-field.full { grid-column: span 1; }
             .search-filter-bar {
