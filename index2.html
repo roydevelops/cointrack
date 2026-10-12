@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoinTrack.io — Numismatic Portfolio Ledger</title>
+    <meta name="description" content="A private, local numismatic ledger for tracking your coin collection, managing purchase values, and archiving slab photos with zero subscription fees.">
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪙</text></svg>">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-base: #020617;
+            --bg-surface: #0f172a;
+            --bg-elevated: #1e293b;
+            --border-color: #334155;
+            --accent-gold: #f59e0b;
+            --accent-gold-hover: #d97706;
+            --accent-gold-soft: rgba(245, 158, 11, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-subtle: #64748b;
+            --danger-red: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.15);
+            --success-green: #10b981;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-elevation: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Layout Container */
+        .workspace {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar Navigation / Control Panel */
+        .sidebar {
+            background-color: var(--bg-surface);
+            border-right: 1px solid var(--border-color);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            transition: transform var(--transition-smooth);
+            z-index: 100;
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-gold), #b45309);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.6rem;
+            line-height: 1;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            flex-shrink: 0;
+        }
+
+        .brand-cluster h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .brand-cluster p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-subtle);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        /* Metric Widget Cards in Sidebar */
+        .metric-widget {
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .metric-widget .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .metric-widget .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-top: 4px;
+        }
+
+        .sidebar-support {
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .sidebar-support strong {
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .sidebar-actions {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Hamburger Menu Button (Mobile Only) */
+        .hamburger-btn {
+            display: none;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: none;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 90;
+        }
+
+        /* Main Workspace Area */
+        .main-content {
+            padding: 36px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .header-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .header-action-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .mobile-brand {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .search-filter-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 2;
+            min-width: 0;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .search-wrapper input:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px var(--accent-gold-soft);
+        }
+
+        .search-wrapper svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--text-muted);
+        }
+
+        select, input, textarea {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.9rem;
+            padding: 10px 14px;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        select:focus, input:focus, textarea:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px var(--accent-gold-soft);
+        }
+
+        select {
+            cursor: pointer;
+            padding-right: 36px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 14px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Buttons */
+        button, .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--accent-gold);
+            color: #020617;
+            border: none;
+            padding: 11px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            white-space: nowrap;
+        }
+
+        button:hover, .btn:hover {
+            background-color: var(--accent-gold-hover);
+            transform: translateY(-1px);
+        }
+
+        button.btn-secondary {
+            background-color: var(--bg-elevated);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            box-shadow: none;
+        }
+
+        button.btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        button.btn-danger {
+            background-color: var(--danger-soft);
+            color: var(--danger-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            box-shadow: none;
+        }
+
+        button.btn-danger:hover {
+            background-color: var(--danger-red);
+            color: #fff;
+        }
+
+        /* FAQ Accordion Styling (Matched to Original Theme) */
+        .faq-accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .faq-item {
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .faq-item[open] {
+            border-color: var(--accent-gold);
+        }
+
+        .faq-question {
+            padding: 14px 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-question::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq-question::after {
+            content: "+";
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            transition: transform 0.2s ease;
+        }
+
+        .faq-item[open] .faq-question::after {
+            content: "−";
+        }
+
+        .faq-answer {
+            padding: 0 16px 14px 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .faq-answer code {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--text-main);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        /* Collection Grid Layout */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 20px;
+        }
+
+        .coin-tile {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-smooth);
+        }
+
+        .coin-tile:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevation);
+        }
+
+        .tile-image-strip {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 140px;
+            background-color: var(--bg-elevated);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tile-image-strip img, .tile-image-strip .no-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: opacity var(--transition-smooth);
+        }
+
+        .tile-image-strip img:hover {
+            opacity: 0.8;
+        }
+
+        .tile-image-strip .no-img {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--text-subtle);
+            background-color: rgba(0,0,0,0.2);
+            cursor: default;
+        }
+
+        .tile-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .tile-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .badge.gold {
+            background-color: var(--accent-gold-soft);
+            color: var(--accent-gold);
+            border-color: transparent;
+        }
+
+        .tile-financials {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .fin-item label {
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-subtle);
+            font-weight: 700;
+        }
+
+        .fin-item span {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .tile-actions {
+            display: flex;
+            gap: 6px;
+            padding: 0 18px 18px;
+        }
+
+        .tile-actions button {
+            flex: 1;
+            padding: 7px;
+            font-size: 0.78rem;
+        }
+
+        /* Modal Overlay & Form Container */
+        .modal-container {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 36px;
+            box-shadow: var(--shadow-elevation);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-field.full {
+            grid-column: span 2;
+        }
+
+        .form-field label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Photo Upload Drop / Paste Zones */
+        .photo-upload-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .dropzone {
+            background-color: var(--bg-elevated);
+            border: 1.5px dashed var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: var(--transition-smooth);
+        }
+
+        .dropzone:hover, .dropzone:focus {
+            border-color: var(--accent-gold);
+            background-color: var(--accent-gold-soft);
+            outline: none;
+        }
+
+        .dropzone p {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .preview-img {
+            max-height: 75px;
+            max-width: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* View Details Modal Styling */
+        .view-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            background: var(--bg-elevated);
+            padding: 18px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            margin: 20px 0;
+        }
+
+        .view-detail-item label {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .view-detail-item span {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .view-photos-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .view-photo-card label {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .view-photo-card img, .view-photo-card .no-photo-box {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-elevated);
+        }
+
+        .view-photo-card .no-photo-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+        }
+
+        /* Empty State */
+        .empty-display {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            background-color: var(--bg-surface);
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        .empty-display h3 {
+            font-size: 1.2rem;
+            margin: 12px 0 6px;
+        }
+
+        .empty-display p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Media Query for Mobile & Tablet viewports */
+        @media (max-width: 900px) {
+            .workspace { grid-template-columns: 1fr; }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 280px;
+                transform: translateX(-100%);
+                box-shadow: var(--shadow-elevation);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
+            .hamburger-btn {
+                display: flex;
+            }
+            .mobile-brand {
+                display: flex;
+            }
+            .main-content { padding: 20px 16px; }
+            .form-grid, .photo-upload-matrix, .view-photos-grid { grid-template-columns: 1fr; }
+            .form-field.full { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="workspace">
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Control Center -->
+    <aside class="sidebar" id="appSidebar">
+        <div class="brand-cluster">
+            <div class="brand-logo">🪙</div>
+            <div>
+                <h1>CoinTrack.io</h1>
+                <p>Numismatic Ledger</p>
+            </div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-section-title">Portfolio Analytics</div>
+            <div class="metric-widget">
+                <div class="label">Total Holdings</div>
+                <div class="value" id="statTotalCoins">0</div>
+            </div>
+            <div class="metric-widget">
+                <div class="label">Estimated Portfolio</div>
+                <div class="value" id="statTotalValue">$0.00</div>
+            </div>
+        </div>
+
+        <div class="sidebar-support">
+            <strong>Contact Support</strong>
+            support@cointrack.io
+        </div>
+
+        <div class="sidebar-actions">
+            <button id="sidebarExportBtn" class="btn-secondary">Export JSON Backup</button>
+            <button id="sidebarImportBtn" class="btn-secondary">Import Backup</button>
+            <input type="file" id="importFileInput" class="hidden" accept=".json">
+        </div>
+    </aside>
+
+    <!-- Main Workspace Content -->
+    <main class="main-content">
+        <header class="content-header">
+            <div class="header-top-row">
+                <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar">☰</button>
+                <div class="mobile-brand">🪙 CoinTrack.io</div>
+                <div class="header-action-group">
+                    <button id="openFaqBtn" class="btn-secondary" title="Frequently Asked Questions" style="padding: 11px 14px;">❓ FAQ</button>
+                    <button id="openWelcomeBtn" class="btn-secondary" title="App Guide &amp; Info" style="padding: 11px 14px;">ℹ️ Guide</button>
+                    <button id="openModalBtn"><span>+</span> Entry</button>
+                </div>
+            </div>
+            <div class="search-filter-bar">
+                <div class="search-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="searchInput" placeholder="Search collection...">
+                </div>
+                <select id="gradeServiceFilter">
+                    <option value="">All Services</option>
+                    <option value="PCGS">PCGS</option>
+                    <option value="NGC">NGC</option>
+                    <option value="ANACS">ANACS</option>
+                    <option value="ICG">ICG</option>
+                    <option value="Raw">Raw / Ungraded</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Dynamic Grid View -->
+        <section class="inventory-grid" id="coinGridContainer"></section>
+    </main>
+</div>
+
+<!-- Welcome / Info Modal -->
+<div id="welcomeModal" class="modal-container hidden">
+    <div class="modal-card">
+        <button class="modal-close" id="closeWelcomeModalBtn">✕</button>
+        <div style="font-size: 2.5rem; margin-bottom: 12px;">🪙</div>
+        <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--accent-gold);">Welcome to CoinTrack.io</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
+            Your secure, private, local numismatic portfolio ledger. Keep track of your valuable coin collections, certification holders, purchase prices, and estimated market values with zero monthly fees.
+        </p>
+        <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; line-height: 1.6; margin-bottom: 24px;">
+            <li><strong>Precious Metal &amp; Portfolio Tracking:</strong> Aggregate holdings count and monitor estimated market values vs. acquisition costs.</li>
+            <li><strong>Certification &amp; Slab Registry:</strong> Log third-party grading services (PCGS, NGC, ANACS, ICG) with specific grades and serial numbers.</li>
+            <li><strong>Dual-Side Photo Archiving:</strong> Store high-resolution obverse and reverse face photos alongside transaction receipts and certification papers.</li>
+            <li><strong>100% Private &amp; Self-Hosted:</strong> Your collection data stays securely in your browser with zero subscription fees and instant JSON backups.</li>
+        </ul>
+        <button id="getStartedBtn" style="width: 100%;">Got It, Let's Go!</button>
+    </div>
+</div>
+
+<!-- FAQ Modal Window -->
+<div id="faqModal" class="modal-container hidden">
+    <div class="modal-card">
+        <button class="modal-close" id="closeFaqModalBtn">✕</button>
+        <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 20px; color: var(--accent-gold);">Frequently Asked Questions</h2>
+        <div class="faq-accordion">
+            <details class="faq-item" open>
+                <summary class="faq-question">Where is my data stored?</summary>
+                <div class="faq-answer">Everything stays locally inside your browser's private storage. No accounts, external databases, or third-party servers are used.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">How does the Import feature work?</summary>
+                <div class="faq-answer">Clicking <strong>Import</strong> lets you select a previously exported <code>.json</code> backup file to restore your entire collection, including all coin details and photos.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">Are there monthly fees or hidden costs?</summary>
+                <div class="faq-answer">No. CoinTrack.io is 100% free with no subscriptions or recurring fees.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">How do I backup my collection?</summary>
+                <div class="faq-answer">Click the <strong>Export</strong> button at the top to download a single backup file containing all your coin records and images.</div>
+            </details>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Entry Form -->
+<div id="entryModal" class="modal-container hidden">
+    <div class="modal-card">
+        <button class="modal-close" id="closeModalBtn">✕</button>
+        <h2 id="modalHeading" style="font-size: 1.35rem; font-weight: 700; margin-bottom: 24px;">New Coin Record</h2>
+        
+        <form id="coinRecordForm">
+            <input type="hidden" id="recordId">
+            <div class="form-grid">
+                <div class="form-field full">
+                    <label>Coin Name / Denomination *</label>
+                    <input type="text" id="inputName" required placeholder="e.g. Morgan Silver Dollar">
+                </div>
+                <div class="form-field">
+                    <label>Year *</label>
+                    <input type="text" id="inputYear" required placeholder="e.g. 1921">
+                </div>
+                <div class="form-field">
+                    <label>Mint Mark</label>
+                    <input type="text" id="inputMint" placeholder="e.g. CC, S, D">
+                </div>
+                <div class="form-field">
+                    <label>Grading Service</label>
+                    <select id="inputGradingCompany">
+                        <option value="">Raw / Ungraded</option>
+                        <option value="PCGS">PCGS</option>
+                        <option value="NGC">NGC</option>
+                        <option value="ANACS">ANACS</option>
+                        <option value="ICG">ICG</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label>Grade / Condition</label>
+                    <input type="text" id="inputGrade" placeholder="e.g. MS-63">
+                </div>
+                <div class="form-field">
+                    <label>Country of Origin</label>
+                    <input type="text" id="inputCountry" placeholder="e.g. United States">
+                </div>
+                <div class="form-field">
+                    <label>Purchase Price ($)</label>
+                    <input type="text" inputmode="decimal" id="inputPaid" placeholder="0.00">
+                </div>
+                <div class="form-field">
+                    <label>Estimated Value ($)</label>
+                    <input type="text" inputmode="decimal" id="inputValue" placeholder="0.00">
+                </div>
+                <div class="form-field">
+                    <label>Acquisition Date</label>
+                    <input type="date" id="inputDate">
+                </div>
+                <div class="form-field">
+                    <label>Source / Vendor</label>
+                    <input type="text" id="inputSource" placeholder="e.g. Heritage Auctions">
+                </div>
+                <div class="form-field full">
+                    <label>Numismatic Notes &amp; Varieties</label>
+                    <textarea id="inputNotes" rows="2" placeholder="Die varieties, error characteristics, provenance..."></textarea>
+                </div>
+            </div>
+
+            <!-- Image Drop / Clipboard Paste Zone -->
+            <div class="photo-upload-matrix">
+                <div class="form-field">
+                    <label>Obverse (Front)</label>
+                    <div class="dropzone" id="dropFront" tabindex="0">
+                        <p id="textFront">Click &amp; <strong>Ctrl+V</strong><br>or select</p>
+                        <img id="prevFront" class="preview-img hidden">
+                    </div>
+                    <input type="file" id="fileFront" class="hidden" accept="image/*">
+                    <input type="hidden" id="dataFront">
+                </div>
+                <div class="form-field">
+                    <label>Reverse (Back)</label>
+                    <div class="dropzone" id="dropBack" tabindex="0">
+                        <p id="textBack">Click &amp; <strong>Ctrl+V</strong><br>or select</p>
+                        <img id="prevBack" class="preview-img hidden">
+                    </div>
+                    <input type="file" id="fileBack" class="hidden" accept="image/*">
+                    <input type="hidden" id="dataBack">
+                </div>
+                <div class="form-field">
+                    <label>Receipt / Cert</label>
+                    <div class="dropzone" id="dropReceipt" tabindex="0">
+                        <p id="textReceipt">Click &amp; <strong>Ctrl+V</strong><br>or select</p>
+                        <img id="prevReceipt" class="preview-img hidden">
+                    </div>
+                    <input type="file" id="fileReceipt" class="hidden" accept="image/*">
+                    <input type="hidden" id="dataReceipt">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button type="submit" style="flex: 2;">Save Coin Record</button>
+                <button type="button" id="cancelModalBtn" class="btn-secondary" style="flex: 1;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Full Details View Modal -->
+<div id="viewModal" class="modal-container hidden">
+    <div class="modal-card">
+        <button class="modal-close" id="closeViewModalBtn">✕</button>
+        <h2 id="viewCoinTitle" style="font-size: 1.35rem; font-weight: 700; margin-bottom: 4px;">Coin Details</h2>
+        <p id="viewCoinSubtitle" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;"></p>
+        
+        <div class="view-details-grid" id="viewDetailsGrid"></div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display:block; font-size:0.68rem; color:var(--text-subtle); text-transform:uppercase; font-weight:700; margin-bottom:6px;">Notes &amp; Varieties</label>
+            <p id="viewCoinNotes" style="background:var(--bg-elevated); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-size:0.875rem; color:var(--text-muted); margin:0;"></p>
+        </div>
+
+        <div class="view-photos-grid" id="viewPhotosGrid"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let coinInventory = JSON.parse(localStorage.getItem('cointrack_collection')) || [];
+
+        const entryModal = document.getElementById('entryModal');
+        const viewModal = document.getElementById('viewModal');
+        const welcomeModal = document.getElementById('welcomeModal');
+        const faqModal = document.getElementById('faqModal');
+        const coinRecordForm = document.getElementById('coinRecordForm');
+        const coinGridContainer = document.getElementById('coinGridContainer');
+        const searchInput = document.getElementById('searchInput');
+        const gradeServiceFilter = document.getElementById('gradeServiceFilter');
+
+        const appSidebar = document.getElementById('appSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const hamburgerToggleBtn = document.getElementById('hamburgerToggleBtn');
+
+        // Show Welcome Modal only on first visit
+        if (!localStorage.getItem('cointrack_welcomed')) {
+            welcomeModal.classList.remove('hidden');
+            localStorage.setItem('cointrack_welcomed', 'true');
+        }
+
+        document.getElementById('openWelcomeBtn').addEventListener('click', () => welcomeModal.classList.remove('hidden'));
+        document.getElementById('closeWelcomeModalBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
+        document.getElementById('getStartedBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
+        welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) welcomeModal.classList.add('hidden'); });
+
+        document.getElementById('openFaqBtn').addEventListener('click', () => faqModal.classList.remove('hidden'));
+        document.getElementById('closeFaqModalBtn').addEventListener('click', () => faqModal.classList.add('hidden'));
+        faqModal.addEventListener('click', (e) => { if (e.target === faqModal) faqModal.classList.add('hidden'); });
+
+        function toggleMobileSidebar(open) {
+            const isOpen = open !== undefined ? open : !appSidebar.classList.contains('mobile-open');
+            appSidebar.classList.toggle('mobile-open', isOpen);
+            sidebarOverlay.classList.toggle('active', isOpen);
+        }
+
+        hamburgerToggleBtn.addEventListener('click', () => toggleMobileSidebar());
+        sidebarOverlay.addEventListener('click', () => toggleMobileSidebar(false));
+
+        function toggleModal(display = true) {
+            entryModal.classList.toggle('hidden', !display);
+            if (display) document.getElementById('inputName').focus();
+        }
+
+        function toggleViewModal(display = true) {
+            viewModal.classList.toggle('hidden', !display);
+        }
+
+        // Auto-formatting currency inputs behavior
+        function setupCurrencyInput(inputEl) {
+            inputEl.addEventListener('input', (e) => {
+                let val = e.target.value.replace(/\D/g, '');
+                if (!val) {
+                    e.target.value = '';
+                    return;
+                }
+                let num = parseInt(val, 10) / 100;
+                e.target.value = num.toFixed(2);
+            });
+        }
+
+        setupCurrencyInput(document.getElementById('inputPaid'));
+        setupCurrencyInput(document.getElementById('inputValue'));
+
+        document.getElementById('openModalBtn').addEventListener('click', () => {
+            coinRecordForm.reset();
+            document.getElementById('recordId').value = '';
+            document.getElementById('modalHeading').innerText = 'New Coin Record';
+            clearAllPreviews();
+            toggleModal(true);
+        });
+
+        document.getElementById('closeModalBtn').addEventListener('click', () => toggleModal(false));
+        document.getElementById('cancelModalBtn').addEventListener('click', () => toggleModal(false));
+        document.getElementById('closeViewModalBtn').addEventListener('click', () => toggleViewModal(false));
+        
+        entryModal.addEventListener('click', (e) => { if (e.target === entryModal) toggleModal(false); });
+        viewModal.addEventListener('click', (e) => { if (e.target === viewModal) toggleViewModal(false); });
+
+        // Photo Matrix Setup
+        function initPhotoZone(zoneEl, fileEl, dataEl, prevEl, textEl) {
+            zoneEl.addEventListener('click', () => fileEl.click());
+            fileEl.addEventListener('change', (e) => {
+                if (e.target.files[0]) readImageFile(e.target.files[0], dataEl, prevEl, textEl);
+            });
+            zoneEl.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
+                for (let item of clipboardItems) {
+                    if (item.type.indexOf('image') !== -1) {
+                        readImageFile(item.getAsFile(), dataEl, prevEl, textEl);
+                        break;
+                    }
+                }
+            });
+        }
+
+        function readImageFile(file, dataEl, prevEl, textEl) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imageObj = new Image();
+                imageObj.src = e.target.result;
+                imageObj.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const limit = 600;
+                    let w = imageObj.width, h = imageObj.height;
+                    if (w > h && w > limit) { h *= limit / w; w = limit; }
+                    else if (h > limit) { w *= limit / h; h = limit; }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(imageObj, 0, 0, w, h);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    dataEl.value = compressedBase64;
+                    prevEl.src = compressedBase64;
+                    prevEl.classList.remove('hidden');
+                    textEl.innerHTML = 'Image loaded <span style="color:var(--accent-gold)">(replace)</span>';
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        initPhotoZone(document.getElementById('dropFront'), document.getElementById('fileFront'), document.getElementById('dataFront'), document.getElementById('prevFront'), document.getElementById('textFront'));
+        initPhotoZone(document.getElementById('dropBack'), document.getElementById('fileBack'), document.getElementById('dataBack'), document.getElementById('prevBack'), document.getElementById('textBack'));
+        initPhotoZone(document.getElementById('dropReceipt'), document.getElementById('fileReceipt'), document.getElementById('dataReceipt'), document.getElementById('prevReceipt'), document.getElementById('textReceipt'));
+
+        function clearAllPreviews() {
+            ['Front', 'Back', 'Receipt'].forEach(p => {
+                document.getElementById(`data${p}`).value = '';
+                document.getElementById(`prev${p}`).src = '';
+                document.getElementById(`prev${p}`).classList.add('hidden');
+                document.getElementById(`text${p}`).innerHTML = 'Click &amp; <strong>Ctrl+V</strong><br>or select';
+            });
+        }
+
+        // Form Submission
+        coinRecordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const idVal = document.getElementById('recordId').value;
+            const targetExisting = idVal ? coinInventory.find(c => c.id == idVal) : null;
+
+            const record = {
+                id: idVal ? parseInt(idVal) : Date.now(),
+                name: document.getElementById('inputName').value.trim(),
+                year: document.getElementById('inputYear').value.trim(),
+                mint: document.getElementById('inputMint').value.trim(),
+                gradingCompany: document.getElementById('inputGradingCompany').value,
+                grade: document.getElementById('inputGrade').value.trim(),
+                country: document.getElementById('inputCountry').value.trim(),
+                paidPrice: parseFloat(document.getElementById('inputPaid').value) || 0,
+                value: parseFloat(document.getElementById('inputValue').value) || 0,
+                purchaseDate: document.getElementById('inputDate').value,
+                source: document.getElementById('inputSource').value.trim(),
+                notes: document.getElementById('inputNotes').value.trim(),
+                frontPhoto: document.getElementById('dataFront').value || (targetExisting ? (targetExisting.frontPhoto || targetExisting.photo) : ''),
+                backPhoto: document.getElementById('dataBack').value || (targetExisting ? targetExisting.backPhoto : ''),
+                receiptPhoto: document.getElementById('dataReceipt').value || (targetExisting ? targetExisting.receiptPhoto : '')
+            };
+
+            if (idVal) {
+                const idx = coinInventory.findIndex(c => c.id === record.id);
+                if (idx !== -1) coinInventory[idx] = record;
+            } else {
+                coinInventory.unshift(record);
+            }
+
+            persistAndRender();
+            toggleModal(false);
+        });
+
+        function persistAndRender() {
+            localStorage.setItem('cointrack_collection', JSON.stringify(coinInventory));
+            renderInterface();
+        }
+
+        function renderInterface() {
+            const query = searchInput.value.toLowerCase();
+            const filterService = gradeServiceFilter.value;
+
+            const matches = coinInventory.filter(c => {
+                const textMatch = Object.values(c).some(val => String(val).toLowerCase().includes(query));
+                const serviceMatch = !filterService || (filterService === 'Raw' ? !c.gradingCompany : c.gradingCompany === filterService);
+                return textMatch && serviceMatch;
+            });
+
+            // Update Sidebar Analytics
+            document.getElementById('statTotalCoins').innerText = coinInventory.length;
+            const portfolioSum = coinInventory.reduce((sum, c) => sum + (parseFloat(c.value) || parseFloat(c.paidPrice) || 0), 0);
+            document.getElementById('statTotalValue').innerText = '$' + portfolioSum.toLocaleString('en-US', {minimumFractionDigits: 2});
+
+            if (matches.length === 0) {
+                coinGridContainer.innerHTML = `
+                    <div class="empty-display">
+                        <div style="font-size: 2.5rem;">🪙</div>
+                        <h3>No matching coins</h3>
+                        <p>Adjust your search criteria or add new items to your portfolio ledger.</p>
+                    </div>`;
+                return;
+            }
+
+            coinGridContainer.innerHTML = matches.map(c => {
+                const frontImg = c.frontPhoto || c.photo || '';
+                const backImg = c.backPhoto || '';
+                const fullGradeBadge = c.gradingCompany && c.grade ? `${c.gradingCompany} ${c.grade}` : (c.gradingCompany || c.grade || '');
+
+                return `
+                <div class="coin-tile">
+                    <div class="tile-image-strip">
+                        ${frontImg ? `<img src="${frontImg}" onclick="openLightbox('${frontImg}')">` : '<div class="no-img">No Obverse</div>'}
+                        ${backImg ? `<img src="${backImg}" onclick="openLightbox('${backImg}')">` : '<div class="no-img">No Reverse</div>'}
+                    </div>
+                    <div class="tile-body">
+                        <div class="tile-title">${escapeHTML(c.name)}</div>
+                        <div class="badge-row">
+                            <span class="badge gold">${escapeHTML(c.year)} ${c.mint ? '· ' + escapeHTML(c.mint) : ''}</span>
+                            ${fullGradeBadge ? `<span class="badge">${escapeHTML(fullGradeBadge)}</span>` : ''}
+                            ${c.country ? `<span class="badge">${escapeHTML(c.country)}</span>` : ''}
+                        </div>
+                        <div class="tile-financials">
+                            <div class="fin-item"><label>Paid</label><span>${c.paidPrice ? '$' + Number(c.paidPrice).toFixed(2) : '—'}</span></div>
+                            <div class="fin-item" style="text-align: right;"><label>Est. Value</label><span>${c.value ? '$' + Number(c.value).toFixed(2) : '—'}</span></div>
+                        </div>
+                    </div>
+                    <div class="tile-actions">
+                        <button class="btn-secondary" onclick="viewCoin(${c.id})">View</button>
+                        <button class="btn-secondary" onclick="editCoin(${c.id})">Edit</button>
+                        <button class="btn-danger" onclick="deleteCoin(${c.id})">Delete</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        window.openLightbox = (src) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-container';
+            overlay.innerHTML = `<img src="${src}" style="max-width:90%; max-height:90vh; border-radius:12px; box-shadow:0 25px 50px rgba(0,0,0,0.9);">`;
+            overlay.onclick = () => overlay.remove();
+            document.body.appendChild(overlay);
+        };
+
+        window.viewCoin = (id) => {
+            const target = coinInventory.find(c => c.id === id);
+            if (!target) return;
+
+            document.getElementById('viewCoinTitle').innerText = target.name || 'Coin Details';
+            document.getElementById('viewCoinSubtitle').innerText = `${target.year || ''} ${target.mint ? '· ' + target.mint : ''}`;
+
+            const fullGrade = target.gradingCompany && target.grade ? `${target.gradingCompany} - ${target.grade}` : (target.gradingCompany || target.grade || 'Raw');
+
+            document.getElementById('viewDetailsGrid').innerHTML = `
+                <div class="view-detail-item"><label>Grade / Holder</label><span>${escapeHTML(fullGrade)}</span></div>
+                <div class="view-detail-item"><label>Country</label><span>${escapeHTML(target.country || '—')}</span></div>
+                <div class="view-detail-item"><label>Purchase Price</label><span>${target.paidPrice ? '$' + Number(target.paidPrice).toFixed(2) : '—'}</span></div>
+                <div class="view-detail-item"><label>Estimated Value</label><span>${target.value ? '$' + Number(target.value).toFixed(2) : '—'}</span></div>
+                <div class="view-detail-item"><label>Acquisition Date</label><span>${escapeHTML(target.purchaseDate || '—')}</span></div>
+                <div class="view-detail-item"><label>Source / Vendor</label><span>${escapeHTML(target.source || '—')}</span></div>
+            `;
+
+            document.getElementById('viewCoinNotes').innerText = target.notes || 'No notes added.';
+
+            const frontImg = target.frontPhoto || target.photo || '';
+            const backImg = target.backPhoto || '';
+            const receiptImg = target.receiptPhoto || '';
+
+            document.getElementById('viewPhotosGrid').innerHTML = `
+                <div class="view-photo-card">
+                    <label>Obverse</label>
+                    ${frontImg ? `<img src="${frontImg}" onclick="openLightbox('${frontImg}')" style="cursor:pointer;">` : `<div class="no-photo-box">No image</div>`}
+                </div>
+                <div class="view-photo-card">
+                    <label>Reverse</label>
+                    ${backImg ? `<img src="${backImg}" onclick="openLightbox('${backImg}')" style="cursor:pointer;">` : `<div class="no-photo-box">No image</div>`}
+                </div>
+                <div class="view-photo-card">
+                    <label>Receipt</label>
+                    ${receiptImg ? `<img src="${receiptImg}" onclick="openLightbox('${receiptImg}')" style="cursor:pointer;">` : `<div class="no-photo-box">No image</div>`}
+                </div>
+            `;
+
+            toggleViewModal(true);
+        };
+
+        window.editCoin = (id) => {
+            const target = coinInventory.find(c => c.id === id);
+            if (!target) return;
+            document.getElementById('recordId').value = target.id;
+            document.getElementById('inputName').value = target.name;
+            document.getElementById('inputYear').value = target.year;
+            document.getElementById('inputMint').value = target.mint || '';
+            document.getElementById('inputGradingCompany').value = target.gradingCompany || '';
+            document.getElementById('inputGrade').value = target.grade || '';
+            document.getElementById('inputCountry').value = target.country || '';
+            document.getElementById('inputPaid').value = target.paidPrice ? Number(target.paidPrice).toFixed(2) : '';
+            document.getElementById('inputValue').value = target.value ? Number(target.value).toFixed(2) : '';
+            document.getElementById('inputDate').value = target.purchaseDate || '';
+            document.getElementById('inputSource').value = target.source || '';
+            document.getElementById('inputNotes').value = target.notes || '';
+
+            clearAllPreviews();
+            const fPhoto = target.frontPhoto || target.photo || '';
+            if (fPhoto) {
+                document.getElementById('dataFront').value = fPhoto;
+                document.getElementById('prevFront').src = fPhoto;
+                document.getElementById('prevFront').classList.remove('hidden');
+            }
+            if (target.backPhoto) {
+                document.getElementById('dataBack').value = target.backPhoto;
+                document.getElementById('prevBack').src = target.backPhoto;
+                document.getElementById('prevBack').classList.remove('hidden');
+            }
+            if (target.receiptPhoto) {
+                document.getElementById('dataReceipt').value = target.receiptPhoto;
+                document.getElementById('prevReceipt').src = target.receiptPhoto;
+                document.getElementById('prevReceipt').classList.remove('hidden');
+            }
+
+            document.getElementById('modalHeading').innerText = 'Edit Coin Record';
+            toggleModal(true);
+        };
+
+        window.deleteCoin = (id) => {
+            if (confirm('Permanently remove this coin from your inventory?')) {
+                coinInventory = coinInventory.filter(c => c.id !== id);
+                persistAndRender();
+            }
+        };
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        searchInput.addEventListener('input', renderInterface);
+        gradeServiceFilter.addEventListener('change', renderInterface);
+
+        // Backup Export / Import
+        document.getElementById('sidebarExportBtn').addEventListener('click', () => {
+            const jsonBlob = new Blob([JSON.stringify(coinInventory, null, 2)], { type: 'text/json' });
+            const fileUrl = URL.createObjectURL(jsonBlob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = fileUrl;
+            downloadLink.download = `cointrack_ledger_${new Date().toISOString().slice(0,10)}.json`;
+            downloadLink.click();
+            URL.revokeObjectURL(fileUrl);
+        });
+
+        document.getElementById('sidebarImportBtn').addEventListener('click', () => document.getElementById('importFileInput').click());
+        document.getElementById('importFileInput').addEventListener('change', (e) => {
+            const fileObj = e.target.files[0];
+            if (!fileObj) return;
+            const fileReader = new FileReader();
+            fileReader.onload = (event) => {
+                try {
+                    const parsedData = JSON.parse(event.target.result);
+                    if (Array.isArray(parsedData)) {
+                        if (confirm(`Replace active ledger with ${parsedData.length} records from backup?`)) {
+                            coinInventory = parsedData;
+                            persistAndRender();
+                            alert('Collection restored successfully!');
+                        }
+                    }
+                } catch (error) { alert('Failed to parse backup file.'); }
+            };
+            fileReader.readAsText(fileObj);
+            e.target.value = '';
+        });
+
+        renderInterface();
+    });
+</script>
+
+</body>
+</html>
