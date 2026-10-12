@@ -1365,7 +1365,7 @@
 
         window.editCoin = (id) => {
             const target = coinInventory.find(c => c.id === id);
-            if (-1 === coinInventory.indexOf(target)) return;
+            if (!target) return;
             document.getElementById('recordId').value = target.id;
             document.getElementById('inputName').value = target.name;
             document.getElementById('inputYear').value = target.year;
@@ -1389,7 +1389,7 @@
             if (target.backPhoto) {
                 document.getElementById('dataBack').value = target.backPhoto;
                 document.getElementById('prevBack').src = target.backPhoto;
-                document.getElementById('prevBack'].classList?.remove('hidden'); // safe fallback
+                document.getElementById('prevBack').classList.remove('hidden');
             }
             if (target.receiptPhoto) {
                 document.getElementById('dataReceipt').value = target.receiptPhoto;
