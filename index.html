@@ -38,8 +38,8 @@
         }
 
         html, body {
+            overflow-x: hidden;
             width: 100%;
-            scroll-behavior: smooth;
         }
 
         body {
@@ -58,6 +58,7 @@
             min-height: 100vh;
             position: relative;
             width: 100%;
+            overflow-x: hidden;
         }
 
         /* Sidebar Navigation / Control Panel */
@@ -166,24 +167,18 @@
         /* Hamburger Menu Button (Mobile Only) */
         .hamburger-btn {
             display: none;
-            background: transparent;
-            border: none;
-            padding: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
             color: var(--text-main);
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
             align-items: center;
             justify-content: center;
             cursor: pointer;
             box-shadow: none;
-            font-size: 1.8rem;
-            line-height: 1;
+            font-size: 1.2rem;
             flex-shrink: 0;
-            transition: var(--transition-smooth);
-        }
-
-        .hamburger-btn:hover {
-            background: transparent;
-            color: var(--accent-gold);
-            transform: none;
         }
 
         .sidebar-overlay {
@@ -201,6 +196,7 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+            overflow-y: auto;
             width: 100%;
             box-sizing: border-box;
             min-height: 100vh;
@@ -225,12 +221,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
-        }
-
-        .header-left-group {
-            display: flex;
-            align-items: center;
             gap: 12px;
         }
 
@@ -296,6 +286,7 @@
             color: var(--text-main);
             font-family: inherit;
             font-size: 0.9rem;
+            padding: 10px 14px;
             outline: none;
             transition: var(--transition-smooth);
         }
@@ -307,11 +298,11 @@
 
         select {
             cursor: pointer;
-            padding: 12px 38px 12px 16px;
+            padding-right: 36px;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 14px center;
+            background-position: right 12px center;
             background-size: 14px;
             flex: 1;
             min-width: 0;
@@ -363,41 +354,6 @@
         button.btn-danger:hover {
             background-color: var(--danger-red);
             color: #fff;
-        }
-
-        /* Back to Top Floating Button (Enlarged) */
-        .back-to-top-btn {
-            position: fixed;
-            bottom: 28px;
-            right: 28px;
-            width: 52px;
-            height: 52px;
-            background-color: var(--bg-elevated);
-            color: var(--accent-gold);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            cursor: pointer;
-            z-index: 70;
-            box-shadow: var(--shadow-elevation);
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition-smooth);
-        }
-
-        .back-to-top-btn.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .back-to-top-btn:hover {
-            background-color: var(--accent-gold);
-            color: #020617;
-            border-color: var(--accent-gold);
-            transform: translateY(-2px);
         }
 
         /* FAQ Accordion Styling */
@@ -845,36 +801,20 @@
             }
             .main-content { padding: 0 16px 20px; }
             .content-header { 
-                position: fixed;
+                padding-top: 16px; 
+                position: sticky;
                 top: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                padding: 12px 16px;
                 background-color: var(--bg-base);
                 z-index: 80;
-                box-shadow: 0 4px 12px rgba(2, 6, 23, 0.5);
             }
-            /* Offset content so it doesn't hide behind the fixed mobile header */
-            .inventory-grid {
-                padding-top: 140px;
+            .form-grid, .photo-upload-matrix, .view-photos-grid { grid-template-columns: 1fr; }
+            .form-field.full { grid-column: span 1; }
+            .search-filter-bar {
+                flex-direction: column;
+                align-items: stretch;
             }
-            
-            /* Mobile Stacking for New Entry Form */
-            .modal-card {
-                padding: 20px 16px;
-                max-height: 95vh;
-            }
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            .form-field.full {
-                grid-column: span 1;
-            }
-            .photo-upload-matrix {
-                grid-template-columns: 1fr;
-                gap: 12px;
+            .search-wrapper, select {
+                width: 100%;
             }
         }
     </style>
@@ -923,10 +863,8 @@
     <main class="main-content">
         <header class="content-header">
             <div class="header-top-row">
-                <div class="header-left-group">
-                    <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar">☰</button>
-                    <div class="mobile-brand">🪙 CoinTrack.io</div>
-                </div>
+                <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar">☰</button>
+                <div class="mobile-brand">🪙 CoinTrack.io</div>
                 <div class="header-action-group">
                     <button id="openModalBtn"><span>+</span> New</button>
                 </div>
@@ -937,7 +875,7 @@
                     <input type="text" id="searchInput" placeholder="Search collection...">
                 </div>
                 <select id="gradeServiceFilter">
-                    <option value="">Show All</option>
+                    <option value="">All Services</option>
                     <option value="PCGS">PCGS</option>
                     <option value="NGC">NGC</option>
                     <option value="ANACS">ANACS</option>
@@ -952,7 +890,7 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <span>&copy; 2026 CoinTrack.io</span>
+            <span>&copy; 2026 CoinTrack.io. All rights reserved.</span>
             <div class="footer-links">
                 <a href="#" id="footerGuideLink">Guide</a>
                 <span>&bull;</span>
@@ -961,9 +899,6 @@
         </footer>
     </main>
 </div>
-
-<!-- Back to Top Floating Button -->
-<button class="back-to-top-btn" id="backToTopBtn" aria-label="Back to top">↑</button>
 
 <!-- Welcome / Info Modal -->
 <div id="welcomeModal" class="modal-container hidden">
@@ -1145,7 +1080,6 @@
         const appSidebar = document.getElementById('appSidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const hamburgerToggleBtn = document.getElementById('hamburgerToggleBtn');
-        const backToTopBtn = document.getElementById('backToTopBtn');
 
         // Show Welcome Modal only on first visit
         if (!localStorage.getItem('cointrack_welcomed')) {
@@ -1187,19 +1121,6 @@
 
         hamburgerToggleBtn.addEventListener('click', () => toggleMobileSidebar());
         sidebarOverlay.addEventListener('click', () => toggleMobileSidebar(false));
-
-        // Back to Top scroll behavior
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
-        });
-
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
 
         function toggleModal(display = true) {
             entryModal.classList.toggle('hidden', !display);
