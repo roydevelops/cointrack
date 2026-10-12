@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoinTrack.io — Enterprise Numismatic Portfolio</title>
-    <meta name="description" content="Secure, privacy-first, local coin collection software with advanced portfolio tracking, instant photo pasting, and zero monthly fees.">
+    <title>CoinTrack.io — Numismatic Portfolio Ledger</title>
+    <meta name="description" content="A private, local numismatic ledger for tracking your coin collection, managing purchase values, and archiving slab photos with zero subscription fees.">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪙</text></svg>">
     
@@ -61,7 +61,7 @@
             padding: 32px 24px;
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 28px;
             transition: transform var(--transition-smooth);
             z-index: 100;
         }
@@ -80,7 +80,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.1rem;
+            font-size: 2.6rem;
             line-height: 1;
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
             flex-shrink: 0;
@@ -132,6 +132,22 @@
             font-weight: 700;
             color: var(--accent-gold);
             margin-top: 4px;
+        }
+
+        .sidebar-support {
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .sidebar-support strong {
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 2px;
         }
 
         .sidebar-actions {
@@ -187,6 +203,12 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
+        }
+
+        .header-action-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
         .mobile-brand {
@@ -313,6 +335,70 @@
         button.btn-danger:hover {
             background-color: var(--danger-red);
             color: #fff;
+        }
+
+        /* FAQ Accordion Styling (Matched to Original Theme) */
+        .faq-accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .faq-item {
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .faq-item[open] {
+            border-color: var(--accent-gold);
+        }
+
+        .faq-question {
+            padding: 14px 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-question::-webkit-details-marker {
+            display: none;
+        }
+
+        .faq-question::after {
+            content: "+";
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            transition: transform 0.2s ease;
+        }
+
+        .faq-item[open] .faq-question::after {
+            content: "−";
+        }
+
+        .faq-answer {
+            padding: 0 16px 14px 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .faq-answer code {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--text-main);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
         }
 
         /* Collection Grid Layout */
@@ -678,7 +764,7 @@
             <div class="brand-logo">🪙</div>
             <div>
                 <h1>CoinTrack.io</h1>
-                <p>Enterprise Ledger</p>
+                <p>Numismatic Ledger</p>
             </div>
         </div>
 
@@ -694,6 +780,11 @@
             </div>
         </div>
 
+        <div class="sidebar-support">
+            <strong>Contact Support</strong>
+            support@cointrack.io
+        </div>
+
         <div class="sidebar-actions">
             <button id="sidebarExportBtn" class="btn-secondary">Export JSON Backup</button>
             <button id="sidebarImportBtn" class="btn-secondary">Import Backup</button>
@@ -707,7 +798,11 @@
             <div class="header-top-row">
                 <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar">☰</button>
                 <div class="mobile-brand">🪙 CoinTrack.io</div>
-                <button id="openModalBtn"><span>+</span> Entry</button>
+                <div class="header-action-group">
+                    <button id="openFaqBtn" class="btn-secondary" title="Frequently Asked Questions" style="padding: 11px 14px;">❓ FAQ</button>
+                    <button id="openWelcomeBtn" class="btn-secondary" title="App Guide &amp; Info" style="padding: 11px 14px;">ℹ️ Guide</button>
+                    <button id="openModalBtn"><span>+</span> Entry</button>
+                </div>
             </div>
             <div class="search-filter-bar">
                 <div class="search-wrapper">
@@ -728,6 +823,51 @@
         <!-- Dynamic Grid View -->
         <section class="inventory-grid" id="coinGridContainer"></section>
     </main>
+</div>
+
+<!-- Welcome / Info Modal -->
+<div id="welcomeModal" class="modal-container hidden">
+    <div class="modal-card">
+        <button class="modal-close" id="closeWelcomeModalBtn">✕</button>
+        <div style="font-size: 2.5rem; margin-bottom: 12px;">🪙</div>
+        <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--accent-gold);">Welcome to CoinTrack.io</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
+            Your secure, private, local numismatic portfolio ledger. Keep track of your valuable coin collections, certification holders, purchase prices, and estimated market values with zero monthly fees.
+        </p>
+        <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; line-height: 1.6; margin-bottom: 24px;">
+            <li><strong>Precious Metal &amp; Portfolio Tracking:</strong> Aggregate holdings count and monitor estimated market values vs. acquisition costs.</li>
+            <li><strong>Certification &amp; Slab Registry:</strong> Log third-party grading services (PCGS, NGC, ANACS, ICG) with specific grades and serial numbers.</li>
+            <li><strong>Dual-Side Photo Archiving:</strong> Store high-resolution obverse and reverse face photos alongside transaction receipts and certification papers.</li>
+            <li><strong>100% Private &amp; Self-Hosted:</strong> Your collection data stays securely in your browser with zero subscription fees and instant JSON backups.</li>
+        </ul>
+        <button id="getStartedBtn" style="width: 100%;">Got It, Let's Go!</button>
+    </div>
+</div>
+
+<!-- FAQ Modal Window -->
+<div id="faqModal" class="modal-container hidden">
+    <div class="modal-card">
+        <button class="modal-close" id="closeFaqModalBtn">✕</button>
+        <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 20px; color: var(--accent-gold);">Frequently Asked Questions</h2>
+        <div class="faq-accordion">
+            <details class="faq-item" open>
+                <summary class="faq-question">Where is my data stored?</summary>
+                <div class="faq-answer">Everything stays locally inside your browser's private storage. No accounts, external databases, or third-party servers are used.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">How does the Import feature work?</summary>
+                <div class="faq-answer">Clicking <strong>Import</strong> lets you select a previously exported <code>.json</code> backup file to restore your entire collection, including all coin details and photos.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">Are there monthly fees or hidden costs?</summary>
+                <div class="faq-answer">No. CoinTrack.io is 100% free with no subscriptions or recurring fees.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">How do I backup my collection?</summary>
+                <div class="faq-answer">Click the <strong>Export</strong> button at the top to download a single backup file containing all your coin records and images.</div>
+            </details>
+        </div>
+    </div>
 </div>
 
 <!-- Modal Entry Form -->
@@ -855,6 +995,8 @@
 
         const entryModal = document.getElementById('entryModal');
         const viewModal = document.getElementById('viewModal');
+        const welcomeModal = document.getElementById('welcomeModal');
+        const faqModal = document.getElementById('faqModal');
         const coinRecordForm = document.getElementById('coinRecordForm');
         const coinGridContainer = document.getElementById('coinGridContainer');
         const searchInput = document.getElementById('searchInput');
@@ -863,6 +1005,21 @@
         const appSidebar = document.getElementById('appSidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const hamburgerToggleBtn = document.getElementById('hamburgerToggleBtn');
+
+        // Show Welcome Modal only on first visit
+        if (!localStorage.getItem('cointrack_welcomed')) {
+            welcomeModal.classList.remove('hidden');
+            localStorage.setItem('cointrack_welcomed', 'true');
+        }
+
+        document.getElementById('openWelcomeBtn').addEventListener('click', () => welcomeModal.classList.remove('hidden'));
+        document.getElementById('closeWelcomeModalBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
+        document.getElementById('getStartedBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
+        welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) welcomeModal.classList.add('hidden'); });
+
+        document.getElementById('openFaqBtn').addEventListener('click', () => faqModal.classList.remove('hidden'));
+        document.getElementById('closeFaqModalBtn').addEventListener('click', () => faqModal.classList.add('hidden'));
+        faqModal.addEventListener('click', (e) => { if (e.target === faqModal) faqModal.classList.add('hidden'); });
 
         function toggleMobileSidebar(open) {
             const isOpen = open !== undefined ? open : !appSidebar.classList.contains('mobile-open');
