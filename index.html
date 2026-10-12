@@ -1662,13 +1662,16 @@
         searchInput.addEventListener('input', renderGrid);
 
         exportBtn.addEventListener('click', function() {
-            const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(coins, null, 2));
+            const dataStr = JSON.stringify(coins, null, 2);
+            const blob = new Blob([dataStr], { type: 'text/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.setAttribute('href', dataStr);
-            a.setAttribute('download', `cointrack_backup_${new Date().toISOString().slice(0,10)}.json`);
+            a.href = url;
+            a.download = `cointrack_backup_${new Date().toISOString().slice(0,10)}.json`;
             document.body.appendChild(a);
             a.click();
             a.remove();
+            URL.revokeObjectURL(url);
         });
 
         importBtn.addEventListener('click', () => importFile.click());
