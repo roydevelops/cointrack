@@ -164,13 +164,6 @@
             gap: 10px;
         }
 
-        /* Sidebar specific buttons for Guide/FAQ on mobile */
-        .sidebar-mobile-links {
-            display: none; /* Shown via media query on mobile */
-            flex-direction: column;
-            gap: 8px;
-        }
-
         /* Hamburger Menu Button (Mobile Only) */
         .hamburger-btn {
             display: none;
@@ -206,6 +199,7 @@
             overflow-y: auto;
             width: 100%;
             box-sizing: border-box;
+            min-height: 100vh;
         }
 
         /* Sticky Content Header */
@@ -746,6 +740,35 @@
             margin: 0 auto;
         }
 
+        /* Footer */
+        .app-footer {
+            margin-top: auto;
+            padding-top: 24px;
+            padding-bottom: 12px;
+            border-top: 1px solid rgba(51, 65, 85, 0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--text-subtle);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-gold);
+        }
+
         .hidden { display: none !important; }
 
         /* Media Query for Mobile & Tablet viewports */
@@ -775,14 +798,6 @@
             /* Prevent iOS auto-zoom on input focus */
             select, input, textarea, .search-wrapper input {
                 font-size: 16px !important;
-            }
-            /* Hide Guide and FAQ from the desktop header button group on mobile */
-            #openFaqBtn, #openWelcomeBtn {
-                display: none;
-            }
-            /* Show Guide and FAQ inside the sidebar on mobile */
-            .sidebar-mobile-links {
-                display: flex;
             }
             .main-content { padding: 0 16px 20px; }
             .content-header { padding-top: 16px; }
@@ -824,13 +839,6 @@
                 <div class="label">Estimated Portfolio</div>
                 <div class="value" id="statTotalValue">$0.00</div>
             </div>
-        </div>
-
-        <!-- Relocated Guide & FAQ links for mobile view -->
-        <div class="sidebar-mobile-links">
-            <div class="nav-section-title">Help &amp; Info</div>
-            <button id="sidebarOpenWelcomeBtn" class="btn-secondary" style="width: 100%; justify-content: flex-start;">ℹ️ App Guide</button>
-            <button id="sidebarOpenFaqBtn" class="btn-secondary" style="width: 100%; justify-content: flex-start;">❓ FAQ</button>
         </div>
 
         <div class="sidebar-support">
@@ -875,6 +883,16 @@
 
         <!-- Dynamic Grid View -->
         <section class="inventory-grid" id="coinGridContainer"></section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <span>&copy; 2026 CoinTrack.io. All rights reserved.</span>
+            <div class="footer-links">
+                <a href="#" id="footerGuideLink">Guide</a>
+                <span>&bull;</span>
+                <a href="#" id="footerFaqLink">FAQ</a>
+            </div>
+        </footer>
     </main>
 </div>
 
@@ -1075,15 +1093,23 @@
         };
 
         document.getElementById('openWelcomeBtn').addEventListener('click', openWelcome);
-        document.getElementById('sidebarOpenWelcomeBtn').addEventListener('click', openWelcome);
         document.getElementById('closeWelcomeModalBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
         document.getElementById('getStartedBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
         welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) welcomeModal.classList.add('hidden'); });
 
         document.getElementById('openFaqBtn').addEventListener('click', openFaq);
-        document.getElementById('sidebarOpenFaqBtn').addEventListener('click', openFaq);
         document.getElementById('closeFaqModalBtn').addEventListener('click', () => faqModal.classList.add('hidden'));
         faqModal.addEventListener('click', (e) => { if (e.target === faqModal) faqModal.classList.add('hidden'); });
+
+        // Footer Link Handlers
+        document.getElementById('footerGuideLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            openWelcome();
+        });
+        document.getElementById('footerFaqLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            openFaq();
+        });
 
         function toggleMobileSidebar(open) {
             const isOpen = open !== undefined ? open : !appSidebar.classList.contains('mobile-open');
