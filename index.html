@@ -929,6 +929,11 @@
         .wizard-actions button { flex: 1; }
         .wizard-actions #wizardNextBtn { flex: 2; }
 
+        .view-export-btn {
+            width: 100%;
+            margin-top: 24px;
+        }
+
         /* View Details Modal Styling */
         .view-details-grid {
             display: grid;
@@ -1381,6 +1386,11 @@
         </div>
 
         <div class="view-photos-grid" id="viewPhotosGrid"></div>
+
+        <button type="button" id="exportPdfBtn" class="btn-secondary view-export-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            <span>Download PDF</span>
+        </button>
     </div>
 </div>
 
@@ -1737,9 +1747,210 @@
             document.body.appendChild(overlay);
         };
 
+        // ----- Per-coin PDF export -----
+        const JSPDF_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        let jsPdfLoader = null;
+
+        function loadJsPdf() {
+            if (window.jspdf) return Promise.resolve(window.jspdf.jsPDF);
+            if (!jsPdfLoader) {
+                jsPdfLoader = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = JSPDF_SRC;
+                    script.onload = () => resolve(window.jspdf.jsPDF);
+                    script.onerror = () => { jsPdfLoader = null; reject(new Error('Could not load PDF library')); };
+                    document.head.appendChild(script);
+                });
+            }
+            return jsPdfLoader;
+        }
+
+        function loadImageSize(src) {
+            return new Promise(resolve => {
+                const img = new Image();
+                img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
+                img.onerror = () => resolve(null);
+                img.src = src;
+            });
+        }
+
+        function formatMoney(n) {
+            return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatDateLabel(isoDate) {
+            if (!isoDate) return '';
+            const [y, m, d] = isoDate.split('-').map(Number);
+            if (!y || !m || !d) return isoDate;
+            return new Date(y, m - 1, d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // jsPDF's built-in fonts only cover Latin-1; drop anything else (e.g. emoji)
+        function pdfSafe(str) {
+            return String(str || '').replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"')
+                .replace(/[^\x20-\x7E\xA0-\xFF\u2013\u2014\u2022\u00B7]/g, '');
+        }
+
+        async function exportCoinPdf(coin) {
+            const jsPDF = await loadJsPdf();
+            const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+            const pageW = doc.internal.pageSize.getWidth();
+            const pageH = doc.internal.pageSize.getHeight();
+            const margin = 48;
+            const contentW = pageW - margin * 2;
+            const ink = [15, 23, 42], muted = [100, 116, 139], rule = [226, 232, 240], gold = [217, 119, 6];
+            let y = margin;
+
+            const ensureSpace = (needed) => {
+                if (y + needed > pageH - margin - 24) { doc.addPage(); y = margin; }
+            };
+
+            // Header
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...gold);
+            doc.text('CoinTrack.io', margin, y);
+            doc.setFont('helvetica', 'normal'); doc.setTextColor(...muted);
+            doc.text('Exported ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), pageW - margin, y, { align: 'right' });
+            y += 36;
+
+            // Title + subtitle
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(...ink);
+            const titleLines = doc.splitTextToSize(pdfSafe(coin.name) || 'Untitled coin', contentW);
+            doc.text(titleLines, margin, y);
+            y += titleLines.length * 26;
+            const subtitle = [coin.year, coin.mint, coin.country].filter(Boolean).map(pdfSafe).join('  \u00B7  ');
+            if (subtitle) {
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(12); doc.setTextColor(...muted);
+                doc.text(subtitle, margin, y - 6);
+                y += 14;
+            }
+            doc.setDrawColor(...rule); doc.setLineWidth(1);
+            doc.line(margin, y, pageW - margin, y);
+            y += 24;
+
+            // Obverse / reverse photos side by side
+            const photos = [
+                { label: 'Obverse', src: coin.frontPhoto || coin.photo || '' },
+                { label: 'Reverse', src: coin.backPhoto || '' }
+            ].filter(p => p.src);
+            if (photos.length) {
+                const gap = 16;
+                const boxW = (contentW - gap) / 2, boxH = 230;
+                for (let i = 0; i < photos.length; i++) {
+                    const x = margin + i * (boxW + gap);
+                    const size = await loadImageSize(photos[i].src);
+                    doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(...muted);
+                    doc.text(photos[i].label.toUpperCase(), x, y);
+                    if (size) {
+                        const scale = Math.min(boxW / size.w, boxH / size.h);
+                        const w = size.w * scale, h = size.h * scale;
+                        const fmt = photos[i].src.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+                        doc.addImage(photos[i].src, fmt, x + (boxW - w) / 2, y + 10 + (boxH - h) / 2, w, h);
+                    }
+                }
+                y += boxH + 32;
+            }
+
+            // Details table
+            const fields = [
+                ['Grading service', coin.gradingCompany || 'Raw / ungraded'],
+                ['Grade', coin.grade],
+                ['Year', coin.year],
+                ['Mint mark', coin.mint],
+                ['Country', coin.country],
+                ['Price paid', coin.paidPrice ? formatMoney(coin.paidPrice) : ''],
+                ['Estimated value', coin.value ? formatMoney(coin.value) : ''],
+                ['Gain / loss', coin.paidPrice && coin.value ? (coin.value - coin.paidPrice >= 0 ? '+' : '\u2013') + formatMoney(Math.abs(coin.value - coin.paidPrice)) : ''],
+                ['Date acquired', formatDateLabel(coin.purchaseDate)],
+                ['Bought from', coin.source]
+            ].filter(([, v]) => v);
+
+            ensureSpace(30);
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(...ink);
+            doc.text('Details', margin, y);
+            y += 14;
+            const colW = contentW / 2, rowH = 40;
+            for (let i = 0; i < fields.length; i += 2) {
+                ensureSpace(rowH);
+                for (let j = 0; j < 2 && i + j < fields.length; j++) {
+                    const [label, value] = fields[i + j];
+                    const x = margin + j * colW;
+                    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...muted);
+                    doc.text(label.toUpperCase(), x, y + 14);
+                    doc.setFontSize(11); doc.setTextColor(...ink);
+                    doc.text(doc.splitTextToSize(pdfSafe(value), colW - 16)[0], x, y + 29);
+                }
+                y += rowH;
+                doc.setDrawColor(...rule); doc.line(margin, y, pageW - margin, y);
+            }
+            y += 24;
+
+            // Notes
+            if (coin.notes) {
+                ensureSpace(40);
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(...ink);
+                doc.text('Notes', margin, y);
+                y += 18;
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(51, 65, 85);
+                for (const line of doc.splitTextToSize(pdfSafe(coin.notes), contentW)) {
+                    ensureSpace(15);
+                    doc.text(line, margin, y);
+                    y += 15;
+                }
+            }
+
+            // Receipt / certificate on its own page
+            if (coin.receiptPhoto) {
+                const size = await loadImageSize(coin.receiptPhoto);
+                if (size) {
+                    doc.addPage(); y = margin;
+                    doc.setFont('helvetica', 'bold'); doc.setFontSize(12); doc.setTextColor(...ink);
+                    doc.text('Receipt / Certificate', margin, y);
+                    y += 16;
+                    const maxH = pageH - y - margin - 24;
+                    const scale = Math.min(contentW / size.w, maxH / size.h);
+                    const fmt = coin.receiptPhoto.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+                    doc.addImage(coin.receiptPhoto, fmt, margin, y, size.w * scale, size.h * scale);
+                }
+            }
+
+            // Footer on every page
+            const pages = doc.getNumberOfPages();
+            for (let i = 1; i <= pages; i++) {
+                doc.setPage(i);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...muted);
+                doc.text('Exported from CoinTrack.io', margin, pageH - 28);
+                if (pages > 1) doc.text(`Page ${i} of ${pages}`, pageW - margin, pageH - 28, { align: 'right' });
+            }
+
+            const fileName = [coin.year, coin.name, coin.mint].filter(Boolean).join(' ')
+                .replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '') || 'coin';
+            doc.save(`${fileName}.pdf`);
+        }
+
+        document.getElementById('exportPdfBtn').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            const coin = coinInventory.find(c => c.id === viewedCoinId);
+            if (!coin) return;
+            const label = btn.querySelector('span');
+            btn.disabled = true;
+            label.textContent = 'Preparing PDF...';
+            try {
+                await exportCoinPdf(coin);
+            } catch (err) {
+                console.error(err);
+                alert('Could not create the PDF. Check your internet connection and try again.');
+            } finally {
+                btn.disabled = false;
+                label.textContent = 'Download PDF';
+            }
+        });
+
+        let viewedCoinId = null;
+
         window.viewCoin = (id) => {
             const target = coinInventory.find(c => c.id === id);
             if (!target) return;
+            viewedCoinId = id;
 
             document.getElementById('viewCoinTitle').innerText = target.name || 'Coin Details';
             document.getElementById('viewCoinSubtitle').innerText = `${target.year || ''} ${target.mint ? '· ' + target.mint : ''}`;
