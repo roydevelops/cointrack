@@ -167,18 +167,65 @@
         /* Hamburger Menu Button (Mobile Only) */
         .hamburger-btn {
             display: none;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-color);
+            background: none;
+            border: none;
             color: var(--text-main);
-            width: 42px;
-            height: 42px;
-            border-radius: var(--radius-sm);
+            padding: 4px 0;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 5px;
             cursor: pointer;
             box-shadow: none;
-            font-size: 1.2rem;
             flex-shrink: 0;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 28px;
+            height: 3px;
+            border-radius: 2px;
+            background-color: currentColor;
+        }
+
+        .hamburger-btn:hover {
+            background: none;
+            color: var(--accent-gold);
+            transform: none;
+        }
+
+        .header-left-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            z-index: 85;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(12px);
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s, background-color 0.25s ease;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top.visible:hover {
+            transform: translateY(-2px);
         }
 
         .sidebar-overlay {
@@ -236,6 +283,7 @@
             gap: 8px;
             font-weight: 700;
             font-size: 1.1rem;
+            line-height: 1;
         }
 
         .search-filter-bar {
@@ -810,11 +858,14 @@
             .form-grid, .photo-upload-matrix, .view-photos-grid { grid-template-columns: 1fr; }
             .form-field.full { grid-column: span 1; }
             .search-filter-bar {
-                flex-direction: column;
-                align-items: stretch;
+                gap: 8px;
             }
-            .search-wrapper, select {
-                width: 100%;
+            .search-filter-bar .search-wrapper {
+                flex: 3;
+            }
+            .search-filter-bar select {
+                flex: 2;
+                width: auto;
             }
         }
     </style>
@@ -863,8 +914,10 @@
     <main class="main-content">
         <header class="content-header">
             <div class="header-top-row">
-                <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar">☰</button>
-                <div class="mobile-brand">🪙 CoinTrack.io</div>
+                <div class="header-left-group">
+                    <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar"><span></span><span></span><span></span></button>
+                    <div class="mobile-brand">🪙 CoinTrack.io</div>
+                </div>
                 <div class="header-action-group">
                     <button id="openModalBtn"><span>+</span> New</button>
                 </div>
@@ -899,6 +952,9 @@
         </footer>
     </main>
 </div>
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTopBtn" aria-label="Back to top">↑</button>
 
 <!-- Welcome / Info Modal -->
 <div id="welcomeModal" class="modal-container hidden">
@@ -1446,6 +1502,20 @@
             };
             fileReader.readAsText(fileObj);
             e.target.value = '';
+        });
+
+        // Back to Top
+        const backToTopBtn = document.getElementById('backToTopBtn');
+        const mainContent = document.querySelector('.main-content');
+        const updateBackToTop = () => {
+            const scrolled = Math.max(window.scrollY, mainContent.scrollTop);
+            backToTopBtn.classList.toggle('visible', scrolled > 300);
+        };
+        window.addEventListener('scroll', updateBackToTop, { passive: true });
+        mainContent.addEventListener('scroll', updateBackToTop, { passive: true });
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            mainContent.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         renderInterface();
