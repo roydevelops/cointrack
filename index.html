@@ -85,7 +85,6 @@
             min-height: 100vh;
         }
 
-        /* Subtle background gradient */
         body::before {
             content: '';
             position: fixed;
@@ -105,7 +104,6 @@
             z-index: 1;
         }
 
-        /* ── Header ── */
         header {
             display: flex;
             justify-content: space-between;
@@ -154,7 +152,6 @@
             flex-wrap: wrap;
         }
 
-        /* ── Buttons ── */
         button, .btn {
             display: inline-flex;
             align-items: center;
@@ -231,7 +228,6 @@
             border-radius: 7px;
         }
 
-        /* ── Stats ── */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -283,7 +279,6 @@
             line-height: 1.2;
         }
 
-        /* ── Form Card ── */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -355,7 +350,6 @@
             box-shadow: 0 0 0 3px var(--primary-glow);
         }
 
-        /* Paste boxes */
         .paste-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -405,7 +399,6 @@
             border: 1px solid var(--border);
         }
 
-        /* ── Toolbar ── */
         .toolbar {
             display: flex;
             justify-content: space-between;
@@ -453,7 +446,6 @@
             color: var(--text-muted);
         }
 
-        /* ── Coin Grid ── */
         .coin-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -579,7 +571,6 @@
             flex: 1;
         }
 
-        /* Empty state */
         .empty-state {
             grid-column: 1 / -1;
             text-align: center;
@@ -609,7 +600,6 @@
             margin: 0 auto;
         }
 
-        /* ── Modals ── */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -669,7 +659,6 @@
             box-shadow: none;
         }
 
-        /* Details modal */
         .details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -729,7 +718,6 @@
             color: var(--text-muted);
         }
 
-        /* FAQ */
         details {
             border: 1px solid var(--border);
             border-radius: var(--radius-xs);
@@ -788,7 +776,6 @@
             text-decoration: underline;
         }
 
-        /* Welcome modal */
         .welcome-modal {
             max-width: 560px;
             text-align: center;
@@ -884,7 +871,6 @@
             color: var(--text-secondary);
         }
 
-        /* Footer */
         footer {
             margin-top: 48px;
             text-align: center;
@@ -911,7 +897,6 @@
             color: var(--primary);
         }
 
-        /* Image lightbox */
         .lightbox img {
             max-width: 92%;
             max-height: 88vh;
@@ -920,7 +905,6 @@
             border: 1px solid var(--border);
         }
 
-        /* Responsive */
         @media (max-width: 700px) {
             .paste-grid {
                 grid-template-columns: 1fr;
@@ -1009,8 +993,23 @@
                         <input type="text" id="coinMint" placeholder="e.g. CC, S, D">
                     </div>
                     <div class="form-group">
+                        <label for="coinGradingCompany">Grading Company</label>
+                        <select id="coinGradingCompany">
+                            <option value="">Raw / Ungraded</option>
+                            <option value="PCGS">PCGS</option>
+                            <option value="NGC">NGC</option>
+                            <option value="ANACS">ANACS</option>
+                            <option value="ICG">ICG</option>
+                            <option value="Other">Other / Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="customCompanyGroup" style="display: none;">
+                        <label for="coinCustomCompany">Custom Company Name</label>
+                        <input type="text" id="coinCustomCompany" placeholder="e.g. SEGS, PCI">
+                    </div>
+                    <div class="form-group">
                         <label for="coinGrade">Grade / Condition</label>
-                        <input type="text" id="coinGrade" placeholder="e.g. MS-63, XF">
+                        <input type="text" id="coinGrade" placeholder="e.g. MS-63, XF-45">
                     </div>
                     <div class="form-group">
                         <label for="coinCountry">Country / Origin</label>
@@ -1212,6 +1211,21 @@
         const importFile = document.getElementById('importFile');
         const coinGrid = document.getElementById('coinGrid');
 
+        const gradingCompanySelect = document.getElementById('coinGradingCompany');
+        const customCompanyGroup = document.getElementById('customCompanyGroup');
+        const customCompanyInput = document.getElementById('coinCustomCompany');
+
+        gradingCompanySelect.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                customCompanyGroup.style.display = 'flex';
+                customCompanyInput.required = true;
+            } else {
+                customCompanyGroup.style.display = 'none';
+                customCompanyInput.required = false;
+                customCompanyInput.value = '';
+            }
+        });
+
         const frontPasteBox = document.getElementById('frontPasteBox');
         const frontInput = document.getElementById('coinFrontInput');
         const frontData = document.getElementById('coinFrontData');
@@ -1230,7 +1244,6 @@
         const receiptPreview = document.getElementById('receiptPreview');
         const receiptText = document.getElementById('receiptPasteText');
 
-        // Modal triggers
         document.getElementById('openWelcomeLink').addEventListener('click', (e) => {
             e.preventDefault();
             openModal('welcomeModal');
@@ -1332,6 +1345,8 @@
             if (isHidden) {
                 coinForm.reset();
                 document.getElementById('coinId').value = '';
+                customCompanyGroup.style.display = 'none';
+                customCompanyInput.required = false;
                 resetPhotoBox(frontData, frontPreview, frontText);
                 resetPhotoBox(backData, backPreview, backText);
                 resetPhotoBox(receiptData, receiptPreview, receiptText);
@@ -1383,6 +1398,9 @@
             coinGrid.innerHTML = filtered.map(c => {
                 const frontImg = c.frontPhoto || c.photo || '';
                 const backImg = c.backPhoto || '';
+                const gradingDisplay = c.gradingCompany === 'Other' ? c.customCompany : (c.gradingCompany || '');
+                const fullGradeBadge = gradingDisplay && c.grade ? `${gradingDisplay} ${c.grade}` : (gradingDisplay || c.grade || '');
+
                 return `
                     <article class="coin-card">
                         <div class="coin-card-photos">
@@ -1398,7 +1416,7 @@
                             <div class="coin-meta">
                                 <span class="chip year">${escapeHtml(c.year)}</span>
                                 ${c.mint ? `<span class="chip">${escapeHtml(c.mint)}</span>` : ''}
-                                ${c.grade ? `<span class="chip">${escapeHtml(c.grade)}</span>` : ''}
+                                ${fullGradeBadge ? `<span class="chip">${escapeHtml(fullGradeBadge)}</span>` : ''}
                                 ${c.country ? `<span class="chip">${escapeHtml(c.country)}</span>` : ''}
                             </div>
                             <div class="coin-values">
@@ -1420,7 +1438,6 @@
                     </article>`;
             }).join('');
 
-            // Safe click handlers for photos (avoids putting huge base64 into HTML attributes)
             coinGrid.querySelectorAll('.thumb-img').forEach(img => {
                 img.addEventListener('click', () => openImageModal(img.src));
             });
@@ -1443,20 +1460,21 @@
             const backImg = coin.backPhoto || '';
             const receiptImg = coin.receiptPhoto || '';
 
+            const gradingDisplay = coin.gradingCompany === 'Other' ? coin.customCompany : (coin.gradingCompany || '');
+            const fullGradeDetails = gradingDisplay && coin.grade ? `${gradingDisplay} - ${coin.grade}` : (gradingDisplay || coin.grade || '—');
+
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
 
             const card = document.createElement('div');
             card.className = 'modal-card';
 
-            // Close button
             const closeBtn = document.createElement('button');
             closeBtn.className = 'modal-close';
             closeBtn.textContent = '✕';
             closeBtn.addEventListener('click', () => modal.remove());
             card.appendChild(closeBtn);
 
-            // Title
             const title = document.createElement('h2');
             title.style.cssText = 'margin:0 0 4px;font-size:1.25rem;font-weight:700;';
             title.textContent = coin.name || '';
@@ -1467,12 +1485,11 @@
             subtitle.textContent = (coin.year || '') + (coin.mint ? ' · ' + coin.mint : '');
             card.appendChild(subtitle);
 
-            // Details grid
             const grid = document.createElement('div');
             grid.className = 'details-grid';
             const fields = [
                 ['Country', coin.country || '—'],
-                ['Grade', coin.grade || '—'],
+                ['Grade / Holder', fullGradeDetails],
                 ['Paid Price', coin.paidPrice ? '$' + Number(coin.paidPrice).toFixed(2) : '—'],
                 ['Est. Value', coin.value ? '$' + Number(coin.value).toFixed(2) : '—'],
                 ['Purchase Date', coin.purchaseDate || '—'],
@@ -1491,7 +1508,6 @@
             });
             card.appendChild(grid);
 
-            // Notes
             const notesWrap = document.createElement('div');
             notesWrap.style.marginBottom = '16px';
             const notesLabel = document.createElement('label');
@@ -1504,7 +1520,6 @@
             notesWrap.appendChild(notesP);
             card.appendChild(notesWrap);
 
-            // Photos
             const photos = document.createElement('div');
             photos.className = 'modal-photos';
 
@@ -1565,6 +1580,8 @@
                 name: document.getElementById('coinName').value.trim(),
                 year: document.getElementById('coinYear').value.trim(),
                 mint: document.getElementById('coinMint').value.trim(),
+                gradingCompany: document.getElementById('coinGradingCompany').value,
+                customCompany: document.getElementById('coinCustomCompany').value.trim(),
                 grade: document.getElementById('coinGrade').value.trim(),
                 country: document.getElementById('coinCountry').value.trim(),
                 paidPrice: parseFloat(document.getElementById('coinPaidPrice').value) || 0,
@@ -1607,6 +1624,19 @@
                 document.getElementById('coinName').value = coin.name;
                 document.getElementById('coinYear').value = coin.year;
                 document.getElementById('coinMint').value = coin.mint || '';
+                
+                const gComp = coin.gradingCompany || '';
+                gradingCompanySelect.value = gComp;
+                if (gComp === 'Other') {
+                    customCompanyGroup.style.display = 'flex';
+                    customCompanyInput.value = coin.customCompany || '';
+                    customCompanyInput.required = true;
+                } else {
+                    customCompanyGroup.style.display = 'none';
+                    customCompanyInput.value = '';
+                    customCompanyInput.required = false;
+                }
+
                 document.getElementById('coinGrade').value = coin.grade || '';
                 document.getElementById('coinCountry').value = coin.country || '';
                 document.getElementById('coinPaidPrice').value = coin.paidPrice || '';
