@@ -619,6 +619,90 @@
             overflow: hidden;
         }
 
+        /* Guide / Welcome Modal */
+        .guide-card {
+            max-width: 400px;
+            padding: 32px 28px 28px;
+            text-align: center;
+        }
+        .guide-card .modal-close {
+            top: 14px;
+            right: 14px;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 50%;
+            box-shadow: none;
+            font-size: 0.95rem;
+            color: var(--text-subtle);
+        }
+        .guide-card .modal-close:hover {
+            background: var(--bg-elevated);
+            color: var(--text-main);
+            transform: none;
+        }
+        .guide-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: var(--accent-gold-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+        .guide-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .guide-intro {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        .guide-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: left;
+            margin-bottom: 28px;
+        }
+        .guide-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        .guide-list-icon {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.05rem;
+        }
+        .guide-list strong {
+            display: block;
+            font-size: 0.92rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .guide-list li span:not(.guide-list-icon) {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+        .guide-cta {
+            width: 100%;
+            justify-content: center;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -970,22 +1054,28 @@
 <!-- Back to Top Button -->
 <button class="back-to-top" id="backToTopBtn" aria-label="Back to top">↑</button>
 
-<!-- Welcome / Info Modal -->
+<!-- Welcome / Guide Modal -->
 <div id="welcomeModal" class="modal-container hidden">
-    <div class="modal-card">
-        <button class="modal-close" id="closeWelcomeModalBtn">✕</button>
-        <div style="font-size: 2.5rem; margin-bottom: 12px;">🪙</div>
-        <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--accent-gold);">Welcome to CoinTrack.io</h2>
-        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
-            Your secure, private, local numismatic portfolio ledger. Keep track of your valuable coin collections, certification holders, purchase prices, and estimated market values with zero monthly fees.
-        </p>
-        <ul style="font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; line-height: 1.6; margin-bottom: 24px;">
-            <li><strong>Precious Metal &amp; Portfolio Tracking:</strong> Aggregate holdings count and monitor estimated market values vs. acquisition costs.</li>
-            <li><strong>Certification &amp; Slab Registry:</strong> Log third-party grading services (PCGS, NGC, ANACS, ICG) with specific grades and serial numbers.</li>
-            <li><strong>Dual-Side Photo Archiving:</strong> Store high-resolution obverse and reverse face photos alongside transaction receipts and certification papers.</li>
-            <li><strong>100% Private &amp; Self-Hosted:</strong> Your collection data stays securely in your browser with zero subscription fees and instant JSON backups.</li>
+    <div class="modal-card guide-card">
+        <button class="modal-close" id="closeWelcomeModalBtn" aria-label="Close">✕</button>
+        <div class="guide-icon">🪙</div>
+        <h2 class="guide-title">Welcome to CoinTrack</h2>
+        <p class="guide-intro">A simple, private ledger for your coin collection.</p>
+        <ul class="guide-list">
+            <li>
+                <span class="guide-list-icon">📒</span>
+                <div><strong>Log your coins</strong><span>Grading service, grade, price paid and value.</span></div>
+            </li>
+            <li>
+                <span class="guide-list-icon">📷</span>
+                <div><strong>Add photos</strong><span>Obverse, reverse and receipt for every coin.</span></div>
+            </li>
+            <li>
+                <span class="guide-list-icon">🔒</span>
+                <div><strong>Stays on your device</strong><span>No account, no fees. Export a backup any time.</span></div>
+            </li>
         </ul>
-        <button id="getStartedBtn" style="width: 100%;">Got It, Let's Go!</button>
+        <button id="getStartedBtn" class="guide-cta">Get Started</button>
     </div>
 </div>
 
