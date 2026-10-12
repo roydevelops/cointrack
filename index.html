@@ -165,18 +165,24 @@
         /* Hamburger Menu Button (Mobile Only) */
         .hamburger-btn {
             display: none;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-color);
+            background: transparent;
+            border: none;
+            padding: 0;
             color: var(--text-main);
-            width: 42px;
-            height: 42px;
-            border-radius: var(--radius-sm);
             align-items: center;
             justify-content: center;
             cursor: pointer;
             box-shadow: none;
-            font-size: 1.2rem;
+            font-size: 1.8rem;
+            line-height: 1;
             flex-shrink: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .hamburger-btn:hover {
+            background: transparent;
+            color: var(--accent-gold);
+            transform: none;
         }
 
         .sidebar-overlay {
