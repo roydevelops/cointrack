@@ -800,7 +800,13 @@
                 font-size: 16px !important;
             }
             .main-content { padding: 0 16px 20px; }
-            .content-header { padding-top: 16px; }
+            .content-header { 
+                padding-top: 16px; 
+                position: sticky;
+                top: 0;
+                background-color: var(--bg-base);
+                z-index: 80;
+            }
             .form-grid, .photo-upload-matrix, .view-photos-grid { grid-template-columns: 1fr; }
             .form-field.full { grid-column: span 1; }
             .search-filter-bar {
@@ -860,8 +866,6 @@
                 <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar">☰</button>
                 <div class="mobile-brand">🪙 CoinTrack.io</div>
                 <div class="header-action-group">
-                    <button id="openFaqBtn" class="btn-secondary" title="Frequently Asked Questions" style="padding: 11px 14px;">❓ FAQ</button>
-                    <button id="openWelcomeBtn" class="btn-secondary" title="App Guide &amp; Info" style="padding: 11px 14px;">ℹ️ Guide</button>
                     <button id="openModalBtn"><span>+</span> New</button>
                 </div>
             </div>
@@ -886,7 +890,7 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <span>&copy; 2026 CoinTrack.io</span>
+            <span>&copy; 2026 CoinTrack.io. All rights reserved.</span>
             <div class="footer-links">
                 <a href="#" id="footerGuideLink">Guide</a>
                 <span>&bull;</span>
@@ -1092,12 +1096,10 @@
             toggleMobileSidebar(false);
         };
 
-        document.getElementById('openWelcomeBtn').addEventListener('click', openWelcome);
         document.getElementById('closeWelcomeModalBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
         document.getElementById('getStartedBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
         welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) welcomeModal.classList.add('hidden'); });
 
-        document.getElementById('openFaqBtn').addEventListener('click', openFaq);
         document.getElementById('closeFaqModalBtn').addEventListener('click', () => faqModal.classList.add('hidden'));
         faqModal.addEventListener('click', (e) => { if (e.target === faqModal) faqModal.classList.add('hidden'); });
 
@@ -1363,7 +1365,7 @@
 
         window.editCoin = (id) => {
             const target = coinInventory.find(c => c.id === id);
-            if (!target) return;
+            if (-1 === coinInventory.indexOf(target)) return;
             document.getElementById('recordId').value = target.id;
             document.getElementById('inputName').value = target.name;
             document.getElementById('inputYear').value = target.year;
@@ -1387,7 +1389,7 @@
             if (target.backPhoto) {
                 document.getElementById('dataBack').value = target.backPhoto;
                 document.getElementById('prevBack').src = target.backPhoto;
-                document.getElementById('prevBack').classList.remove('hidden');
+                document.getElementById('prevBack'].classList?.remove('hidden'); // safe fallback
             }
             if (target.receiptPhoto) {
                 document.getElementById('dataReceipt').value = target.receiptPhoto;
