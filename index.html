@@ -39,6 +39,7 @@
 
         html, body {
             width: 100%;
+            overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
@@ -204,6 +205,7 @@
             width: 100%;
             box-sizing: border-box;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Sticky Content Header */
@@ -253,12 +255,13 @@
             gap: 12px;
             align-items: center;
             width: 100%;
+            flex-wrap: wrap;
         }
 
         .search-wrapper {
             position: relative;
             flex: 2;
-            min-width: 0;
+            min-width: 220px;
         }
 
         .search-wrapper input {
@@ -289,7 +292,6 @@
             color: var(--text-muted);
         }
 
-        /* Standard Form Input Sizing and Padding Fix */
         select, input[type="text"], input[type="date"], textarea {
             width: 100%;
             padding: 12px 16px;
@@ -316,6 +318,8 @@
             background-repeat: no-repeat;
             background-position: right 14px center;
             background-size: 14px;
+            flex: 1;
+            min-width: 180px;
         }
 
         /* Buttons */
@@ -366,7 +370,7 @@
             color: #fff;
         }
 
-        /* Back to Top Floating Button (Enlarged Icon) */
+        /* Back to Top Floating Button */
         .back-to-top-btn {
             position: fixed;
             bottom: 28px;
@@ -606,6 +610,7 @@
             z-index: 1000;
             padding: 20px;
             animation: fadeIn 0.2s ease-out;
+            overflow-y: auto;
         }
 
         @keyframes fadeIn {
@@ -621,6 +626,7 @@
             max-width: 680px;
             max-height: 90vh;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 36px;
             box-shadow: var(--shadow-elevation);
             position: relative;
@@ -646,12 +652,14 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
             margin-bottom: 24px;
+            width: 100%;
         }
 
         .form-field {
             display: flex;
             flex-direction: column;
             gap: 6px;
+            min-width: 0;
         }
 
         .form-field.full {
@@ -671,6 +679,7 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             margin-bottom: 24px;
+            width: 100%;
         }
 
         .dropzone {
@@ -687,6 +696,7 @@
             justify-content: center;
             gap: 6px;
             transition: var(--transition-smooth);
+            width: 100%;
         }
 
         .dropzone:hover, .dropzone:focus {
@@ -846,7 +856,6 @@
             .mobile-brand {
                 display: flex;
             }
-            /* Prevent iOS auto-zoom on input focus */
             select, input, textarea, .search-wrapper input {
                 font-size: 16px !important;
             }
@@ -862,12 +871,9 @@
                 z-index: 80;
                 box-shadow: 0 4px 12px rgba(2, 6, 23, 0.5);
             }
-            /* Offset content so it doesn't hide behind the fixed mobile header */
             .inventory-grid {
                 padding-top: 140px;
             }
-            
-            /* Mobile Stacking for New Entry Form */
             .modal-card {
                 padding: 20px 16px;
                 max-height: 95vh;
