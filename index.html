@@ -37,6 +37,11 @@
             padding: 0;
         }
 
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-base);
@@ -52,6 +57,8 @@
             grid-template-columns: 280px 1fr;
             min-height: 100vh;
             position: relative;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         /* Sidebar Navigation / Control Panel */
@@ -157,6 +164,13 @@
             gap: 10px;
         }
 
+        /* Sidebar specific buttons for Guide/FAQ on mobile */
+        .sidebar-mobile-links {
+            display: none; /* Shown via media query on mobile */
+            flex-direction: column;
+            gap: 8px;
+        }
+
         /* Hamburger Menu Button (Mobile Only) */
         .hamburger-btn {
             display: none;
@@ -190,12 +204,15 @@
             flex-direction: column;
             gap: 24px;
             overflow-y: auto;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .content-header {
             display: flex;
             flex-direction: column;
             gap: 16px;
+            width: 100%;
         }
 
         .header-top-row {
@@ -746,9 +763,24 @@
             .mobile-brand {
                 display: flex;
             }
+            /* Hide Guide and FAQ from the desktop header button group on mobile */
+            #openFaqBtn, #openWelcomeBtn {
+                display: none;
+            }
+            /* Show Guide and FAQ inside the sidebar on mobile */
+            .sidebar-mobile-links {
+                display: flex;
+            }
             .main-content { padding: 20px 16px; }
             .form-grid, .photo-upload-matrix, .view-photos-grid { grid-template-columns: 1fr; }
             .form-field.full { grid-column: span 1; }
+            .search-filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-wrapper, select {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -778,6 +810,13 @@
                 <div class="label">Estimated Portfolio</div>
                 <div class="value" id="statTotalValue">$0.00</div>
             </div>
+        </div>
+
+        <!-- Relocated Guide & FAQ links for mobile view -->
+        <div class="sidebar-mobile-links">
+            <div class="nav-section-title">Help &amp; Info</div>
+            <button id="sidebarOpenWelcomeBtn" class="btn-secondary" style="width: 100%; justify-content: flex-start;">ℹ️ App Guide</button>
+            <button id="sidebarOpenFaqBtn" class="btn-secondary" style="width: 100%; justify-content: flex-start;">❓ FAQ</button>
         </div>
 
         <div class="sidebar-support">
@@ -1012,12 +1051,23 @@
             localStorage.setItem('cointrack_welcomed', 'true');
         }
 
-        document.getElementById('openWelcomeBtn').addEventListener('click', () => welcomeModal.classList.remove('hidden'));
+        const openWelcome = () => {
+            welcomeModal.classList.remove('hidden');
+            toggleMobileSidebar(false);
+        };
+        const openFaq = () => {
+            faqModal.classList.remove('hidden');
+            toggleMobileSidebar(false);
+        };
+
+        document.getElementById('openWelcomeBtn').addEventListener('click', openWelcome);
+        document.getElementById('sidebarOpenWelcomeBtn').addEventListener('click', openWelcome);
         document.getElementById('closeWelcomeModalBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
         document.getElementById('getStartedBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
         welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) welcomeModal.classList.add('hidden'); });
 
-        document.getElementById('openFaqBtn').addEventListener('click', () => faqModal.classList.remove('hidden'));
+        document.getElementById('openFaqBtn').addEventListener('click', openFaq);
+        document.getElementById('sidebarOpenFaqBtn').addEventListener('click', openFaq);
         document.getElementById('closeFaqModalBtn').addEventListener('click', () => faqModal.classList.add('hidden'));
         faqModal.addEventListener('click', (e) => { if (e.target === faqModal) faqModal.classList.add('hidden'); });
 
