@@ -227,6 +227,12 @@
             gap: 12px;
         }
 
+        .header-left-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .header-action-group {
             display: flex;
             gap: 8px;
@@ -865,8 +871,10 @@
     <main class="main-content">
         <header class="content-header">
             <div class="header-top-row">
-                <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar">☰</button>
-                <div class="mobile-brand">🪙 CoinTrack.io</div>
+                <div class="header-left-group">
+                    <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar">☰</button>
+                    <div class="mobile-brand">🪙 CoinTrack.io</div>
+                </div>
                 <div class="header-action-group">
                     <button id="openModalBtn"><span>+</span> New</button>
                 </div>
