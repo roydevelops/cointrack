@@ -625,7 +625,8 @@
             padding: 32px 28px 28px;
             text-align: center;
         }
-        .guide-card .modal-close {
+        .guide-card .modal-close,
+        .wizard-card .modal-close {
             top: 14px;
             right: 14px;
             width: 32px;
@@ -636,7 +637,8 @@
             font-size: 0.95rem;
             color: var(--text-subtle);
         }
-        .guide-card .modal-close:hover {
+        .guide-card .modal-close:hover,
+        .wizard-card .modal-close:hover {
             background: var(--bg-elevated);
             color: var(--text-main);
             transform: none;
@@ -803,6 +805,129 @@
             border-radius: 6px;
             border: 1px solid var(--border-color);
         }
+
+        /* Add / Edit Coin Wizard */
+        .wizard-card {
+            max-width: 460px;
+            padding: 28px;
+        }
+        .wizard-head { margin-bottom: 24px; }
+        .wizard-eyebrow, .wizard-head h2 { padding-right: 40px; }
+        .wizard-eyebrow {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .wizard-head h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 4px 0 14px;
+        }
+        .wizard-progress {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .wizard-progress button {
+            height: 16px;
+            padding: 6px 0;
+            border-radius: 4px;
+            background-color: var(--border-color);
+            background-clip: content-box;
+            box-shadow: none;
+            pointer-events: none;
+        }
+        .wizard-progress button.reachable { pointer-events: auto; }
+        .wizard-progress button.done { background-color: var(--accent-gold); }
+        .wizard-progress button:hover { transform: none; }
+        .wizard-step { display: none; }
+        .wizard-step.active {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+        .wizard .form-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 16px;
+            margin-bottom: 0;
+        }
+        .wizard input, .wizard textarea {
+            width: 100%;
+            min-width: 0;
+        }
+        .wizard .form-field.full { grid-column: 1 / -1; }
+        .wizard .form-field label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: none;
+        }
+        .wizard .opt {
+            font-weight: 400;
+            color: var(--text-subtle);
+        }
+        .chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .chip-group button {
+            background-color: var(--bg-elevated);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            box-shadow: none;
+            padding: 9px 16px;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .chip-group button:hover {
+            background-color: var(--bg-elevated);
+            color: var(--text-main);
+            transform: none;
+        }
+        .chip-group button.active {
+            background-color: var(--accent-gold-soft);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+        .wizard .photo-upload-matrix {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .wizard .dropzone {
+            position: relative;
+            aspect-ratio: 1;
+            min-height: 0;
+            padding: 8px;
+            overflow: hidden;
+        }
+        .wizard .dropzone p { font-size: 0.8rem; }
+        .dz-plus {
+            display: block;
+            font-size: 1.5rem;
+            line-height: 1;
+            color: var(--accent-gold);
+            margin-bottom: 2px;
+        }
+        .wizard .preview-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            border: none;
+            border-radius: 0;
+        }
+        .wizard-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 28px;
+        }
+        .wizard-actions button { flex: 1; }
+        .wizard-actions #wizardNextBtn { flex: 2; }
 
         /* View Details Modal Styling */
         .view-details-grid {
@@ -1105,102 +1230,137 @@
     </div>
 </div>
 
-<!-- Modal Entry Form -->
+<!-- Add / Edit Coin Wizard -->
 <div id="entryModal" class="modal-container hidden">
-    <div class="modal-card">
-        <button class="modal-close" id="closeModalBtn">✕</button>
-        <h2 id="modalHeading" style="font-size: 1.35rem; font-weight: 700; margin-bottom: 24px;">New Coin Record</h2>
-        
-        <form id="coinRecordForm">
-            <input type="hidden" id="recordId">
-            <div class="form-grid">
-                <div class="form-field full">
-                    <label>Coin Name / Denomination *</label>
-                    <input type="text" id="inputName" required placeholder="e.g. Morgan Silver Dollar">
-                </div>
-                <div class="form-field">
-                    <label>Year *</label>
-                    <input type="text" id="inputYear" required placeholder="e.g. 1921">
-                </div>
-                <div class="form-field">
-                    <label>Mint Mark</label>
-                    <input type="text" id="inputMint" placeholder="e.g. CC, S, D">
-                </div>
-                <div class="form-field">
-                    <label>Grading Service</label>
-                    <select id="inputGradingCompany">
-                        <option value="">Raw / Ungraded</option>
-                        <option value="PCGS">PCGS</option>
-                        <option value="NGC">NGC</option>
-                        <option value="ANACS">ANACS</option>
-                        <option value="ICG">ICG</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label>Grade / Condition</label>
-                    <input type="text" id="inputGrade" placeholder="e.g. MS-63">
-                </div>
-                <div class="form-field">
-                    <label>Country of Origin</label>
-                    <input type="text" id="inputCountry" placeholder="e.g. United States">
-                </div>
-                <div class="form-field">
-                    <label>Purchase Price ($)</label>
-                    <input type="text" inputmode="decimal" id="inputPaid" placeholder="0.00">
-                </div>
-                <div class="form-field">
-                    <label>Estimated Value ($)</label>
-                    <input type="text" inputmode="decimal" id="inputValue" placeholder="0.00">
-                </div>
-                <div class="form-field">
-                    <label>Acquisition Date</label>
-                    <input type="date" id="inputDate">
-                </div>
-                <div class="form-field">
-                    <label>Source / Vendor</label>
-                    <input type="text" id="inputSource" placeholder="e.g. Heritage Auctions">
-                </div>
-                <div class="form-field full">
-                    <label>Numismatic Notes &amp; Varieties</label>
-                    <textarea id="inputNotes" rows="2" placeholder="Die varieties, error characteristics, provenance..."></textarea>
-                </div>
+    <div class="modal-card wizard-card">
+        <button class="modal-close" id="closeModalBtn" aria-label="Close">✕</button>
+        <div class="wizard-head">
+            <p class="wizard-eyebrow"><span id="modalHeading">New coin</span> · <span id="wizardStepCount">1 of 4</span></p>
+            <h2 id="wizardStepTitle">What coin is it?</h2>
+            <div class="wizard-progress" id="wizardProgress">
+                <button type="button" data-goto="0" aria-label="Step 1"></button>
+                <button type="button" data-goto="1" aria-label="Step 2"></button>
+                <button type="button" data-goto="2" aria-label="Step 3"></button>
+                <button type="button" data-goto="3" aria-label="Step 4"></button>
             </div>
+        </div>
 
-            <!-- Image Drop / Clipboard Paste Zone -->
-            <div class="photo-upload-matrix">
+        <form id="coinRecordForm" class="wizard" novalidate>
+            <input type="hidden" id="recordId">
+
+            <!-- Step 1: The coin -->
+            <section class="wizard-step active" data-title="What coin is it?">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="inputName">Coin name</label>
+                        <input type="text" id="inputName" required placeholder="e.g. Morgan Silver Dollar">
+                    </div>
+                    <div class="form-field">
+                        <label for="inputYear">Year</label>
+                        <input type="text" id="inputYear" required inputmode="numeric" placeholder="e.g. 1921">
+                    </div>
+                    <div class="form-field">
+                        <label for="inputMint">Mint mark <span class="opt">optional</span></label>
+                        <input type="text" id="inputMint" placeholder="e.g. CC, S, D">
+                    </div>
+                    <div class="form-field full">
+                        <label for="inputCountry">Country <span class="opt">optional</span></label>
+                        <input type="text" id="inputCountry" placeholder="e.g. United States">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: Grading -->
+            <section class="wizard-step" data-title="Is it graded?">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label>Grading service</label>
+                        <div class="chip-group" id="gradeChips">
+                            <button type="button" data-value="">Raw</button>
+                            <button type="button" data-value="PCGS">PCGS</button>
+                            <button type="button" data-value="NGC">NGC</button>
+                            <button type="button" data-value="ANACS">ANACS</button>
+                            <button type="button" data-value="ICG">ICG</button>
+                            <button type="button" data-value="Other">Other</button>
+                        </div>
+                        <select id="inputGradingCompany" class="hidden" tabindex="-1" aria-hidden="true">
+                            <option value="">Raw / Ungraded</option>
+                            <option value="PCGS">PCGS</option>
+                            <option value="NGC">NGC</option>
+                            <option value="ANACS">ANACS</option>
+                            <option value="ICG">ICG</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label for="inputGrade">Grade / condition</label>
+                        <input type="text" id="inputGrade" placeholder="e.g. MS-63">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: Value -->
+            <section class="wizard-step" data-title="What's it worth?">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="inputPaid">Price paid ($)</label>
+                        <input type="text" inputmode="decimal" id="inputPaid" placeholder="0.00">
+                    </div>
+                    <div class="form-field">
+                        <label for="inputValue">Est. value ($)</label>
+                        <input type="text" inputmode="decimal" id="inputValue" placeholder="0.00">
+                    </div>
+                    <div class="form-field full">
+                        <label for="inputDate">Date acquired</label>
+                        <input type="date" id="inputDate">
+                    </div>
+                    <div class="form-field full">
+                        <label for="inputSource">Bought from</label>
+                        <input type="text" id="inputSource" placeholder="e.g. Heritage Auctions">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 4: Photos & notes -->
+            <section class="wizard-step" data-title="Photos &amp; notes">
+                <div class="photo-upload-matrix">
                 <div class="form-field">
-                    <label>Obverse (Front)</label>
+                    <label>Front</label>
                     <div class="dropzone" id="dropFront" tabindex="0">
-                        <p id="textFront">Click &amp; <strong>Ctrl+V</strong><br>or select</p>
-                        <img id="prevFront" class="preview-img hidden">
+                        <p id="textFront"><span class="dz-plus">+</span>Add</p>
+                        <img id="prevFront" class="preview-img hidden" alt="">
                     </div>
                     <input type="file" id="fileFront" class="hidden" accept="image/*">
                     <input type="hidden" id="dataFront">
                 </div>
                 <div class="form-field">
-                    <label>Reverse (Back)</label>
+                    <label>Back</label>
                     <div class="dropzone" id="dropBack" tabindex="0">
-                        <p id="textBack">Click &amp; <strong>Ctrl+V</strong><br>or select</p>
-                        <img id="prevBack" class="preview-img hidden">
+                        <p id="textBack"><span class="dz-plus">+</span>Add</p>
+                        <img id="prevBack" class="preview-img hidden" alt="">
                     </div>
                     <input type="file" id="fileBack" class="hidden" accept="image/*">
                     <input type="hidden" id="dataBack">
                 </div>
                 <div class="form-field">
-                    <label>Receipt / Cert</label>
+                    <label>Receipt</label>
                     <div class="dropzone" id="dropReceipt" tabindex="0">
-                        <p id="textReceipt">Click &amp; <strong>Ctrl+V</strong><br>or select</p>
-                        <img id="prevReceipt" class="preview-img hidden">
+                        <p id="textReceipt"><span class="dz-plus">+</span>Add</p>
+                        <img id="prevReceipt" class="preview-img hidden" alt="">
                     </div>
                     <input type="file" id="fileReceipt" class="hidden" accept="image/*">
                     <input type="hidden" id="dataReceipt">
                 </div>
-            </div>
+                </div>
+                <div class="form-field">
+                    <label for="inputNotes">Notes</label>
+                    <textarea id="inputNotes" rows="3" placeholder="Varieties, errors, provenance..."></textarea>
+                </div>
+            </section>
 
-            <div style="display: flex; gap: 12px;">
-                <button type="submit" style="flex: 2;">Save Coin Record</button>
-                <button type="button" id="cancelModalBtn" class="btn-secondary" style="flex: 1;">Cancel</button>
+            <div class="wizard-actions">
+                <button type="button" id="wizardBackBtn" class="btn-secondary">Cancel</button>
+                <button type="submit" id="wizardNextBtn">Next</button>
             </div>
         </form>
     </div>
@@ -1282,9 +1442,91 @@
         hamburgerToggleBtn.addEventListener('click', () => toggleMobileSidebar());
         sidebarOverlay.addEventListener('click', () => toggleMobileSidebar(false));
 
+        // ----- Add / Edit Coin Wizard -----
+        const wizardSteps = [...document.querySelectorAll('#coinRecordForm .wizard-step')];
+        const wizardBars = [...document.querySelectorAll('#wizardProgress button')];
+        const wizardBackBtn = document.getElementById('wizardBackBtn');
+        const wizardNextBtn = document.getElementById('wizardNextBtn');
+        const gradeSelect = document.getElementById('inputGradingCompany');
+        const gradeChips = [...document.querySelectorAll('#gradeChips button')];
+        let wizardStep = 0;
+        let wizardMax = 0;
+
+        function stepFields(n) {
+            return [...wizardSteps[n].querySelectorAll('input:not([type="hidden"]):not([type="file"]), textarea')];
+        }
+
+        function stepIsValid(n) {
+            for (const field of stepFields(n)) {
+                if (!field.checkValidity()) {
+                    field.reportValidity();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateWizardButtons() {
+            const last = wizardSteps.length - 1;
+            const isEditing = !!document.getElementById('recordId').value;
+            wizardBackBtn.textContent = wizardStep === 0 ? 'Cancel' : 'Back';
+            if (wizardStep === last) {
+                wizardNextBtn.textContent = isEditing ? 'Save Changes' : 'Save Coin';
+            } else if (wizardStep > 0) {
+                const gradePicked = wizardStep === 1 && gradeSelect.value;
+                const empty = !gradePicked && stepFields(wizardStep).every(f => !f.value.trim());
+                wizardNextBtn.textContent = empty ? 'Skip' : 'Next';
+            } else {
+                wizardNextBtn.textContent = 'Next';
+            }
+        }
+
+        function goToStep(n) {
+            wizardStep = n;
+            wizardMax = Math.max(wizardMax, n);
+            wizardSteps.forEach((step, i) => step.classList.toggle('active', i === n));
+            wizardBars.forEach((bar, i) => {
+                bar.classList.toggle('done', i <= n);
+                bar.classList.toggle('reachable', i <= wizardMax && i !== n);
+            });
+            document.getElementById('wizardStepCount').textContent = `${n + 1} of ${wizardSteps.length}`;
+            document.getElementById('wizardStepTitle').textContent = wizardSteps[n].dataset.title;
+            entryModal.querySelector('.modal-card').scrollTop = 0;
+            updateWizardButtons();
+        }
+
+        function syncGradeChips() {
+            gradeChips.forEach(chip => chip.classList.toggle('active', chip.dataset.value === gradeSelect.value));
+        }
+
+        gradeChips.forEach(chip => chip.addEventListener('click', () => {
+            gradeSelect.value = chip.dataset.value;
+            syncGradeChips();
+            updateWizardButtons();
+        }));
+
+        wizardBars.forEach(bar => bar.addEventListener('click', () => {
+            const target = Number(bar.dataset.goto);
+            if (target > wizardStep && !stepIsValid(wizardStep)) return;
+            goToStep(target);
+        }));
+
+        wizardBackBtn.addEventListener('click', () => {
+            if (wizardStep === 0) toggleModal(false);
+            else goToStep(wizardStep - 1);
+        });
+
+        coinRecordForm.addEventListener('input', updateWizardButtons);
+
         function toggleModal(display = true) {
             entryModal.classList.toggle('hidden', !display);
-            if (display) document.getElementById('inputName').focus();
+            if (display) {
+                // Editing an existing coin unlocks every step; a new coin walks through in order
+                wizardMax = document.getElementById('recordId').value ? wizardSteps.length - 1 : 0;
+                syncGradeChips();
+                goToStep(0);
+                if (window.matchMedia('(hover: hover)').matches) document.getElementById('inputName').focus();
+            }
         }
 
         function toggleViewModal(display = true) {
@@ -1310,13 +1552,12 @@
         document.getElementById('openModalBtn').addEventListener('click', () => {
             coinRecordForm.reset();
             document.getElementById('recordId').value = '';
-            document.getElementById('modalHeading').innerText = 'New Coin Record';
+            document.getElementById('modalHeading').innerText = 'New coin';
             clearAllPreviews();
             toggleModal(true);
         });
 
         document.getElementById('closeModalBtn').addEventListener('click', () => toggleModal(false));
-        document.getElementById('cancelModalBtn').addEventListener('click', () => toggleModal(false));
         document.getElementById('closeViewModalBtn').addEventListener('click', () => toggleViewModal(false));
         
         entryModal.addEventListener('click', (e) => { if (e.target === entryModal) toggleModal(false); });
@@ -1372,13 +1613,24 @@
                 document.getElementById(`data${p}`).value = '';
                 document.getElementById(`prev${p}`).src = '';
                 document.getElementById(`prev${p}`).classList.add('hidden');
-                document.getElementById(`text${p}`).innerHTML = 'Click &amp; <strong>Ctrl+V</strong><br>or select';
+                document.getElementById(`text${p}`).innerHTML = '<span class="dz-plus">+</span>Add';
             });
         }
 
         // Form Submission
         coinRecordForm.addEventListener('submit', (e) => {
             e.preventDefault();
+
+            // Wizard: Next advances a step; only the last step saves
+            if (wizardStep < wizardSteps.length - 1) {
+                if (stepIsValid(wizardStep)) goToStep(wizardStep + 1);
+                return;
+            }
+            if (!stepIsValid(0)) {
+                goToStep(0);
+                stepIsValid(0);
+                return;
+            }
             const idVal = document.getElementById('recordId').value;
             const targetExisting = idVal ? coinInventory.find(c => c.id == idVal) : null;
 
@@ -1561,7 +1813,7 @@
                 document.getElementById('prevReceipt').classList.remove('hidden');
             }
 
-            document.getElementById('modalHeading').innerText = 'Edit Coin Record';
+            document.getElementById('modalHeading').innerText = 'Edit coin';
             toggleModal(true);
         };
 
