@@ -693,10 +693,11 @@
         }
 
         /* Guide / Welcome Modal */
-        .guide-card {
-            max-width: 400px;
-            padding: 32px 28px 28px;
+        .modal-card.guide-card {
+            max-width: 560px;
+            padding: 0;
             text-align: center;
+            overflow-x: hidden;
         }
         .guide-card .modal-close,
         .wizard-card .modal-close {
@@ -709,6 +710,7 @@
             box-shadow: none;
             font-size: 0.95rem;
             color: var(--text-subtle);
+            z-index: 1;
         }
         .guide-card .modal-close:hover,
         .wizard-card .modal-close:hover {
@@ -716,66 +718,135 @@
             color: var(--text-main);
             transform: none;
         }
-        .guide-icon {
-            width: 56px;
-            height: 56px;
+        .guide-hero {
+            padding: 40px 32px 24px;
+            background:
+                radial-gradient(ellipse 70% 90% at 50% 0%, rgba(245, 158, 11, 0.16), transparent 70%);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        .guide-logo {
+            width: 64px;
+            height: 64px;
             margin: 0 auto 16px;
-            border-radius: 50%;
-            background: var(--accent-gold-soft);
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--accent-gold), #b45309);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.75rem;
+            font-size: 2.2rem;
+            line-height: 1;
         }
-        .guide-title {
-            font-size: 1.3rem;
+        .guide-eyebrow {
+            font-size: 0.7rem;
             font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
             margin-bottom: 6px;
         }
+        .guide-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin-bottom: 8px;
+        }
         .guide-intro {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
-            margin-bottom: 24px;
+            line-height: 1.5;
+            max-width: 380px;
+            margin: 0 auto;
         }
-        .guide-list {
+        .guide-features {
             list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 24px 28px 0;
             text-align: left;
-            margin-bottom: 28px;
         }
-        .guide-list li {
+        .guide-features li {
             display: flex;
             align-items: flex-start;
-            gap: 14px;
+            gap: 12px;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            background: rgba(30, 41, 59, 0.55);
+            border: 1px solid rgba(51, 65, 85, 0.6);
         }
-        .guide-list-icon {
+        .guide-feature-icon {
             flex-shrink: 0;
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             border-radius: 10px;
-            background: var(--bg-elevated);
+            background: var(--accent-gold-soft);
+            color: var(--accent-gold);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.05rem;
         }
-        .guide-list strong {
+        .guide-feature-icon svg { width: 18px; height: 18px; }
+        .guide-features strong {
             display: block;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             font-weight: 600;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
-        .guide-list li span:not(.guide-list-icon) {
+        .guide-features li span:not(.guide-feature-icon) {
             display: block;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
             line-height: 1.45;
+        }
+        .guide-notice {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin: 14px 28px 0;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            background: rgba(245, 158, 11, 0.07);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            text-align: left;
+        }
+        .guide-notice-icon {
+            flex-shrink: 0;
+            color: var(--accent-gold);
+            margin-top: 1px;
+        }
+        .guide-notice-icon svg { width: 18px; height: 18px; display: block; }
+        .guide-notice p {
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+        .guide-notice strong { color: var(--text-main); font-weight: 600; }
+        .guide-notice em { font-style: normal; color: var(--text-main); font-weight: 600; }
+        .guide-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 22px 28px 26px;
         }
         .guide-cta {
             width: 100%;
             justify-content: center;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+        }
+        .guide-faq-link { font-size: 0.85rem; }
+        @media (max-width: 560px) {
+            .guide-hero { padding: 36px 20px 20px; }
+            .guide-title { font-size: 1.35rem; }
+            .guide-intro { font-size: 0.9rem; }
+            .guide-logo { width: 56px; height: 56px; font-size: 1.9rem; border-radius: 16px; margin-bottom: 12px; }
+            .guide-features { grid-template-columns: 1fr; padding: 16px 20px 0; gap: 14px; }
+            .guide-features li { padding: 0; background: none; border: none; }
+            .guide-feature-icon { width: 32px; height: 32px; }
+            .guide-notice { margin: 18px 16px 0; }
+            .guide-actions { padding: 18px 16px 22px; }
         }
 
         @keyframes fadeIn {
@@ -1305,26 +1376,48 @@
 
 <!-- Welcome / Guide Modal -->
 <div id="welcomeModal" class="modal-container hidden">
-    <div class="modal-card guide-card">
+    <div class="modal-card guide-card" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
         <button class="modal-close" id="closeWelcomeModalBtn" aria-label="Close">✕</button>
-        <div class="guide-icon">🪙</div>
-        <h2 class="guide-title">Welcome to CoinTrack</h2>
-        <p class="guide-intro">A simple, private ledger for your coin collection.</p>
-        <ul class="guide-list">
+        <div class="guide-hero">
+            <div class="guide-logo">🪙</div>
+            <p class="guide-eyebrow">Numismatic Ledger</p>
+            <h2 class="guide-title" id="welcomeTitle">Welcome to CoinTrack</h2>
+            <p class="guide-intro">Keep track of every coin you own: what it is, what you paid, and what it's worth today.</p>
+        </div>
+        <ul class="guide-features">
             <li>
-                <span class="guide-list-icon">📒</span>
-                <div><strong>Log your coins</strong><span>Grading service, grade, price paid and value.</span></div>
+                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span>
+                <div><strong>Log every detail</strong><span>Year, mint, grading service, grade, price paid and estimated value.</span></div>
             </li>
             <li>
-                <span class="guide-list-icon">📷</span>
-                <div><strong>Add photos</strong><span>Obverse, reverse and receipt for every coin.</span></div>
+                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                <div><strong>Photograph it</strong><span>Obverse, reverse and receipt photos kept with each coin.</span></div>
             </li>
             <li>
-                <span class="guide-list-icon">🔒</span>
-                <div><strong>Stays on your device</strong><span>No account, no fees. Export a backup any time.</span></div>
+                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>
+                <div><strong>Know what it's worth</strong><span>Total holdings and portfolio value update as you go.</span></div>
+            </li>
+            <li>
+                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></span>
+                <div><strong>Find coins fast</strong><span>Search, filter by type or grader, and sort by value, gain, year or grade.</span></div>
+            </li>
+            <li>
+                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h4"/></svg></span>
+                <div><strong>Share a coin sheet</strong><span>Download any coin as a clean, printable PDF.</span></div>
+            </li>
+            <li>
+                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+                <div><strong>Private by design</strong><span>No account, no fees, no servers. Nothing leaves your device.</span></div>
             </li>
         </ul>
-        <button id="getStartedBtn" class="guide-cta">Get Started</button>
+        <div class="guide-notice">
+            <span class="guide-notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg></span>
+            <p><strong>Your collection is saved in this browser.</strong> It won't follow you to other devices, and clearing your browser data erases it. Use <em>Export JSON Backup</em> in the side menu regularly, and <em>Import Backup</em> to restore or move it.</p>
+        </div>
+        <div class="guide-actions">
+            <button id="getStartedBtn" class="guide-cta">Get Started</button>
+            <button type="button" id="welcomeFaqBtn" class="link-btn guide-faq-link">Read the FAQ</button>
+        </div>
     </div>
 </div>
 
@@ -1538,11 +1631,13 @@
 
         // Show Welcome Modal only on first visit
         if (!localStorage.getItem('cointrack_welcomed')) {
+            document.getElementById('getStartedBtn').textContent = coinInventory.length ? 'Back to my collection' : 'Add your first coin';
             welcomeModal.classList.remove('hidden');
             localStorage.setItem('cointrack_welcomed', 'true');
         }
 
         const openWelcome = () => {
+            document.getElementById('getStartedBtn').textContent = coinInventory.length ? 'Back to my collection' : 'Add your first coin';
             welcomeModal.classList.remove('hidden');
             toggleMobileSidebar(false);
         };
@@ -1552,7 +1647,14 @@
         };
 
         document.getElementById('closeWelcomeModalBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
-        document.getElementById('getStartedBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
+        document.getElementById('getStartedBtn').addEventListener('click', () => {
+            welcomeModal.classList.add('hidden');
+            if (coinInventory.length === 0) document.getElementById('openModalBtn').click();
+        });
+        document.getElementById('welcomeFaqBtn').addEventListener('click', () => {
+            welcomeModal.classList.add('hidden');
+            openFaq();
+        });
         welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) welcomeModal.classList.add('hidden'); });
 
         document.getElementById('closeFaqModalBtn').addEventListener('click', () => faqModal.classList.add('hidden'));
