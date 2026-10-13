@@ -1171,6 +1171,7 @@
                     <option value="NGC">NGC</option>
                     <option value="ANACS">ANACS</option>
                     <option value="ICG">ICG</option>
+                    <option value="Other">Other</option>
                     <option value="Raw">Raw / Ungraded</option>
                 </select>
             </div>
@@ -1694,7 +1695,11 @@
 
             const matches = coinInventory.filter(c => {
                 const textMatch = Object.values(c).some(val => String(val).toLowerCase().includes(query));
-                const serviceMatch = !filterService || (filterService === 'Raw' ? !c.gradingCompany : c.gradingCompany === filterService);
+                const namedServices = ['PCGS', 'NGC', 'ANACS', 'ICG'];
+                const serviceMatch = !filterService
+                    || (filterService === 'Raw' ? !c.gradingCompany
+                    : filterService === 'Other' ? (!!c.gradingCompany && !namedServices.includes(c.gradingCompany))
+                    : c.gradingCompany === filterService);
                 return textMatch && serviceMatch;
             });
 
