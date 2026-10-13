@@ -73,6 +73,14 @@
             gap: 28px;
             transition: transform var(--transition-smooth);
             z-index: 100;
+            /* Pin to viewport while the content column scrolls */
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            height: 100dvh;
+            align-self: start;
+            overflow-y: auto;
+            overscroll-behavior: contain;
         }
 
         .brand-cluster {
@@ -1056,6 +1064,8 @@
                 left: 0;
                 bottom: 0;
                 width: 280px;
+                height: auto;
+                align-self: stretch;
                 transform: translateX(-100%);
                 box-shadow: var(--shadow-elevation);
             }
