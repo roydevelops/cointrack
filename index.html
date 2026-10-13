@@ -309,6 +309,30 @@
             min-width: 0;
         }
 
+        .results-summary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: -4px;
+        }
+
+        .results-summary.hidden { display: none; }
+
+        .link-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--accent-gold);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: none;
+        }
+
+        .link-btn:hover { text-decoration: underline; background: none; }
+
         .search-wrapper input {
             width: 100%;
             padding: 12px 16px 12px 42px;
@@ -1096,14 +1120,25 @@
             .form-grid, .photo-upload-matrix, .view-photos-grid { grid-template-columns: 1fr; }
             .form-field.full { grid-column: span 1; }
             .search-filter-bar {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
                 gap: 8px;
             }
             .search-filter-bar .search-wrapper {
-                flex: 3;
+                grid-column: 1 / -1;
             }
             .search-filter-bar select {
-                flex: 2;
-                width: auto;
+                width: 100%;
+                text-overflow: ellipsis;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .search-filter-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+            .search-filter-bar #sortSelect {
+                grid-column: 1 / -1;
             }
         }
     </style>
@@ -1165,8 +1200,11 @@
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     <input type="text" id="searchInput" placeholder="Search collection...">
                 </div>
-                <select id="gradeServiceFilter">
-                    <option value="">Show All</option>
+                <select id="coinTypeFilter" aria-label="Filter by coin type">
+                    <option value="">All coin types</option>
+                </select>
+                <select id="gradeServiceFilter" aria-label="Filter by grading service">
+                    <option value="">All services</option>
                     <option value="PCGS">PCGS</option>
                     <option value="NGC">NGC</option>
                     <option value="ANACS">ANACS</option>
@@ -1174,6 +1212,24 @@
                     <option value="Other">Other</option>
                     <option value="Raw">Raw / Ungraded</option>
                 </select>
+                <select id="sortSelect" aria-label="Sort collection">
+                    <option value="added-desc">Sort: Recently added</option>
+                    <option value="added-asc">Sort: Oldest added</option>
+                    <option value="value-desc">Value: High to low</option>
+                    <option value="value-asc">Value: Low to high</option>
+                    <option value="paid-desc">Paid: High to low</option>
+                    <option value="paid-asc">Paid: Low to high</option>
+                    <option value="gain-desc">Gain: Highest first</option>
+                    <option value="gain-asc">Gain: Lowest first</option>
+                    <option value="year-desc">Year: Newest first</option>
+                    <option value="year-asc">Year: Oldest first</option>
+                    <option value="grade-desc">Grade: Highest first</option>
+                    <option value="name-asc">Name: A to Z</option>
+                </select>
+            </div>
+            <div class="results-summary hidden" id="resultsSummary">
+                <span id="resultsCount"></span>
+                <button type="button" class="link-btn" id="clearFiltersBtn">Clear filters</button>
             </div>
         </header>
 
@@ -1417,6 +1473,12 @@
         const coinGridContainer = document.getElementById('coinGridContainer');
         const searchInput = document.getElementById('searchInput');
         const gradeServiceFilter = document.getElementById('gradeServiceFilter');
+        const coinTypeFilter = document.getElementById('coinTypeFilter');
+        const sortSelect = document.getElementById('sortSelect');
+        try {
+            const savedSort = localStorage.getItem('cointrack_sort');
+            if (savedSort && sortSelect.querySelector(`option[value="${savedSort}"]`)) sortSelect.value = savedSort;
+        } catch (e) {}
 
         const appSidebar = document.getElementById('appSidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -1689,9 +1751,58 @@
             renderInterface();
         }
 
+        // Rebuild the coin-type dropdown from names in the collection, keeping the current choice
+        function refreshCoinTypeOptions() {
+            const counts = {};
+            coinInventory.forEach(c => {
+                const n = (c.name || '').trim();
+                if (n) counts[n] = (counts[n] || 0) + 1;
+            });
+            const names = Object.keys(counts).sort((a, b) => a.localeCompare(b));
+            const current = coinTypeFilter.value;
+            coinTypeFilter.innerHTML = '<option value="">All coin types</option>' +
+                names.map(n => `<option value="${escapeHTML(n)}">${escapeHTML(n)} (${counts[n]})</option>`).join('');
+            coinTypeFilter.value = names.includes(current) ? current : '';
+        }
+
+        // Sort in place. Coins missing the sorted field always go last, whichever direction.
+        function sortCoins(list, mode) {
+            const num = v => { const n = parseFloat(v); return isFinite(n) && n > 0 ? n : null; };
+            const gradeNum = c => { const m = String(c.grade || '').match(/(\d{1,2})/); return m ? parseInt(m[1]) : null; };
+            const yearNum = c => { const m = String(c.year || '').match(/\d{3,4}/); return m ? parseInt(m[0]) : null; };
+            const keyFns = {
+                value: c => num(c.value),
+                paid: c => num(c.paidPrice),
+                gain: c => (num(c.value) !== null && num(c.paidPrice) !== null) ? num(c.value) - num(c.paidPrice) : null,
+                year: yearNum,
+                grade: gradeNum
+            };
+            const [field, dir] = mode.split('-');
+            const order = new Map(coinInventory.map((c, i) => [c, i]));
+            if (field === 'added') {
+                list.sort((a, b) => dir === 'asc' ? order.get(b) - order.get(a) : order.get(a) - order.get(b));
+                return list;
+            }
+            if (field === 'name') {
+                list.sort((a, b) => (a.name || '').localeCompare(b.name || '') || order.get(a) - order.get(b));
+                return list;
+            }
+            const key = keyFns[field];
+            list.sort((a, b) => {
+                const ka = key(a), kb = key(b);
+                if (ka === null && kb === null) return order.get(a) - order.get(b);
+                if (ka === null) return 1;
+                if (kb === null) return -1;
+                return (dir === 'asc' ? ka - kb : kb - ka) || order.get(a) - order.get(b);
+            });
+            return list;
+        }
+
         function renderInterface() {
             const query = searchInput.value.toLowerCase();
             const filterService = gradeServiceFilter.value;
+            refreshCoinTypeOptions();
+            const filterType = coinTypeFilter.value;
 
             const matches = coinInventory.filter(c => {
                 const textMatch = Object.values(c).some(val => String(val).toLowerCase().includes(query));
@@ -1700,8 +1811,16 @@
                     || (filterService === 'Raw' ? !c.gradingCompany
                     : filterService === 'Other' ? (!!c.gradingCompany && !namedServices.includes(c.gradingCompany))
                     : c.gradingCompany === filterService);
-                return textMatch && serviceMatch;
+                const typeMatch = !filterType || (c.name || '').trim() === filterType;
+                return textMatch && serviceMatch && typeMatch;
             });
+
+            sortCoins(matches, sortSelect.value);
+
+            const isFiltered = !!(query || filterService || filterType);
+            document.getElementById('resultsSummary').classList.toggle('hidden', !isFiltered);
+            document.getElementById('resultsCount').textContent =
+                `Showing ${matches.length} of ${coinInventory.length} coin${coinInventory.length === 1 ? '' : 's'}`;
 
             // Update Sidebar Analytics
             document.getElementById('statTotalCoins').innerText = coinInventory.length;
@@ -2057,6 +2176,17 @@
 
         searchInput.addEventListener('input', renderInterface);
         gradeServiceFilter.addEventListener('change', renderInterface);
+        coinTypeFilter.addEventListener('change', renderInterface);
+        sortSelect.addEventListener('change', () => {
+            try { localStorage.setItem('cointrack_sort', sortSelect.value); } catch (e) {}
+            renderInterface();
+        });
+        document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+            searchInput.value = '';
+            gradeServiceFilter.value = '';
+            coinTypeFilter.value = '';
+            renderInterface();
+        });
 
         // Backup Export / Import
         document.getElementById('sidebarExportBtn').addEventListener('click', () => {
