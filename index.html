@@ -1507,6 +1507,74 @@
             .hero-title-row h2 { font-size: 1.3rem; }
         }
 
+        /* Sponsor banner */
+        .sponsor-banner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 14px 12px 12px;
+            border-radius: var(--radius-md);
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: inherit;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            margin-bottom: -4px;
+        }
+        a.sponsor-banner:hover { border-color: rgba(245, 158, 11, 0.45); background: var(--bg-elevated); }
+        .sponsor-logo {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+        }
+        .sponsor-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .sponsor-copy { flex: 1; min-width: 0; }
+        .sponsor-label {
+            display: block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-subtle);
+            margin-bottom: 2px;
+        }
+        .sponsor-name { font-size: 0.92rem; font-weight: 600; color: var(--text-main); }
+        .sponsor-tagline {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sponsor-cta {
+            flex-shrink: 0;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+        a.sponsor-banner:hover .sponsor-cta { border-color: var(--accent-gold); color: var(--accent-gold); }
+        @media (max-width: 600px) {
+            .sponsor-banner { gap: 12px; padding: 10px 12px 10px 10px; }
+            .sponsor-logo { width: 38px; height: 38px; }
+            .sponsor-tagline { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+            .sponsor-cta { display: none; }
+        }
+
         .hidden { display: none !important; }
 
         /* Media Query for Mobile & Tablet viewports */
@@ -1701,6 +1769,9 @@
 
         <!-- Active collection header -->
         <section class="collection-hero" id="collectionHero"></section>
+
+        <!-- Sponsor banner (filled from SPONSOR config in the script; hidden when SPONSOR is null) -->
+        <aside class="sponsor-banner hidden" id="sponsorBanner" aria-label="Sponsor"></aside>
 
         <!-- Dynamic Grid View -->
         <section class="inventory-grid" id="coinGridContainer"></section>
@@ -2044,6 +2115,46 @@
 </div>
 
 <script>
+        // ----- Sponsor banner -----
+        // Edit this to change the sponsor. Set SPONSOR = null to hide the banner.
+        // logo: image URL, or leave empty to show the first letter of the name.
+        const SPONSOR = {
+            name: 'Your brand here',
+            tagline: 'Reach collectors who track every coin they own. Sponsor CoinTrack.',
+            cta: 'Advertise',
+            url: 'mailto:support@cointrack.io?subject=Sponsoring%20CoinTrack',
+            logo: ''
+        };
+
+        (function renderSponsor() {
+            const slot = document.getElementById('sponsorBanner');
+            if (!slot || !SPONSOR) return;
+            const esc = v => String(v || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+            const banner = document.createElement(SPONSOR.url ? 'a' : 'div');
+            banner.className = 'sponsor-banner';
+            banner.id = 'sponsorBanner';
+            banner.setAttribute('aria-label', `Sponsor: ${SPONSOR.name}`);
+            if (SPONSOR.url) {
+                banner.href = SPONSOR.url;
+                if (!SPONSOR.url.startsWith('mailto:')) {
+                    banner.target = '_blank';
+                    banner.rel = 'sponsored noopener';
+                }
+            }
+            const logo = SPONSOR.logo
+                ? `<img src="${esc(SPONSOR.logo)}" alt="">`
+                : esc(SPONSOR.name.trim().charAt(0).toUpperCase());
+            banner.innerHTML = `
+                <span class="sponsor-logo">${logo}</span>
+                <span class="sponsor-copy">
+                    <span class="sponsor-label">Sponsored</span>
+                    <span class="sponsor-name">${esc(SPONSOR.name)}</span>
+                    <span class="sponsor-tagline">${esc(SPONSOR.tagline)}</span>
+                </span>
+                ${SPONSOR.cta ? `<span class="sponsor-cta">${esc(SPONSOR.cta)} &rarr;</span>` : ''}`;
+            slot.replaceWith(banner);
+        })();
+
     document.addEventListener('DOMContentLoaded', () => {
         // Coins and photos live in IndexedDB: localStorage caps at ~5 MB in Safari, which a
         // handful of photographed coins fills. Older data in localStorage is moved over once.
