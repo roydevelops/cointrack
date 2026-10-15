@@ -942,6 +942,23 @@
             line-height: 1.4;
         }
 
+        .dz-paste {
+            margin-top: 6px;
+            width: 100%;
+            padding: 5px 8px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .dz-paste:hover {
+            color: var(--accent-gold);
+            border-color: var(--accent-gold);
+        }
+
         .preview-img {
             max-height: 75px;
             max-width: 100px;
@@ -1547,6 +1564,7 @@
                         <p id="textFront"><span class="dz-plus">+</span>Add</p>
                         <img id="prevFront" class="preview-img hidden" alt="">
                     </div>
+                    <button type="button" class="dz-paste hidden" id="pasteFront">Paste photo</button>
                     <input type="file" id="fileFront" class="hidden" accept="image/*">
                     <input type="hidden" id="dataFront">
                 </div>
@@ -1556,6 +1574,7 @@
                         <p id="textBack"><span class="dz-plus">+</span>Add</p>
                         <img id="prevBack" class="preview-img hidden" alt="">
                     </div>
+                    <button type="button" class="dz-paste hidden" id="pasteBack">Paste photo</button>
                     <input type="file" id="fileBack" class="hidden" accept="image/*">
                     <input type="hidden" id="dataBack">
                 </div>
@@ -1565,6 +1584,7 @@
                         <p id="textReceipt"><span class="dz-plus">+</span>Add</p>
                         <img id="prevReceipt" class="preview-img hidden" alt="">
                     </div>
+                    <button type="button" class="dz-paste hidden" id="pasteReceipt">Paste photo</button>
                     <input type="file" id="fileReceipt" class="hidden" accept="image/*">
                     <input type="hidden" id="dataReceipt">
                 </div>
@@ -1801,27 +1821,73 @@
         viewModal.addEventListener('click', (e) => { if (e.target === viewModal) toggleViewModal(false); });
 
         // Photo Matrix Setup
-        function initPhotoZone(zoneEl, fileEl, dataEl, prevEl, textEl) {
-            zoneEl.addEventListener('click', () => fileEl.click());
+        // Safari only delivers Cmd+V to editable elements, so paste is caught page-wide while the
+        // wizard is open and routed to the photo box last used (or the first empty one).
+        const photoZones = [];
+        let activePhotoZone = null;
+
+        function initPhotoZone(zoneEl, fileEl, dataEl, prevEl, textEl, pasteBtn) {
+            const zone = { zoneEl, dataEl, prevEl, textEl };
+            photoZones.push(zone);
+            zoneEl.addEventListener('click', () => { activePhotoZone = zone; fileEl.click(); });
+            zoneEl.addEventListener('focus', () => { activePhotoZone = zone; });
+            zoneEl.addEventListener('mouseenter', () => { activePhotoZone = zone; });
             fileEl.addEventListener('change', (e) => {
                 if (e.target.files[0]) readImageFile(e.target.files[0], dataEl, prevEl, textEl);
+                e.target.value = '';
             });
-            zoneEl.addEventListener('paste', (e) => {
-                e.preventDefault();
-                const clipboardItems = (e.clipboardData || e.originalEvent.clipboardData).items;
-                for (let item of clipboardItems) {
-                    if (item.type.indexOf('image') !== -1) {
-                        readImageFile(item.getAsFile(), dataEl, prevEl, textEl);
-                        break;
+            // Explicit button: reads the clipboard directly, which works in Safari without a paste event
+            if (navigator.clipboard && navigator.clipboard.read) {
+                pasteBtn.classList.remove('hidden');
+                pasteBtn.addEventListener('click', async () => {
+                    activePhotoZone = zone;
+                    try {
+                        const items = await navigator.clipboard.read();
+                        for (const item of items) {
+                            const type = item.types.find(t => t.startsWith('image/'));
+                            if (type) {
+                                const blob = await item.getType(type);
+                                readImageFile(blob, dataEl, prevEl, textEl);
+                                return;
+                            }
+                        }
+                        alert('There is no photo on the clipboard. Copy a photo first, then try again.');
+                    } catch (err) {
+                        alert('Could not read the clipboard. Try Cmd+V instead, or click the box to choose a file.');
                     }
-                }
-            });
+                });
+            }
         }
+
+        function imageFromClipboard(e) {
+            const cd = e.clipboardData;
+            if (!cd) return null;
+            for (const item of (cd.items || [])) {
+                if (item.kind === 'file' && item.type.startsWith('image/')) return item.getAsFile();
+            }
+            // Some Safari pastes only expose the image through files, sometimes with no type
+            for (const file of (cd.files || [])) {
+                if (!file.type || file.type.startsWith('image/')) return file;
+            }
+            return null;
+        }
+
+        document.addEventListener('paste', (e) => {
+            if (entryModal.classList.contains('hidden')) return;
+            const file = imageFromClipboard(e);
+            // Only on the photos step; elsewhere let paste behave normally
+            if (!file || wizardStep !== wizardSteps.length - 1) return;
+            e.preventDefault();
+            const zone = activePhotoZone || photoZones.find(z => !z.dataEl.value) || photoZones[0];
+            readImageFile(file, zone.dataEl, zone.prevEl, zone.textEl);
+        });
 
         function readImageFile(file, dataEl, prevEl, textEl) {
             const reader = new FileReader();
+            reader.onerror = () => alert('That photo could not be read. Try saving it as a JPEG first.');
             reader.onload = (e) => {
                 const imageObj = new Image();
+                imageObj.onerror = () => alert('This browser cannot open that photo format (iPhone HEIC photos need a newer macOS). Try exporting it as a JPEG first.');
                 imageObj.src = e.target.result;
                 imageObj.onload = () => {
                     const canvas = document.createElement('canvas');
@@ -1841,9 +1907,9 @@
             reader.readAsDataURL(file);
         }
 
-        initPhotoZone(document.getElementById('dropFront'), document.getElementById('fileFront'), document.getElementById('dataFront'), document.getElementById('prevFront'), document.getElementById('textFront'));
-        initPhotoZone(document.getElementById('dropBack'), document.getElementById('fileBack'), document.getElementById('dataBack'), document.getElementById('prevBack'), document.getElementById('textBack'));
-        initPhotoZone(document.getElementById('dropReceipt'), document.getElementById('fileReceipt'), document.getElementById('dataReceipt'), document.getElementById('prevReceipt'), document.getElementById('textReceipt'));
+        initPhotoZone(document.getElementById('dropFront'), document.getElementById('fileFront'), document.getElementById('dataFront'), document.getElementById('prevFront'), document.getElementById('textFront'), document.getElementById('pasteFront'));
+        initPhotoZone(document.getElementById('dropBack'), document.getElementById('fileBack'), document.getElementById('dataBack'), document.getElementById('prevBack'), document.getElementById('textBack'), document.getElementById('pasteBack'));
+        initPhotoZone(document.getElementById('dropReceipt'), document.getElementById('fileReceipt'), document.getElementById('dataReceipt'), document.getElementById('prevReceipt'), document.getElementById('textReceipt'), document.getElementById('pasteReceipt'));
 
         function clearAllPreviews() {
             ['Front', 'Back', 'Receipt'].forEach(p => {
@@ -1896,13 +1962,30 @@
                 coinInventory.unshift(record);
             }
 
-            persistAndRender();
+            const previous = targetExisting;
+            if (!persistAndRender()) {
+                // Roll back so the in-memory list matches what is actually stored
+                if (previous) {
+                    const idx = coinInventory.findIndex(c => c.id === record.id);
+                    if (idx !== -1) coinInventory[idx] = previous;
+                } else {
+                    coinInventory = coinInventory.filter(c => c !== record);
+                }
+                renderInterface();
+                return;
+            }
             toggleModal(false);
         });
 
         function persistAndRender() {
-            localStorage.setItem('cointrack_collection', JSON.stringify(coinInventory));
+            try {
+                localStorage.setItem('cointrack_collection', JSON.stringify(coinInventory));
+            } catch (err) {
+                alert('Could not save: your browser\'s storage for CoinTrack is full. Export a backup, then remove some photos or coins and try again.');
+                return false;
+            }
             renderInterface();
+            return true;
         }
 
         // Rebuild the coin-type dropdown from names in the collection, keeping the current choice
@@ -2377,8 +2460,7 @@
                     if (Array.isArray(parsedData)) {
                         if (confirm(`Replace active ledger with ${parsedData.length} records from backup?`)) {
                             coinInventory = parsedData;
-                            persistAndRender();
-                            alert('Collection restored successfully!');
+                            if (persistAndRender()) alert('Collection restored successfully!');
                         }
                     }
                 } catch (error) { alert('Failed to parse backup file.'); }
