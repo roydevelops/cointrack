@@ -91,10 +91,10 @@
         .sidebar {
             background-color: var(--bg-surface);
             border-right: 1px solid var(--border-color);
-            padding: 32px 24px;
+            padding: 28px 24px;
             display: flex;
             flex-direction: column;
-            gap: 28px;
+            gap: 22px;
             transition: transform var(--transition-smooth);
             z-index: 100;
             /* Pin to viewport while the content column scrolls */
@@ -176,27 +176,60 @@
         }
 
         .sidebar-support {
-            background-color: var(--bg-elevated);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .sidebar-support strong {
-            color: var(--text-main);
             display: block;
-            margin-bottom: 2px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+            text-decoration: none;
+            margin-top: 2px;
         }
 
-        .sidebar-actions {
-            margin-top: auto;
+        .sidebar-support strong { color: var(--text-muted); font-weight: 600; }
+        .sidebar-support:hover strong { color: var(--accent-gold); }
+
+        /* Hide the sidebar's scrollbar; it still scrolls with wheel, trackpad or touch */
+        .sidebar { scrollbar-width: none; -ms-overflow-style: none; }
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        /* Collapsible sidebar sections */
+        .side-section > summary {
+            list-style: none;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 0;
+            padding: 4px 0;
+            border-radius: 6px;
+            transition: color 0.2s ease;
         }
+        .side-section > summary::-webkit-details-marker { display: none; }
+        .side-section > summary > span:first-child { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .side-section > summary:hover { color: var(--text-muted); }
+        .side-section > summary:focus-visible { outline: 2px solid var(--accent-gold); outline-offset: 2px; }
+        .side-chevron { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.2s ease; transform: rotate(-90deg); }
+        .side-section[open] > summary .side-chevron { transform: none; }
+        .side-section[open] > summary { margin-bottom: 10px; }
+        .side-section-body { display: flex; flex-direction: column; gap: 10px; }
+        .side-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--success-green); }
+        .side-dot.never { background: var(--danger-red); }
+        .side-dot.due { background: var(--accent-gold); }
+        .side-dot.none { display: none; }
+
+        /* Backup & Export sits at the bottom of the sidebar */
+        .sidebar-actions { margin-top: auto; }
+
+        .metric-widget .label-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+        /* Two facts in one card: label left, value right, detail underneath */
+        .metric-widget.facts { display: flex; flex-direction: column; gap: 10px; }
+        .metric-widget .fact { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; align-items: baseline; }
+        .metric-widget .fact + .fact { border-top: 1px solid var(--border-color); padding-top: 10px; }
+        .metric-widget .fact .label { font-size: 0.7rem; }
+        .metric-widget .fact .value { margin-top: 0; font-size: 0.95rem; white-space: nowrap; }
+        .metric-widget .fact .sub { grid-column: 1 / -1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .metric-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+        .metric-widget .holdings { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
 
         /* Hamburger Menu Button (Mobile Only) */
         .hamburger-btn {
@@ -1853,61 +1886,64 @@
             </div>
         </div>
 
-        <div class="sidebar-nav">
-            <div class="nav-section-title">Collections</div>
+        <!-- Sidebar sections collapse; open/closed state is remembered per browser -->
+        <details class="side-section" data-section="collections" open>
+            <summary class="nav-section-title"><span>Collections</span><svg class="side-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
             <div class="collection-list" id="collectionList"></div>
-        </div>
+        </details>
 
-        <div class="sidebar-nav">
-            <div class="nav-section-title" id="statsScopeLabel">Portfolio Analytics</div>
-            <div class="metric-widget">
-                <div class="label">Total Holdings</div>
-                <div class="value" id="statTotalCoins">0</div>
-            </div>
-            <div class="metric-widget">
-                <div class="label">Estimated Portfolio</div>
-                <div class="value" id="statTotalValue">$0.00</div>
-                <div class="trend hidden" id="statTrend"></div>
-            </div>
-            <div class="metric-row">
-                <div class="metric-widget small">
-                    <div class="label">Cost Basis</div>
-                    <div class="value" id="statTotalPaid">$0.00</div>
+        <details class="side-section" data-section="analytics" open>
+            <summary class="nav-section-title"><span id="statsScopeLabel">Portfolio Analytics</span><svg class="side-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <div class="side-section-body">
+                <div class="metric-widget">
+                    <div class="label-row">
+                        <div class="label">Estimated Portfolio</div>
+                        <div class="holdings" id="statTotalCoins">0 coins</div>
+                    </div>
+                    <div class="value" id="statTotalValue">$0.00</div>
+                    <div class="trend hidden" id="statTrend"></div>
                 </div>
-                <div class="metric-widget small">
-                    <div class="label">Gain / Loss</div>
-                    <div class="value" id="statGain">$0.00</div>
+                <div class="metric-row">
+                    <div class="metric-widget small">
+                        <div class="label">Cost Basis</div>
+                        <div class="value" id="statTotalPaid">$0.00</div>
+                    </div>
+                    <div class="metric-widget small">
+                        <div class="label">Gain / Loss</div>
+                        <div class="value" id="statGain">$0.00</div>
+                    </div>
+                </div>
+                <div class="metric-widget small facts">
+                    <div class="fact">
+                        <div class="label">Most Valuable</div>
+                        <div class="value" id="statTopValue">—</div>
+                        <div class="sub" id="statTopName"></div>
+                    </div>
+                    <div class="fact">
+                        <div class="label" id="statStartedLabel">Started</div>
+                        <div class="value" id="statStarted">—</div>
+                        <div class="sub" id="statStartedSub"></div>
+                    </div>
                 </div>
             </div>
-            <div class="metric-widget small">
-                <div class="label">Most Valuable</div>
-                <div class="value" id="statTopValue">—</div>
-                <div class="sub" id="statTopName"></div>
-            </div>
-            <div class="metric-widget small">
-                <div class="label" id="statStartedLabel">Started</div>
-                <div class="value" id="statStarted">—</div>
-                <div class="sub" id="statStartedSub"></div>
-            </div>
-        </div>
+        </details>
 
-        <div class="sidebar-support">
-            <strong>Contact Support</strong>
-            support@cointrack.io
-        </div>
-
-        <div class="sidebar-actions">
-            <div class="backup-status" id="backupStatus"><span class="dot"></span><span id="backupStatusText">No backup yet</span></div>
-            <button id="sidebarExportBtn" class="btn-secondary">Export JSON Backup</button>
-            <button id="sidebarImportBtn" class="btn-secondary">Import Backup</button>
-            <input type="file" id="importFileInput" class="hidden" accept=".json">
-            <div class="export-more">
-                <span>Download</span>
-                <button type="button" class="link-btn" id="exportCsvBtn">CSV</button>
-                <span aria-hidden="true">&middot;</span>
-                <button type="button" class="link-btn" id="exportInventoryBtn">Inventory PDF</button>
+        <details class="side-section sidebar-actions" data-section="data">
+            <summary class="nav-section-title"><span>Backup &amp; Export</span><span class="side-dot" id="backupSummaryDot"></span><svg class="side-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <div class="side-section-body">
+                <div class="backup-status" id="backupStatus"><span class="dot"></span><span id="backupStatusText">No backup yet</span></div>
+                <button id="sidebarExportBtn" class="btn-secondary">Export JSON Backup</button>
+                <button id="sidebarImportBtn" class="btn-secondary">Import Backup</button>
+                <input type="file" id="importFileInput" class="hidden" accept=".json">
+                <div class="export-more">
+                    <span>Download</span>
+                    <button type="button" class="link-btn" id="exportCsvBtn">CSV</button>
+                    <span aria-hidden="true">&middot;</span>
+                    <button type="button" class="link-btn" id="exportInventoryBtn">Inventory PDF</button>
+                </div>
+                <a class="sidebar-support" href="mailto:support@cointrack.io">Questions? <strong>support@cointrack.io</strong></a>
             </div>
-        </div>
+        </details>
     </aside>
 
     <!-- Main Workspace Content -->
@@ -2821,6 +2857,10 @@
         const VALUE_STEP_TITLES = { owned: "What's it worth?", wishlist: "What's your budget?", sold: 'What did it sell for?' };
         function setCoinStatus(status) {
             status = ['owned', 'wishlist', 'sold'].includes(status) ? status : 'owned';
+            // A brand-new coin can't already be sold; "Sold" is offered only when editing a coin
+            const isEditing = !!document.getElementById('recordId').value;
+            if (!isEditing && status === 'sold') status = 'owned';
+            statusChips.forEach(chip => { if (chip.dataset.value === 'sold') chip.classList.toggle('hidden', !isEditing); });
             statusInput.value = status;
             statusChips.forEach(chip => chip.classList.toggle('active', chip.dataset.value === status));
             document.querySelectorAll('#valueStep [data-show]').forEach(el => el.classList.toggle('off', !el.dataset.show.split(' ').includes(status)));
@@ -3263,7 +3303,7 @@
             const gain = scope.reduce((sum, c) => (parseFloat(c.value) && parseFloat(c.paidPrice)) ? sum + (parseFloat(c.value) - parseFloat(c.paidPrice)) : sum, 0);
 
             document.getElementById('statsScopeLabel').textContent = col ? `${col.name} · Analytics` : 'Portfolio Analytics';
-            document.getElementById('statTotalCoins').innerText = scope.length;
+            document.getElementById('statTotalCoins').innerText = `${scope.length} coin${scope.length === 1 ? '' : 's'}`;
             document.getElementById('statTotalValue').innerText = money(valueSum);
             document.getElementById('statTotalPaid').innerText = money(paidSum);
             const gainEl = document.getElementById('statGain');
@@ -3376,6 +3416,21 @@
             renderInterface();
         });
 
+        // ----- Collapsible sidebar sections (remembered per browser) -----
+        (function initSideSections() {
+            const KEY = 'cointrack_sidebar_sections';
+            let saved = {};
+            try { saved = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+            document.querySelectorAll('.side-section[data-section]').forEach(section => {
+                const name = section.dataset.section;
+                if (typeof saved[name] === 'boolean') section.open = saved[name];
+                section.addEventListener('toggle', () => {
+                    saved[name] = section.open;
+                    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+                });
+            });
+        })();
+
         // ----- Backup reminder -----
         // Tracks when the last backup was downloaded and how many changes were saved since.
         const BACKUP_KEY = 'cointrack_backup';
@@ -3403,6 +3458,7 @@
             const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
             document.getElementById('backupStatus').className = 'backup-status' + (!state.at ? (total ? ' never' : '') : due ? ' due' : '');
+            document.getElementById('backupSummaryDot').className = 'side-dot' + (!state.at ? (total ? ' never' : ' none') : due ? ' due' : '');
             document.getElementById('backupStatusText').textContent = !state.at
                 ? (total ? 'No backup yet' : 'Nothing to back up yet')
                 : `Last backup ${ago}${changes ? ` · ${plural(changes, 'change')} since` : ''}`;
