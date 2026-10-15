@@ -1628,7 +1628,58 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        let coinInventory = JSON.parse(localStorage.getItem('cointrack_collection')) || [];
+        // Coins and photos live in IndexedDB: localStorage caps at ~5 MB in Safari, which a
+        // handful of photographed coins fills. Older data in localStorage is moved over once.
+        let coinInventory = [];
+        const LEGACY_KEY = 'cointrack_collection';
+        const collectionStore = (() => {
+            let dbPromise = null;
+            function openDb() {
+                if (!dbPromise) {
+                    dbPromise = new Promise((resolve, reject) => {
+                        const req = indexedDB.open('cointrack', 1);
+                        req.onupgradeneeded = () => req.result.createObjectStore('kv');
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    });
+                }
+                return dbPromise;
+            }
+            function run(mode, fn) {
+                return openDb().then(db => new Promise((resolve, reject) => {
+                    const tx = db.transaction('kv', mode);
+                    const req = fn(tx.objectStore('kv'));
+                    tx.oncomplete = () => resolve(req.result);
+                    tx.onerror = tx.onabort = () => reject(tx.error);
+                }));
+            }
+            return {
+                get: () => run('readonly', s => s.get('collection')),
+                set: (value) => run('readwrite', s => s.put(value, 'collection'))
+            };
+        })();
+
+        async function loadCollection() {
+            let legacy = null;
+            try { legacy = JSON.parse(localStorage.getItem(LEGACY_KEY)); } catch (e) {}
+            try {
+                const stored = await collectionStore.get();
+                if (Array.isArray(stored)) {
+                    coinInventory = stored;
+                } else if (Array.isArray(legacy)) {
+                    coinInventory = legacy;
+                    await collectionStore.set(legacy);
+                }
+                // Only clear the old copy once IndexedDB holds the data
+                if (legacy) try { localStorage.removeItem(LEGACY_KEY); } catch (e) {}
+            } catch (err) {
+                // IndexedDB unavailable (e.g. some private windows): fall back to localStorage
+                useLegacyStorage = true;
+                coinInventory = Array.isArray(legacy) ? legacy : [];
+            }
+            if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+        }
+        let useLegacyStorage = false;
 
         const entryModal = document.getElementById('entryModal');
         const viewModal = document.getElementById('viewModal');
@@ -1921,7 +1972,7 @@
         }
 
         // Form Submission
-        coinRecordForm.addEventListener('submit', (e) => {
+        coinRecordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             // Wizard: Next advances a step; only the last step saves
@@ -1963,7 +2014,7 @@
             }
 
             const previous = targetExisting;
-            if (!persistAndRender()) {
+            if (!(await persistAndRender())) {
                 // Roll back so the in-memory list matches what is actually stored
                 if (previous) {
                     const idx = coinInventory.findIndex(c => c.id === record.id);
@@ -1977,9 +2028,10 @@
             toggleModal(false);
         });
 
-        function persistAndRender() {
+        async function persistAndRender() {
             try {
-                localStorage.setItem('cointrack_collection', JSON.stringify(coinInventory));
+                if (useLegacyStorage) localStorage.setItem(LEGACY_KEY, JSON.stringify(coinInventory));
+                else await collectionStore.set(coinInventory);
             } catch (err) {
                 alert('Could not save: your browser\'s storage for CoinTrack is full. Export a backup, then remove some photos or coins and try again.');
                 return false;
@@ -2460,7 +2512,7 @@
                     if (Array.isArray(parsedData)) {
                         if (confirm(`Replace active ledger with ${parsedData.length} records from backup?`)) {
                             coinInventory = parsedData;
-                            if (persistAndRender()) alert('Collection restored successfully!');
+                            persistAndRender().then(ok => { if (ok) alert('Collection restored successfully!'); });
                         }
                     }
                 } catch (error) { alert('Failed to parse backup file.'); }
@@ -2483,7 +2535,7 @@
             mainContent.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        renderInterface();
+        loadCollection().then(renderInterface);
     });
 </script>
 
