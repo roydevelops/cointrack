@@ -1018,6 +1018,40 @@
             min-width: 0;
         }
         .wizard .form-field.full { grid-column: 1 / -1; }
+
+        /* Coin name suggestions, drawn from names already in the collection */
+        .suggest-wrap { position: relative; }
+        .suggest-list {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            z-index: 20;
+            margin: 0;
+            padding: 6px;
+            list-style: none;
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-elevation);
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        .suggest-list.hidden { display: none; }
+        .suggest-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+        .suggest-list li.active, .suggest-list li:hover { background-color: var(--accent-gold-soft); }
+        .suggest-list li mark { background: none; color: var(--accent-gold); font-weight: 700; }
+        .suggest-list .suggest-count { color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; }
         .wizard .form-field label {
             font-size: 0.8rem;
             font-weight: 600;
@@ -1733,7 +1767,12 @@
                 <div class="form-grid">
                     <div class="form-field full">
                         <label for="inputName">Coin name</label>
-                        <input type="text" id="inputName" required placeholder="e.g. Morgan Silver Dollar">
+                        <div class="suggest-wrap">
+                            <input type="text" id="inputName" name="coin_search_title" required placeholder="e.g. Morgan Silver Dollar"
+                                autocomplete="off" autocorrect="off" spellcheck="false"
+                                role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="nameSuggestions">
+                            <ul id="nameSuggestions" class="suggest-list hidden" role="listbox" aria-label="Coins in your collection"></ul>
+                        </div>
                     </div>
                     <div class="form-field">
                         <label for="inputYear">Year</label>
@@ -2171,6 +2210,106 @@
                 if (window.matchMedia('(hover: hover)').matches) document.getElementById('inputName').focus();
             }
         }
+
+        // Suggest coin names already in the collection (same names as the coin-type filter),
+        // most-owned first. Typing filters them; any new name can still be typed freely.
+        const nameInput = document.getElementById('inputName');
+        const nameSuggestions = document.getElementById('nameSuggestions');
+        let suggestionNames = [];
+        let suggestionIndex = -1;
+
+        function collectionNameCounts() {
+            const counts = {};
+            const display = {};
+            coinInventory.forEach(c => {
+                const n = (c.name || '').trim();
+                if (!n) return;
+                const key = n.toLowerCase();
+                counts[key] = (counts[key] || 0) + 1;
+                if (!display[key]) display[key] = n;
+            });
+            return Object.keys(counts)
+                .map(k => ({ name: display[k], count: counts[k] }))
+                .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+        }
+
+        function hideNameSuggestions() {
+            nameSuggestions.classList.add('hidden');
+            nameInput.setAttribute('aria-expanded', 'false');
+            nameInput.removeAttribute('aria-activedescendant');
+            suggestionIndex = -1;
+        }
+
+        function showNameSuggestions() {
+            const query = nameInput.value.trim().toLowerCase();
+            const all = collectionNameCounts();
+            // Hide once the typed text exactly matches a name, so the list doesn't linger after picking
+            const matches = all.filter(x => x.name.toLowerCase().includes(query) && x.name.toLowerCase() !== query);
+            suggestionNames = matches.map(x => x.name);
+            if (!matches.length) { hideNameSuggestions(); return; }
+            suggestionIndex = -1;
+            nameSuggestions.innerHTML = matches.map((x, i) => {
+                let label = escapeHTML(x.name);
+                if (query) {
+                    const at = x.name.toLowerCase().indexOf(query);
+                    label = escapeHTML(x.name.slice(0, at)) + '<mark>' + escapeHTML(x.name.slice(at, at + query.length)) + '</mark>' + escapeHTML(x.name.slice(at + query.length));
+                }
+                return `<li role="option" id="nameSuggestion${i}" data-index="${i}" aria-selected="false"><span>${label}</span><span class="suggest-count">${x.count} owned</span></li>`;
+            }).join('');
+            nameSuggestions.classList.remove('hidden');
+            nameInput.setAttribute('aria-expanded', 'true');
+        }
+
+        function highlightNameSuggestion(i) {
+            const items = nameSuggestions.querySelectorAll('li');
+            items.forEach((li, j) => {
+                li.classList.toggle('active', j === i);
+                li.setAttribute('aria-selected', j === i ? 'true' : 'false');
+            });
+            suggestionIndex = i;
+            if (items[i]) {
+                items[i].scrollIntoView({ block: 'nearest' });
+                nameInput.setAttribute('aria-activedescendant', items[i].id);
+            }
+        }
+
+        function pickNameSuggestion(i) {
+            if (!suggestionNames[i]) return;
+            nameInput.value = suggestionNames[i];
+            hideNameSuggestions();
+            nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+            const year = document.getElementById('inputYear');
+            if (!year.value) year.focus();
+        }
+
+        nameInput.addEventListener('focus', showNameSuggestions);
+        nameInput.addEventListener('input', e => { if (e.isTrusted) showNameSuggestions(); });
+        nameInput.addEventListener('blur', hideNameSuggestions);
+        nameInput.addEventListener('keydown', e => {
+            const open = !nameSuggestions.classList.contains('hidden');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (!open) showNameSuggestions();
+                if (suggestionNames.length) highlightNameSuggestion((suggestionIndex + 1) % suggestionNames.length);
+            } else if (e.key === 'ArrowUp' && open) {
+                e.preventDefault();
+                highlightNameSuggestion(suggestionIndex <= 0 ? suggestionNames.length - 1 : suggestionIndex - 1);
+            } else if (e.key === 'Enter' && open && suggestionIndex >= 0) {
+                e.preventDefault();
+                pickNameSuggestion(suggestionIndex);
+            } else if (e.key === 'Escape' && open) {
+                e.preventDefault();
+                e.stopPropagation();
+                hideNameSuggestions();
+            }
+        });
+        // mousedown (not click) so the pick lands before the input's blur hides the list
+        nameSuggestions.addEventListener('mousedown', e => {
+            const li = e.target.closest('li');
+            if (!li) return;
+            e.preventDefault();
+            pickNameSuggestion(Number(li.dataset.index));
+        });
 
         function toggleViewModal(display = true) {
             viewModal.classList.toggle('hidden', !display);
