@@ -694,10 +694,12 @@
 
         /* Guide / Welcome Modal */
         .modal-card.guide-card {
-            max-width: 560px;
+            max-width: 480px;
             padding: 0;
             text-align: center;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .guide-card .modal-close,
         .wizard-card .modal-close {
@@ -718,23 +720,38 @@
             color: var(--text-main);
             transform: none;
         }
-        .guide-hero {
-            padding: 40px 32px 24px;
+        /* Steps share one grid cell so the card keeps the height of the tallest step */
+        .guide-steps {
+            display: grid;
             background:
-                radial-gradient(ellipse 70% 90% at 50% 0%, rgba(245, 158, 11, 0.16), transparent 70%);
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+                radial-gradient(ellipse 70% 60% at 50% 0%, rgba(245, 158, 11, 0.14), transparent 70%);
         }
+        .guide-step {
+            grid-area: 1 / 1;
+            padding: 40px 32px 8px;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateX(var(--guide-shift, 16px));
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0.22s;
+        }
+        .guide-step.active {
+            visibility: visible;
+            opacity: 1;
+            transform: none;
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s;
+        }
+        .guide-hero { display: flex; flex-direction: column; justify-content: center; }
         .guide-logo {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 16px;
-            border-radius: 18px;
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            border-radius: 20px;
             background: linear-gradient(135deg, var(--accent-gold), #b45309);
             box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             line-height: 1;
         }
         .guide-eyebrow {
@@ -749,63 +766,83 @@
             font-size: 1.6rem;
             font-weight: 700;
             letter-spacing: -0.01em;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .guide-intro {
             font-size: 0.95rem;
             color: var(--text-muted);
-            line-height: 1.5;
-            max-width: 380px;
+            line-height: 1.55;
+            max-width: 360px;
             margin: 0 auto;
+        }
+        .guide-hint {
+            margin-top: 18px;
+            font-size: 0.8rem;
+            color: var(--text-subtle);
+        }
+        .guide-step-head { margin-bottom: 22px; }
+        .guide-step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
         }
         .guide-features {
             list-style: none;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 24px 28px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
             text-align: left;
         }
         .guide-features li {
             display: flex;
             align-items: flex-start;
-            gap: 12px;
-            padding: 14px;
-            border-radius: var(--radius-md);
-            background: rgba(30, 41, 59, 0.55);
-            border: 1px solid rgba(51, 65, 85, 0.6);
+            gap: 14px;
         }
         .guide-feature-icon {
             flex-shrink: 0;
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
             background: var(--accent-gold-soft);
             color: var(--accent-gold);
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .guide-feature-icon svg { width: 18px; height: 18px; }
+        .guide-feature-icon svg { width: 19px; height: 19px; }
         .guide-features strong {
             display: block;
-            font-size: 0.88rem;
+            font-size: 0.92rem;
             font-weight: 600;
             margin-bottom: 3px;
         }
         .guide-features li span em { font-style: normal; color: var(--text-main); font-weight: 600; }
         .guide-features li span:not(.guide-feature-icon) {
             display: block;
-            font-size: 0.78rem;
+            font-size: 0.84rem;
             color: var(--text-muted);
-            line-height: 1.45;
+            line-height: 1.5;
+        }
+        .guide-final-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 15px;
+            margin: 0 auto 14px;
+        }
+        .guide-final-icon svg { width: 26px; height: 26px; }
+        .guide-final .guide-step-head { margin-bottom: 12px; }
+        .guide-final-text {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            max-width: 360px;
+            margin: 0 auto 18px;
         }
         .guide-notice {
             display: flex;
             gap: 12px;
             align-items: flex-start;
-            margin: 14px 28px 0;
-            padding: 14px 16px;
+            padding: 12px 14px;
             border-radius: var(--radius-md);
             background: rgba(245, 158, 11, 0.07);
             border: 1px solid rgba(245, 158, 11, 0.3);
@@ -818,36 +855,47 @@
         }
         .guide-notice-icon svg { width: 18px; height: 18px; display: block; }
         .guide-notice p {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             line-height: 1.5;
             color: var(--text-muted);
         }
-        .guide-notice strong { color: var(--text-main); font-weight: 600; }
         .guide-notice em { font-style: normal; color: var(--text-main); font-weight: 600; }
-        .guide-actions {
+        .guide-faq-link { font-size: 0.85rem; margin-top: 16px; }
+        .guide-footer {
+            padding: 20px 32px 28px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 14px;
-            padding: 22px 28px 26px;
+            gap: 18px;
         }
-        .guide-cta {
-            width: 100%;
+        .guide-dots {
+            display: flex;
             justify-content: center;
-            padding: 14px 20px;
-            font-size: 0.95rem;
+            gap: 8px;
         }
-        .guide-faq-link { font-size: 0.85rem; }
+        .guide-dots button {
+            width: 8px;
+            height: 8px;
+            padding: 0;
+            border-radius: 999px;
+            background-color: var(--border-color);
+            box-shadow: none;
+            transition: width 0.22s ease, background-color 0.22s ease;
+        }
+        .guide-dots button:hover { transform: none; background-color: var(--text-subtle); }
+        .guide-dots button.active { width: 24px; background-color: var(--accent-gold); }
+        .guide-nav {
+            display: flex;
+            gap: 10px;
+        }
+        .guide-nav button { flex: 1; justify-content: center; }
+        .guide-nav .guide-cta { flex: 2; padding: 13px 20px; font-size: 0.95rem; }
         @media (max-width: 560px) {
-            .guide-hero { padding: 36px 20px 20px; }
+            .guide-step { padding: 36px 20px 4px; }
             .guide-title { font-size: 1.35rem; }
+            .guide-step-title { font-size: 1.15rem; }
             .guide-intro { font-size: 0.9rem; }
-            .guide-logo { width: 56px; height: 56px; font-size: 1.9rem; border-radius: 16px; margin-bottom: 12px; }
-            .guide-features { grid-template-columns: 1fr; padding: 16px 20px 0; gap: 14px; }
-            .guide-features li { padding: 0; background: none; border: none; }
-            .guide-feature-icon { width: 32px; height: 32px; }
-            .guide-notice { margin: 18px 16px 0; }
-            .guide-actions { padding: 18px 16px 22px; }
+            .guide-logo { width: 60px; height: 60px; font-size: 2rem; border-radius: 17px; margin-bottom: 14px; }
+            .guide-footer { padding: 18px 20px 22px; }
         }
 
         @keyframes fadeIn {
@@ -1676,53 +1724,90 @@
 <div id="welcomeModal" class="modal-container hidden">
     <div class="modal-card guide-card" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
         <button class="modal-close" id="closeWelcomeModalBtn" aria-label="Close">✕</button>
-        <div class="guide-hero">
-            <div class="guide-logo">🪙</div>
-            <p class="guide-eyebrow">Numismatic Ledger</p>
-            <h2 class="guide-title" id="welcomeTitle">Welcome to CoinTrack</h2>
-            <p class="guide-intro">Keep track of every coin you own, organized into collections: what it is, what you paid, and what it's worth today.</p>
+        <div class="guide-steps" id="guideSteps">
+            <section class="guide-step guide-hero active">
+                <div class="guide-logo">🪙</div>
+                <p class="guide-eyebrow">Numismatic Ledger</p>
+                <h2 class="guide-title" id="welcomeTitle">Welcome to CoinTrack</h2>
+                <p class="guide-intro">Keep track of every coin you own, organized into collections: what it is, what you paid, and what it's worth today.</p>
+                <p class="guide-hint">A quick tour takes about 30 seconds.</p>
+            </section>
+            <section class="guide-step" aria-hidden="true">
+                <div class="guide-step-head">
+                    <p class="guide-eyebrow">Organize</p>
+                    <h3 class="guide-step-title">Build your collections</h3>
+                </div>
+                <ul class="guide-features">
+                    <li>
+                        <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h7l2 2h9v10H3z"/><path d="M3 7V5h6l2 2"/></svg></span>
+                        <div><strong>Sort into collections</strong><span>Group coins into collections in the side panel, or view All coins. Tap <em>+ New collection</em> to start another.</span></div>
+                    </li>
+                    <li>
+                        <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/></svg></span>
+                        <div><strong>Tell its story</strong><span>Each collection shows its name, description and start date up top. Use <em>Edit</em> to change them.</span></div>
+                    </li>
+                    <li>
+                        <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg></span>
+                        <div><strong>Pick a highlight coin</strong><span>Tap the ☆ on any coin to feature it at the top of its collection.</span></div>
+                    </li>
+                </ul>
+            </section>
+            <section class="guide-step" aria-hidden="true">
+                <div class="guide-step-head">
+                    <p class="guide-eyebrow">Record</p>
+                    <h3 class="guide-step-title">Log every coin</h3>
+                </div>
+                <ul class="guide-features">
+                    <li>
+                        <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span>
+                        <div><strong>Capture the details</strong><span>Year, mint, grade, price paid and value, plus which collection it belongs to. Names you&#39;ve used before are suggested as you type.</span></div>
+                    </li>
+                    <li>
+                        <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+                        <div><strong>Photograph it</strong><span>Obverse, reverse and receipt photos are kept with each coin.</span></div>
+                    </li>
+                </ul>
+            </section>
+            <section class="guide-step" aria-hidden="true">
+                <div class="guide-step-head">
+                    <p class="guide-eyebrow">Explore</p>
+                    <h3 class="guide-step-title">Track, find and share</h3>
+                </div>
+                <ul class="guide-features">
+                    <li>
+                        <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>
+                        <div><strong>Know what it&#39;s worth</strong><span>Side panel stats follow the collection you pick: coin count, value, gain, top coin and how long you&#39;ve been collecting.</span></div>
+                    </li>
+                    <li>
+                        <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></span>
+                        <div><strong>Find coins fast</strong><span>Search, filter by type or grader, and sort by value, gain, year or grade.</span></div>
+                    </li>
+                    <li>
+                        <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h4"/></svg></span>
+                        <div><strong>Share a coin sheet</strong><span>Download any coin as a clean, printable PDF.</span></div>
+                    </li>
+                </ul>
+            </section>
+            <section class="guide-step guide-final" aria-hidden="true">
+                <div class="guide-step-head">
+                    <span class="guide-feature-icon guide-final-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                    <p class="guide-eyebrow">Private by design</p>
+                    <h3 class="guide-step-title">Your coins stay in this browser</h3>
+                </div>
+                <p class="guide-final-text">No account and no servers. That also means your collection won't follow you to other devices, and clearing your browser data erases it.</p>
+                <div class="guide-notice">
+                    <span class="guide-notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg></span>
+                    <p>Use <em>Export JSON Backup</em> in the side menu regularly, and <em>Import Backup</em> to restore or move it.</p>
+                </div>
+                <button type="button" id="welcomeFaqBtn" class="link-btn guide-faq-link">Read the FAQ</button>
+            </section>
         </div>
-        <ul class="guide-features">
-            <li>
-                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h7l2 2h9v10H3z"/><path d="M3 7V5h6l2 2"/></svg></span>
-                <div><strong>Sort into collections</strong><span>Group coins into collections in the side panel, or view All coins. Tap <em>+ New collection</em> to start another.</span></div>
-            </li>
-            <li>
-                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/></svg></span>
-                <div><strong>Tell its story</strong><span>Each collection shows its name, description and start date up top. Use <em>Edit</em> to change them.</span></div>
-            </li>
-            <li>
-                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg></span>
-                <div><strong>Pick a highlight coin</strong><span>Tap the ☆ on any coin to feature it at the top of its collection.</span></div>
-            </li>
-            <li>
-                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span>
-                <div><strong>Log every detail</strong><span>Year, mint, grade, price paid and value, plus which collection it belongs to. Coin names you've used before are suggested as you type.</span></div>
-            </li>
-            <li>
-                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h3l2-3h8l2 3h3v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
-                <div><strong>Photograph it</strong><span>Obverse, reverse and receipt photos kept with each coin.</span></div>
-            </li>
-            <li>
-                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>
-                <div><strong>Know what it's worth</strong><span>Side panel stats follow the collection you pick: coin count, value, gain, top coin and how long you've been collecting.</span></div>
-            </li>
-            <li>
-                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></span>
-                <div><strong>Find coins fast</strong><span>Search, filter by type or grader, and sort by value, gain, year or grade.</span></div>
-            </li>
-            <li>
-                <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h4"/></svg></span>
-                <div><strong>Share a coin sheet</strong><span>Download any coin as a clean, printable PDF.</span></div>
-            </li>
-        </ul>
-        <div class="guide-notice">
-            <span class="guide-notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg></span>
-            <p><strong>Private by design: your coins are saved in this browser.</strong> No account or servers. That also means they won't follow you to other devices, and clearing your browser data erases them. Use <em>Export JSON Backup</em> in the side menu regularly, and <em>Import Backup</em> to restore or move it.</p>
-        </div>
-        <div class="guide-actions">
-            <button id="getStartedBtn" class="guide-cta">Get Started</button>
-            <button type="button" id="welcomeFaqBtn" class="link-btn guide-faq-link">Read the FAQ</button>
+        <div class="guide-footer">
+            <div class="guide-dots" id="guideDots" role="tablist" aria-label="Tour steps"></div>
+            <div class="guide-nav">
+                <button type="button" id="guideBackBtn" class="btn-secondary">Skip tour</button>
+                <button type="button" id="getStartedBtn" class="guide-cta">Take the tour</button>
+            </div>
         </div>
     </div>
 </div>
@@ -2083,15 +2168,51 @@
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const hamburgerToggleBtn = document.getElementById('hamburgerToggleBtn');
 
-        // Show Welcome Modal only on first visit
-        if (!localStorage.getItem('cointrack_welcomed')) {
-            document.getElementById('getStartedBtn').textContent = coinInventory.length ? 'Back to my collection' : 'Add your first coin';
-            welcomeModal.classList.remove('hidden');
-            localStorage.setItem('cointrack_welcomed', 'true');
+        // ----- Welcome tour -----
+        const guideSteps = [...welcomeModal.querySelectorAll('.guide-step')];
+        const guideDots = document.getElementById('guideDots');
+        const guideBackBtn = document.getElementById('guideBackBtn');
+        const guideNextBtn = document.getElementById('getStartedBtn');
+        let guideStep = 0;
+
+        guideSteps.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.setAttribute('aria-label', `Step ${i + 1} of ${guideSteps.length}`);
+            dot.addEventListener('click', () => goToGuideStep(i));
+            guideDots.appendChild(dot);
+        });
+        const guideDotBtns = [...guideDots.children];
+
+        function goToGuideStep(n) {
+            n = Math.max(0, Math.min(guideSteps.length - 1, n));
+            const forward = n >= guideStep;
+            guideStep = n;
+            guideSteps.forEach((step, i) => {
+                step.style.setProperty('--guide-shift', (i < n || (i === n && !forward) ? -16 : 16) + 'px');
+                step.classList.toggle('active', i === n);
+                step.setAttribute('aria-hidden', i === n ? 'false' : 'true');
+            });
+            guideDotBtns.forEach((dot, i) => {
+                dot.classList.toggle('active', i === n);
+                dot.setAttribute('aria-current', i === n ? 'step' : 'false');
+            });
+            const last = guideSteps.length - 1;
+            guideBackBtn.textContent = n === 0 ? 'Skip tour' : 'Back';
+            if (n === 0) guideNextBtn.textContent = 'Take the tour';
+            else if (n === last) guideNextBtn.textContent = coinInventory.length ? 'Back to my collection' : 'Add your first coin';
+            else guideNextBtn.textContent = 'Next';
+        }
+
+        function closeWelcome() { welcomeModal.classList.add('hidden'); }
+
+        function finishWelcome() {
+            closeWelcome();
+            if (coinInventory.length === 0) document.getElementById('openModalBtn').click();
         }
 
         const openWelcome = () => {
-            document.getElementById('getStartedBtn').textContent = coinInventory.length ? 'Back to my collection' : 'Add your first coin';
+            goToGuideStep(0);
             welcomeModal.classList.remove('hidden');
             toggleMobileSidebar(false);
         };
@@ -2100,16 +2221,33 @@
             toggleMobileSidebar(false);
         };
 
-        document.getElementById('closeWelcomeModalBtn').addEventListener('click', () => welcomeModal.classList.add('hidden'));
-        document.getElementById('getStartedBtn').addEventListener('click', () => {
-            welcomeModal.classList.add('hidden');
-            if (coinInventory.length === 0) document.getElementById('openModalBtn').click();
+        // Show Welcome Modal only on first visit
+        goToGuideStep(0);
+        if (!localStorage.getItem('cointrack_welcomed')) {
+            welcomeModal.classList.remove('hidden');
+            localStorage.setItem('cointrack_welcomed', 'true');
+        }
+
+        document.getElementById('closeWelcomeModalBtn').addEventListener('click', closeWelcome);
+        guideNextBtn.addEventListener('click', () => {
+            if (guideStep === guideSteps.length - 1) finishWelcome();
+            else goToGuideStep(guideStep + 1);
+        });
+        guideBackBtn.addEventListener('click', () => {
+            if (guideStep === 0) goToGuideStep(guideSteps.length - 1);
+            else goToGuideStep(guideStep - 1);
         });
         document.getElementById('welcomeFaqBtn').addEventListener('click', () => {
-            welcomeModal.classList.add('hidden');
+            closeWelcome();
             openFaq();
         });
-        welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) welcomeModal.classList.add('hidden'); });
+        welcomeModal.addEventListener('click', (e) => { if (e.target === welcomeModal) closeWelcome(); });
+        document.addEventListener('keydown', (e) => {
+            if (welcomeModal.classList.contains('hidden')) return;
+            if (e.target.closest && e.target.closest('input, textarea, select')) return;
+            if (e.key === 'ArrowRight') goToGuideStep(guideStep + 1);
+            else if (e.key === 'ArrowLeft') goToGuideStep(guideStep - 1);
+        });
 
         document.getElementById('closeFaqModalBtn').addEventListener('click', () => faqModal.classList.add('hidden'));
         faqModal.addEventListener('click', (e) => { if (e.target === faqModal) faqModal.classList.add('hidden'); });
