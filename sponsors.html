@@ -208,28 +208,9 @@
         .spot-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: auto; }
         .spot-actions .host { font-size: 0.8rem; color: var(--text-subtle); }
 
-        /* Empty state */
-        .open-spot {
-            text-align: center;
-            padding: 48px 24px;
-            border: 1px dashed var(--border-color);
-            border-radius: var(--radius-lg);
-            background: rgba(15, 23, 42, 0.6);
-        }
-        .open-spot .badge {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 16px;
-            border-radius: 16px;
-            background: var(--accent-gold-soft);
-            color: var(--accent-gold);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .open-spot .badge svg { width: 26px; height: 26px; }
-        .open-spot h2 { font-size: 1.35rem; margin-bottom: 6px; }
-        .open-spot p { color: var(--text-muted); max-width: 440px; margin: 0 auto 20px; }
+        /* With no sponsors listed, the page goes straight to Become a sponsor */
+        .no-sponsors .sponsor-list { display: none; }
+        .no-sponsors .become { margin-top: 8px; }
 
         /* Become a sponsor */
         .become {
@@ -372,20 +353,13 @@
         const icon = {
             check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>',
             pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
-            clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
-            plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
+            clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
         };
 
         const root = document.getElementById('sponsorList');
 
         if (!list.length) {
-            root.innerHTML = `
-                <div class="open-spot">
-                    <div class="badge">${icon.plus}</div>
-                    <h2>This spot is open</h2>
-                    <p>CoinTrack doesn't have a sponsor yet. Your brand could be the first one collectors see.</p>
-                    <a class="btn btn-primary" href="#become">Become our first sponsor &rarr;</a>
-                </div>`;
+            document.body.classList.add('no-sponsors');
             return;
         }
 
