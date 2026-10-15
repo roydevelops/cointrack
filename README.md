@@ -14,6 +14,12 @@
 - 📊 **Live Stats & Search:** Automatically calculates total coin counts and estimated collection value with real-time text filtering.
 - 💾 **JSON Backup & Import:** Export your entire collection (data + images) into a single `.json` file for safe-keeping or moving between browsers.
 - 🖨️ **Print-Friendly CSS:** Built-in print stylesheets clean up the layout so you can easily print or save PDF collection ledgers.
+- 🔎 **Cert Numbers & Verify Links:** Store the slab cert number; PCGS and NGC coins link straight to the grading service's certificate lookup.
+- 📈 **Value History:** Every change to a coin's estimated value is recorded, with a trend line per coin and for the whole collection.
+- 🗂️ **Wishlist & Sold:** Track coins you want (with a target price) and coins you've sold (with realized gain), separately from your holdings.
+- 📄 **CSV & Inventory PDF:** Export a spreadsheet, or a printable inventory with photos, grades and cert numbers for insurance.
+- 🛟 **Backup Reminders:** The side menu shows when you last backed up, and a gentle reminder appears when a new backup is due.
+- 📱 **Installable & Offline:** Add CoinTrack to your home screen or desktop; it opens in its own window and works without a connection.
 
 ---
 

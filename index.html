@@ -7,7 +7,31 @@
     <meta name="description" content="A private, local numismatic ledger for tracking your coin collection, managing purchase values, and archiving slab photos with zero subscription fees.">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪙</text></svg>">
-    
+
+    <!-- Installable app -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="CoinTrack">
+
+    <!-- Link previews (iMessage, Facebook, X, Slack, forums) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="CoinTrack.io">
+    <meta property="og:url" content="https://cointrack.io/">
+    <meta property="og:title" content="CoinTrack.io — Track every coin you own">
+    <meta property="og:description" content="A free, private coin collection tracker. Log grades, cert numbers, photos and values. No account, no subscription.">
+    <meta property="og:image" content="https://cointrack.io/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="CoinTrack.io: track every coin you own">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CoinTrack.io — Track every coin you own">
+    <meta name="twitter:description" content="A free, private coin collection tracker. Log grades, cert numbers, photos and values. No account, no subscription.">
+    <meta name="twitter:image" content="https://cointrack.io/og-image.png">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 
@@ -1603,6 +1627,145 @@
             .sponsor-cta { width: 100%; text-align: center; }
         }
 
+        /* ----- Backup status & reminder ----- */
+        .backup-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 0 2px;
+        }
+        .backup-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success-green); flex-shrink: 0; }
+        .backup-status.due .dot { background: var(--accent-gold); }
+        .backup-status.never .dot { background: var(--danger-red); }
+        .export-more {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+        }
+        .export-more .link-btn { font-size: 0.75rem; }
+        .export-more .link-btn:disabled { opacity: 0.5; cursor: wait; }
+
+        .backup-nudge {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        .backup-nudge > svg { width: 22px; height: 22px; color: var(--accent-gold); flex-shrink: 0; }
+        .backup-nudge-text { flex: 1; min-width: 0; font-size: 0.86rem; color: var(--text-muted); line-height: 1.45; }
+        .backup-nudge-text strong { display: block; color: var(--text-main); font-weight: 600; font-size: 0.92rem; }
+        .backup-nudge-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .backup-nudge-actions button { padding: 8px 14px; font-size: 0.82rem; }
+        @media (max-width: 600px) {
+            .backup-nudge { flex-wrap: wrap; }
+            .backup-nudge-actions { width: 100%; }
+            .backup-nudge-actions button { flex: 1; }
+        }
+
+        /* ----- Cert number ----- */
+        .field-hint { font-size: 0.75rem; color: var(--text-subtle); }
+        .verify-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .verify-link:hover { text-decoration: underline; }
+        .verify-link svg { width: 12px; height: 12px; }
+
+        /* ----- Value history ----- */
+        .value-history {
+            margin: -6px 0 20px;
+            padding: 16px 18px;
+            border-radius: var(--radius-md);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+        }
+        .value-history:empty { display: none; }
+        .vh-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; margin-bottom: 10px; }
+        .vh-head label { white-space: nowrap; }
+        .vh-head label {
+            font-size: 0.68rem;
+            color: var(--text-subtle);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .vh-change { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+        .vh-change.pos { color: var(--success-green); }
+        .vh-change.neg { color: var(--danger-red); }
+        .vh-change small { font-weight: 500; color: var(--text-subtle); }
+        .sparkline { display: block; width: 100%; height: 64px; overflow: visible; }
+        .vh-list { list-style: none; margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+        .vh-list li { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); }
+        .vh-list li span:last-child { color: var(--text-main); font-weight: 600; }
+        .vh-empty { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+        .vh-empty strong { color: var(--text-main); }
+        .metric-widget .trend { margin-top: 8px; }
+        .metric-widget .trend .sparkline { height: 34px; }
+        .metric-widget .trend-label { font-size: 0.72rem; color: var(--text-subtle); margin-top: 4px; }
+        .metric-widget .trend-label b { font-weight: 700; }
+        .metric-widget .trend-label b.pos { color: var(--success-green); }
+        .metric-widget .trend-label b.neg { color: var(--danger-red); }
+
+        /* ----- Owned / wishlist / sold ----- */
+        .status-tabs {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: -8px;
+        }
+        .status-tab-group {
+            display: inline-flex;
+            gap: 4px;
+            padding: 4px;
+            border-radius: 999px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+        }
+        .status-tab-group button {
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: transparent;
+            color: var(--text-muted);
+            box-shadow: none;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .status-tab-group button:hover { background: var(--bg-elevated); color: var(--text-main); transform: none; }
+        .status-tab-group button.active { background: var(--accent-gold-soft); color: var(--accent-gold); }
+        .status-tab-group button span { margin-left: 4px; color: var(--text-subtle); font-weight: 500; }
+        .status-tab-group button.active span { color: inherit; }
+        .status-summary { font-size: 0.82rem; color: var(--text-muted); }
+        .status-summary b { color: var(--text-main); font-weight: 600; }
+        .status-summary b.pos { color: var(--success-green); }
+        .status-summary b.neg { color: var(--danger-red); }
+        .badge.status-sold { background: var(--danger-soft); color: #fca5a5; border-color: transparent; }
+        .badge.status-wishlist { background: rgba(56, 189, 248, 0.12); color: #7dd3fc; border-color: transparent; }
+        .coin-tile.is-sold .tile-image-strip img { filter: grayscale(0.7); opacity: 0.8; }
+        /* Keep photos inside the 140px strip (Chrome otherwise lets square photos spill over the title) */
+        .tile-image-strip { grid-template-rows: minmax(0, 1fr); overflow: hidden; }
+        .wizard [data-show].off { display: none; }
+        @media (max-width: 600px) {
+            .status-tabs { flex-direction: column; align-items: stretch; }
+            .status-tab-group { display: flex; }
+            .status-tab-group button { flex: 1; padding: 7px 8px; }
+        }
+
         .hidden { display: none !important; }
 
         /* Media Query for Mobile & Tablet viewports */
@@ -1704,6 +1867,7 @@
             <div class="metric-widget">
                 <div class="label">Estimated Portfolio</div>
                 <div class="value" id="statTotalValue">$0.00</div>
+                <div class="trend hidden" id="statTrend"></div>
             </div>
             <div class="metric-row">
                 <div class="metric-widget small">
@@ -1733,9 +1897,16 @@
         </div>
 
         <div class="sidebar-actions">
+            <div class="backup-status" id="backupStatus"><span class="dot"></span><span id="backupStatusText">No backup yet</span></div>
             <button id="sidebarExportBtn" class="btn-secondary">Export JSON Backup</button>
             <button id="sidebarImportBtn" class="btn-secondary">Import Backup</button>
             <input type="file" id="importFileInput" class="hidden" accept=".json">
+            <div class="export-more">
+                <span>Download</span>
+                <button type="button" class="link-btn" id="exportCsvBtn">CSV</button>
+                <span aria-hidden="true">&middot;</span>
+                <button type="button" class="link-btn" id="exportInventoryBtn">Inventory PDF</button>
+            </div>
         </div>
     </aside>
 
@@ -1795,11 +1966,17 @@
             </div>
         </header>
 
+        <!-- Backup reminder (only shown when a backup is due) -->
+        <div class="backup-nudge hidden" id="backupNudge" role="status"></div>
+
         <!-- Active collection header -->
         <section class="collection-hero" id="collectionHero"></section>
 
         <!-- Sponsor banner (filled from sponsors.js; see that file to change sponsors) -->
         <aside class="sponsor-banner hidden" id="sponsorBanner" aria-label="Sponsor"></aside>
+
+        <!-- Owned / wishlist / sold tabs (shown once a coin is wishlisted or sold) -->
+        <div class="status-tabs hidden" id="statusTabs"></div>
 
         <!-- Dynamic Grid View -->
         <section class="inventory-grid" id="coinGridContainer"></section>
@@ -1813,6 +1990,8 @@
                 <a href="#" id="footerFaqLink">FAQ</a>
                 <span>&bull;</span>
                 <a href="sponsors.html">Sponsors</a>
+                <span class="hidden" id="installSep">&bull;</span>
+                <a href="#" class="hidden" id="installAppLink">Install app</a>
             </div>
         </footer>
     </main>
@@ -1933,7 +2112,23 @@
             </details>
             <details class="faq-item">
                 <summary class="faq-question">How do I backup my collection?</summary>
-                <div class="faq-answer">Click the <strong>Export</strong> button at the top to download a single backup file containing all your coin records and images.</div>
+                <div class="faq-answer">Click <strong>Export JSON Backup</strong> in the side menu to download a single backup file containing all your coin records and images. The side menu shows when you last backed up, and CoinTrack reminds you when a new backup is due.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">Can I install CoinTrack like an app?</summary>
+                <div class="faq-answer">Yes. On iPhone or iPad, open cointrack.io in Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. On Android or in Chrome and Edge on a computer, use <strong>Install app</strong> at the bottom of the page or the install icon in the address bar. Once installed it opens in its own window and works without an internet connection.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">How do I verify a graded coin?</summary>
+                <div class="faq-answer">Add the <strong>cert number</strong> from the slab label when you add or edit a coin. For PCGS and NGC coins, the coin's details then show a <strong>Verify</strong> link that opens the grading service's certificate lookup. NGC's lookup also needs the numeric grade, e.g. MS-63.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">What are the Wishlist and Sold lists?</summary>
+                <div class="faq-answer">When adding or editing a coin, choose whether it's <strong>in your collection</strong>, <strong>on your wishlist</strong> or <strong>sold</strong>. Wishlist coins track a target price; sold coins keep what you paid and what you sold for, so you can see your realized gain. Only coins in your collection count toward the totals in the side panel.</div>
+            </details>
+            <details class="faq-item">
+                <summary class="faq-question">How do I give my collection to an insurer or open it in a spreadsheet?</summary>
+                <div class="faq-answer">At the bottom of the side menu, <strong>Download CSV</strong> opens in Excel, Numbers or Google Sheets, and <strong>Inventory PDF</strong> creates a printable list with photos, grades, cert numbers and values. Both cover the collection you have selected, or everything when All coins is selected.</div>
             </details>
         </div>
     </div>
@@ -1960,6 +2155,15 @@
             <!-- Step 1: The coin -->
             <section class="wizard-step active" data-title="What coin is it?">
                 <div class="form-grid">
+                    <div class="form-field full">
+                        <label>This coin is</label>
+                        <div class="chip-group" id="statusChips">
+                            <button type="button" data-value="owned">In my collection</button>
+                            <button type="button" data-value="wishlist">On my wishlist</button>
+                            <button type="button" data-value="sold">Sold</button>
+                        </div>
+                        <input type="hidden" id="inputStatus" value="owned">
+                    </div>
                     <div class="form-field full">
                         <label for="inputName">Coin name</label>
                         <div class="suggest-wrap">
@@ -2014,26 +2218,39 @@
                         <label for="inputGrade">Grade / condition</label>
                         <input type="text" id="inputGrade" placeholder="e.g. MS-63">
                     </div>
+                    <div class="form-field full" id="certField">
+                        <label for="inputCert">Cert number <span class="opt">optional</span></label>
+                        <input type="text" id="inputCert" inputmode="numeric" autocomplete="off" placeholder="Printed on the slab label">
+                        <span class="field-hint" id="certHint">Adds a Verify link to the grading service's certificate lookup.</span>
+                    </div>
                 </div>
             </section>
 
             <!-- Step 3: Value -->
-            <section class="wizard-step" data-title="What's it worth?">
+            <section class="wizard-step" data-title="What's it worth?" id="valueStep">
                 <div class="form-grid">
-                    <div class="form-field">
+                    <div class="form-field" data-show="owned sold">
                         <label for="inputPaid">Price paid ($)</label>
                         <input type="text" inputmode="decimal" id="inputPaid" placeholder="0.00">
                     </div>
-                    <div class="form-field">
-                        <label for="inputValue">Est. value ($)</label>
+                    <div class="form-field" data-show="owned wishlist">
+                        <label for="inputValue" id="labelValue">Est. value ($)</label>
                         <input type="text" inputmode="decimal" id="inputValue" placeholder="0.00">
                     </div>
-                    <div class="form-field full">
+                    <div class="form-field" data-show="sold">
+                        <label for="inputSoldPrice">Sold for ($)</label>
+                        <input type="text" inputmode="decimal" id="inputSoldPrice" placeholder="0.00">
+                    </div>
+                    <div class="form-field full" data-show="owned sold">
                         <label for="inputDate">Date acquired</label>
                         <input type="date" id="inputDate">
                     </div>
+                    <div class="form-field full" data-show="sold">
+                        <label for="inputSoldDate">Date sold</label>
+                        <input type="date" id="inputSoldDate">
+                    </div>
                     <div class="form-field full">
-                        <label for="inputSource">Bought from</label>
+                        <label for="inputSource" id="labelSource">Bought from</label>
                         <input type="text" id="inputSource" placeholder="e.g. Heritage Auctions">
                     </div>
                 </div>
@@ -2096,6 +2313,8 @@
         
         <div class="view-details-grid" id="viewDetailsGrid"></div>
 
+        <div class="value-history" id="viewValueHistory"></div>
+
         <div style="margin-bottom: 20px;">
             <label style="display:block; font-size:0.68rem; color:var(--text-subtle); text-transform:uppercase; font-weight:700; margin-bottom:6px;">Notes &amp; Varieties</label>
             <p id="viewCoinNotes" style="background:var(--bg-elevated); padding:14px; border-radius:var(--radius-sm); border:1px solid var(--border-color); font-size:0.875rem; color:var(--text-muted); margin:0;"></p>
@@ -2145,6 +2364,42 @@
 </div>
 
 <script src="sponsors.js"></script>
+<script>
+    // ----- Installable app: offline support + "Install app" link -----
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    }
+    (function () {
+        let installPrompt = null;
+        const standalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        const setVisible = (on) => {
+            ['installAppLink', 'installSep'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('hidden', !on);
+            });
+        };
+        // Chrome, Edge and Android offer an install prompt we can trigger from the link
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            installPrompt = e;
+            if (!standalone()) setVisible(true);
+        });
+        window.addEventListener('appinstalled', () => { installPrompt = null; setVisible(false); });
+        document.addEventListener('DOMContentLoaded', () => {
+            const link = document.getElementById('installAppLink');
+            if (!link) return;
+            if (installPrompt && !standalone()) setVisible(true);
+            link.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (!installPrompt) return;
+                installPrompt.prompt();
+                try { await installPrompt.userChoice; } catch (err) {}
+                installPrompt = null;
+                setVisible(false);
+            });
+        });
+    })();
+</script>
 <script>
         // ----- Sponsor banner -----
         // Sponsors are listed in sponsors.js (shared with sponsors.html).
@@ -2265,7 +2520,90 @@
 
         const getCollection = id => collections.find(c => c.id === id);
         const coinsIn = id => id === 'all' ? coinInventory : coinInventory.filter(c => c.collectionId === id);
-        const highlightCoinOf = col => col && coinInventory.find(c => c.id === col.highlightCoinId && c.collectionId === col.id);
+
+        // Each coin is in the collection (default), on the wishlist, or sold.
+        // Only coins in the collection count toward holdings, value and highlights.
+        const statusOf = c => (c.status === 'sold' || c.status === 'wishlist') ? c.status : 'owned';
+        const isOwned = c => statusOf(c) === 'owned';
+        const ownedIn = id => coinsIn(id).filter(isOwned);
+        let activeStatus = 'owned';
+        try { activeStatus = localStorage.getItem('cointrack_status_tab') || 'owned'; } catch (e) {}
+
+        const highlightCoinOf = col => col && coinInventory.find(c => c.id === col.highlightCoinId && c.collectionId === col.id && isOwned(c));
+
+        // Certificate lookup on the grading service's site (PCGS by cert; NGC also needs the numeric grade)
+        function certLookupUrl(c) {
+            const cert = String(c.cert || '').replace(/\s+/g, '');
+            if (!cert) return '';
+            if (c.gradingCompany === 'PCGS') return `https://www.pcgs.com/cert/${encodeURIComponent(cert)}`;
+            if (c.gradingCompany === 'NGC') {
+                const g = String(c.grade || '').match(/(\d{1,2})/);
+                return g ? `https://www.ngccoin.com/certlookup/${encodeURIComponent(cert)}/${g[1]}/` : 'https://www.ngccoin.com/certlookup/';
+            }
+            return '';
+        }
+
+        // ----- Value history -----
+        // Each coin keeps [{ date: 'YYYY-MM-DD', value }]; a point is added whenever its estimated value changes.
+        function addedDateOf(c) {
+            const n = Number(c.id);
+            return toIsoDate(n > 946684800000 && n < Date.now() + 864e5 ? new Date(n) : new Date());
+        }
+        // Stored history, or (for coins saved before history existed) the current value as first recorded
+        function valueHistoryOf(c) {
+            if (Array.isArray(c.valueHistory) && c.valueHistory.length) {
+                return c.valueHistory.filter(p => p && /^\d{4}-\d{2}-\d{2}$/.test(p.date) && Number(p.value) > 0)
+                    .slice().sort((a, b) => a.date.localeCompare(b.date));
+            }
+            return Number(c.value) > 0 ? [{ date: addedDateOf(c), value: Number(c.value) }] : [];
+        }
+        function nextValueHistory(previous, value) {
+            // A wishlist coin's "value" is a target price, so history starts fresh once it's owned
+            const history = previous && isOwned(previous) ? valueHistoryOf(previous) : [];
+            if (!(value > 0)) return history;
+            const today = toIsoDate(new Date());
+            const last = history[history.length - 1];
+            if (last && Number(last.value) === value) return history;
+            if (last && last.date === today) history[history.length - 1] = { date: today, value };
+            else history.push({ date: today, value });
+            return history;
+        }
+        // Total value of a set of coins on each date anything changed (coins count from when they were added)
+        function portfolioSeries(coins) {
+            const worth = c => parseFloat(c.value) || parseFloat(c.paidPrice) || 0;
+            const tracks = coins.map(c => {
+                const h = valueHistoryOf(c);
+                return h.length ? h : (worth(c) ? [{ date: addedDateOf(c), value: worth(c) }] : []);
+            }).filter(t => t.length);
+            const dates = [...new Set(tracks.flatMap(t => t.map(p => p.date)))].sort();
+            return dates.map(d => ({
+                date: d,
+                value: tracks.reduce((sum, t) => {
+                    let v = 0;
+                    for (const p of t) { if (p.date <= d) v = Number(p.value); else break; }
+                    return sum + v;
+                }, 0)
+            }));
+        }
+        let sparkId = 0;
+        // Step line: a value holds until the next time it changes
+        function sparklineSvg(points, h = 64) {
+            const W = 300, pad = 4;
+            const xs = points.map(p => new Date(p.date + 'T00:00:00').getTime());
+            const ys = points.map(p => Number(p.value));
+            const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+            const X = t => (x1 === x0 ? W / 2 : ((t - x0) / (x1 - x0)) * W).toFixed(1);
+            const Y = v => (y1 === y0 ? h / 2 : pad + (1 - (v - y0) / (y1 - y0)) * (h - pad * 2)).toFixed(1);
+            let line = `M${X(xs[0])},${Y(ys[0])}`;
+            for (let i = 1; i < xs.length; i++) line += ` L${X(xs[i])},${Y(ys[i - 1])} L${X(xs[i])},${Y(ys[i])}`;
+            const area = `${line} L${X(xs[xs.length - 1])},${h} L${X(xs[0])},${h} Z`;
+            const id = 'spark' + (++sparkId);
+            return `<svg class="sparkline" viewBox="0 0 ${W} ${h}" preserveAspectRatio="none" aria-hidden="true">
+                <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.35"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></linearGradient></defs>
+                <path d="${area}" fill="url(#${id})"/>
+                <path d="${line}" fill="none" stroke="#f59e0b" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+            </svg>`;
+        }
 
         async function loadCollection() {
             let legacy = null;
@@ -2425,7 +2763,8 @@
         let wizardMax = 0;
 
         function stepFields(n) {
-            return [...wizardSteps[n].querySelectorAll('input:not([type="hidden"]):not([type="file"]), textarea')];
+            return [...wizardSteps[n].querySelectorAll('input:not([type="hidden"]):not([type="file"]), textarea')]
+                .filter(f => !f.closest('.hidden, .off'));
         }
 
         function stepIsValid(n) {
@@ -2469,7 +2808,31 @@
 
         function syncGradeChips() {
             gradeChips.forEach(chip => chip.classList.toggle('active', chip.dataset.value === gradeSelect.value));
+            // Cert numbers only apply to slabbed coins
+            document.getElementById('certField').classList.toggle('hidden', !gradeSelect.value);
+            const service = gradeSelect.value;
+            document.getElementById('certHint').textContent = service === 'PCGS' || service === 'NGC'
+                ? `Adds a Verify link to ${service}'s certificate lookup.`
+                : 'Saved with the coin. Verify links are available for PCGS and NGC.';
         }
+
+        const statusInput = document.getElementById('inputStatus');
+        const statusChips = [...document.querySelectorAll('#statusChips button')];
+        const VALUE_STEP_TITLES = { owned: "What's it worth?", wishlist: "What's your budget?", sold: 'What did it sell for?' };
+        function setCoinStatus(status) {
+            status = ['owned', 'wishlist', 'sold'].includes(status) ? status : 'owned';
+            statusInput.value = status;
+            statusChips.forEach(chip => chip.classList.toggle('active', chip.dataset.value === status));
+            document.querySelectorAll('#valueStep [data-show]').forEach(el => el.classList.toggle('off', !el.dataset.show.split(' ').includes(status)));
+            document.getElementById('labelValue').textContent = status === 'wishlist' ? 'Target price ($)' : 'Est. value ($)';
+            document.getElementById('inputValue').closest('.form-field').classList.toggle('full', status === 'wishlist');
+            document.getElementById('labelSource').textContent = status === 'wishlist' ? 'Where to buy it' : 'Bought from';
+            document.getElementById('inputSource').placeholder = status === 'wishlist' ? 'e.g. a dealer or coin show' : 'e.g. Heritage Auctions';
+            document.getElementById('valueStep').dataset.title = VALUE_STEP_TITLES[status];
+            if (wizardSteps[wizardStep] && wizardSteps[wizardStep].id === 'valueStep') document.getElementById('wizardStepTitle').textContent = VALUE_STEP_TITLES[status];
+            updateWizardButtons();
+        }
+        statusChips.forEach(chip => chip.addEventListener('click', () => setCoinStatus(chip.dataset.value)));
 
         gradeChips.forEach(chip => chip.addEventListener('click', () => {
             gradeSelect.value = chip.dataset.value;
@@ -2620,6 +2983,7 @@
 
         setupCurrencyInput(document.getElementById('inputPaid'));
         setupCurrencyInput(document.getElementById('inputValue'));
+        setupCurrencyInput(document.getElementById('inputSoldPrice'));
 
         const inputCollection = document.getElementById('inputCollection');
         function fillCollectionSelect(selectedId) {
@@ -2632,6 +2996,8 @@
             document.getElementById('recordId').value = '';
             document.getElementById('modalHeading').innerText = 'New coin';
             fillCollectionSelect(activeCollectionId);
+            // Adding from the Wishlist tab starts a wishlist coin
+            setCoinStatus(activeStatus === 'wishlist' ? 'wishlist' : 'owned');
             clearAllPreviews();
             toggleModal(true);
         };
@@ -2773,11 +3139,18 @@
                 purchaseDate: document.getElementById('inputDate').value,
                 source: document.getElementById('inputSource').value.trim(),
                 notes: document.getElementById('inputNotes').value.trim(),
+                cert: document.getElementById('inputCert').value.trim(),
+                status: statusInput.value || 'owned',
+                soldPrice: parseFloat(document.getElementById('inputSoldPrice').value) || 0,
+                soldDate: document.getElementById('inputSoldDate').value,
                 collectionId: getCollection(inputCollection.value) ? inputCollection.value : (targetExisting ? targetExisting.collectionId : collections[0].id),
                 frontPhoto: document.getElementById('dataFront').value || (targetExisting ? (targetExisting.frontPhoto || targetExisting.photo) : ''),
                 backPhoto: document.getElementById('dataBack').value || (targetExisting ? targetExisting.backPhoto : ''),
                 receiptPhoto: document.getElementById('dataReceipt').value || (targetExisting ? targetExisting.receiptPhoto : '')
             };
+            record.valueHistory = record.status === 'owned'
+                ? nextValueHistory(targetExisting, record.value)
+                : (targetExisting && isOwned(targetExisting) ? valueHistoryOf(targetExisting) : (targetExisting && targetExisting.valueHistory) || []);
 
             if (idVal) {
                 const idx = coinInventory.findIndex(c => c.id === record.id);
@@ -2817,6 +3190,7 @@
                 alert('Could not save: your browser\'s storage for CoinTrack is full. Export a backup, then remove some photos or coins and try again.');
                 return false;
             }
+            noteDataChange();
             renderInterface();
             return true;
         }
@@ -2875,8 +3249,8 @@
                 </button>`;
             const sorted = [...collections].sort((a, b) => a.name.localeCompare(b.name));
             document.getElementById('collectionList').innerHTML =
-                link('all', 'All coins', coinInventory.length) +
-                sorted.map(c => link(c.id, c.name, coinsIn(c.id).length)).join('') +
+                link('all', 'All coins', coinInventory.filter(isOwned).length) +
+                sorted.map(c => link(c.id, c.name, ownedIn(c.id).length)).join('') +
                 '<button type="button" class="collection-link add" id="newCollectionBtn">+ New collection</button>';
         }
 
@@ -2896,6 +3270,13 @@
             gainEl.innerText = (gain > 0 ? '+' : '') + money(gain);
             gainEl.classList.toggle('pos', gain > 0);
             gainEl.classList.toggle('neg', gain < 0);
+
+            // Value over time (needs at least two dates to draw)
+            const series = portfolioSeries(scope);
+            const trendEl = document.getElementById('statTrend');
+            trendEl.classList.toggle('hidden', series.length < 2);
+            trendEl.innerHTML = series.length < 2 ? '' :
+                sparklineSvg(series, 34) + `<div class="trend-label">Value over time · since ${escapeHTML(formatDateLabel(series[0].date))}</div>`;
 
             const top = scope.reduce((best, c) => (worth(c) > (best ? worth(best) : 0) ? c : best), null);
             document.getElementById('statTopValue').innerText = top ? money(worth(top)) : '—';
@@ -2961,15 +3342,108 @@
             if (heroFeature) heroFeature.addEventListener('click', () => viewCoin(feature.id));
         }
 
+        function renderStatusTabs(scopeAll) {
+            const counts = { owned: 0, wishlist: 0, sold: 0 };
+            scopeAll.forEach(c => { counts[statusOf(c)]++; });
+            if (!(activeStatus in counts) || (activeStatus !== 'owned' && !counts[activeStatus])) activeStatus = 'owned';
+            const el = document.getElementById('statusTabs');
+            const show = counts.wishlist > 0 || counts.sold > 0;
+            el.classList.toggle('hidden', !show);
+            if (!show) { el.innerHTML = ''; return; }
+            const tab = (key, label) => `<button type="button" data-status="${key}" class="${activeStatus === key ? 'active' : ''}" aria-pressed="${activeStatus === key}">${label}<span>${counts[key]}</span></button>`;
+            const list = scopeAll.filter(c => statusOf(c) === activeStatus);
+            const num = v => parseFloat(v) || 0;
+            let summary = '';
+            if (activeStatus === 'sold') {
+                const soldFor = list.reduce((sum, c) => sum + num(c.soldPrice), 0);
+                const both = list.filter(c => num(c.soldPrice) && num(c.paidPrice));
+                const realized = both.reduce((sum, c) => sum + num(c.soldPrice) - num(c.paidPrice), 0);
+                summary = `Sold for <b>${formatMoney(soldFor)}</b>` + (both.length
+                    ? ` &middot; Realized <b class="${realized > 0 ? 'pos' : realized < 0 ? 'neg' : ''}">${realized > 0 ? '+' : realized < 0 ? '&minus;' : ''}${formatMoney(Math.abs(realized))}</b>`
+                    : '');
+            } else if (activeStatus === 'wishlist') {
+                const target = list.reduce((sum, c) => sum + num(c.value), 0);
+                summary = target ? `Target total <b>${formatMoney(target)}</b>` : '';
+            }
+            el.innerHTML = `<div class="status-tab-group" role="group" aria-label="Show coins">${tab('owned', 'Collection')}${tab('wishlist', 'Wishlist')}${tab('sold', 'Sold')}</div>` +
+                (summary ? `<div class="status-summary">${summary}</div>` : '');
+        }
+        document.getElementById('statusTabs').addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-status]');
+            if (!btn) return;
+            activeStatus = btn.dataset.status;
+            try { localStorage.setItem('cointrack_status_tab', activeStatus); } catch (err) {}
+            renderInterface();
+        });
+
+        // ----- Backup reminder -----
+        // Tracks when the last backup was downloaded and how many changes were saved since.
+        const BACKUP_KEY = 'cointrack_backup';
+        function readBackupState() {
+            try { return JSON.parse(localStorage.getItem(BACKUP_KEY)) || {}; } catch (e) { return {}; }
+        }
+        function writeBackupState(state) {
+            try { localStorage.setItem(BACKUP_KEY, JSON.stringify(state)); } catch (e) {}
+        }
+        function noteDataChange() {
+            const state = readBackupState();
+            state.changes = (state.changes || 0) + 1;
+            writeBackupState(state);
+        }
+        function noteBackupDone() {
+            writeBackupState({ ...readBackupState(), at: Date.now(), changes: 0, snoozeUntil: 0 });
+        }
+        function renderBackupStatus() {
+            const state = readBackupState();
+            const total = coinInventory.length;
+            const changes = state.changes || 0;
+            const days = state.at ? Math.floor((Date.now() - state.at) / 864e5) : null;
+            const ago = days === null ? '' : days < 1 ? 'today' : days === 1 ? 'yesterday' : `${days} days ago`;
+            const due = state.at ? ((days >= 30 && changes > 0) || changes >= 15) : total >= 3;
+            const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+            document.getElementById('backupStatus').className = 'backup-status' + (!state.at ? (total ? ' never' : '') : due ? ' due' : '');
+            document.getElementById('backupStatusText').textContent = !state.at
+                ? (total ? 'No backup yet' : 'Nothing to back up yet')
+                : `Last backup ${ago}${changes ? ` · ${plural(changes, 'change')} since` : ''}`;
+
+            const nudge = document.getElementById('backupNudge');
+            const show = due && total > 0 && !(state.snoozeUntil > Date.now());
+            nudge.classList.toggle('hidden', !show);
+            if (!show) { nudge.innerHTML = ''; return; }
+            const title = state.at ? 'Time for a backup' : 'Back up your collection';
+            const body = state.at
+                ? `Your last backup was ${ago}, and you've made ${plural(changes, 'change')} since.`
+                : `Your ${plural(total, 'coin')} ${total === 1 ? 'is' : 'are'} only saved in this browser. Download a backup file so clearing browser data can't erase them.`;
+            nudge.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="M12 8v6"/><path d="m9 11 3 3 3-3"/></svg>
+                <div class="backup-nudge-text"><strong>${title}</strong>${body}</div>
+                <div class="backup-nudge-actions">
+                    <button type="button" class="btn-secondary" data-backup="later">Later</button>
+                    <button type="button" data-backup="now">Back up now</button>
+                </div>`;
+        }
+        document.getElementById('backupNudge').addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-backup]');
+            if (!btn) return;
+            if (btn.dataset.backup === 'now') exportBackup();
+            else writeBackupState({ ...readBackupState(), snoozeUntil: Date.now() + 7 * 864e5 });
+            renderBackupStatus();
+        });
+
         function renderInterface() {
             const query = searchInput.value.toLowerCase();
             const filterService = gradeServiceFilter.value;
             const activeCol = getCollection(activeCollectionId) || null;
             if (!activeCol) activeCollectionId = 'all';
-            const scope = coinsIn(activeCollectionId);
+            const scopeAll = coinsIn(activeCollectionId);
+            const owned = scopeAll.filter(isOwned);
             renderCollectionNav();
-            renderSidebarStats(scope, activeCol);
-            renderCollectionHero(scope, activeCol);
+            renderSidebarStats(owned, activeCol);
+            renderCollectionHero(owned, activeCol);
+            renderBackupStatus();
+            renderStatusTabs(scopeAll);
+            const scope = scopeAll.filter(c => statusOf(c) === activeStatus);
             searchInput.placeholder = activeCol ? `Search ${activeCol.name}...` : 'Search collection...';
             refreshCoinTypeOptions(scope);
             const filterType = coinTypeFilter.value;
@@ -3002,7 +3476,7 @@
                 coinGridContainer.innerHTML = `
                     <div class="empty-display">
                         <div style="font-size: 2.5rem;">🪙</div>
-                        <h3>${emptyCollection ? (activeCol ? 'No coins in this collection yet' : 'No coins yet') : 'No matching coins'}</h3>
+                        <h3>${emptyCollection ? (activeStatus === 'wishlist' ? 'Your wishlist is empty' : activeStatus === 'sold' ? 'No sold coins' : activeCol ? 'No coins in this collection yet' : 'No coins yet') : 'No matching coins'}</h3>
                         <p>${emptyCollection ? 'Add your first coin and it will be filed here.' : 'Adjust your search criteria or add new items to your portfolio ledger.'}</p>
                         ${emptyCollection ? '<button type="button" id="emptyAddCoinBtn"><span>+</span> Add a coin</button>' : ''}
                     </div>`;
@@ -3016,28 +3490,37 @@
                 const backImg = c.backPhoto || '';
                 const fullGradeBadge = c.gradingCompany && c.grade ? `${c.gradingCompany} ${c.grade}` : (c.gradingCompany || c.grade || '');
                 const col = getCollection(c.collectionId);
-                const featured = highlightCoinOf(col) === c;
+                const status = statusOf(c);
+                const featured = status === 'owned' && highlightCoinOf(col) === c;
+                const money = n => Number(n) ? '$' + Number(n).toFixed(2) : '—';
+                const financials = status === 'sold'
+                    ? `<div class="fin-item"><label>Paid</label><span>${money(c.paidPrice)}</span></div>
+                       <div class="fin-item" style="text-align: right;"><label>Sold for</label><span>${money(c.soldPrice)}</span></div>`
+                    : status === 'wishlist'
+                    ? `<div class="fin-item"><label>Target price</label><span>${money(c.value)}</span></div>`
+                    : `<div class="fin-item"><label>Paid</label><span>${money(c.paidPrice)}</span></div>
+                       <div class="fin-item" style="text-align: right;"><label>Est. Value</label><span>${money(c.value)}</span></div>`;
 
                 return `
-                <div class="coin-tile${featured ? ' featured' : ''}">
+                <div class="coin-tile${featured ? ' featured' : ''}${status === 'sold' ? ' is-sold' : ''}">
                     <div class="tile-image-strip">
                         ${frontImg ? `<img src="${frontImg}" onclick="openLightbox('${frontImg}')">` : '<div class="no-img">No Obverse</div>'}
                         ${backImg ? `<img src="${backImg}" onclick="openLightbox('${backImg}')">` : '<div class="no-img">No Reverse</div>'}
-                        <button type="button" class="highlight-btn${featured ? ' on' : ''}" onclick="toggleHighlight(${c.id})"
+                        ${status === 'owned' ? `<button type="button" class="highlight-btn${featured ? ' on' : ''}" onclick="toggleHighlight(${c.id})"
                             title="${featured ? 'Remove as highlight' : 'Make this the highlight of ' + escapeHTML(col ? col.name : 'its collection')}"
-                            aria-label="${featured ? 'Remove as collection highlight' : 'Make collection highlight'}" aria-pressed="${featured}">${featured ? '★' : '☆'}</button>
+                            aria-label="${featured ? 'Remove as collection highlight' : 'Make collection highlight'}" aria-pressed="${featured}">${featured ? '★' : '☆'}</button>` : ''}
                     </div>
                     <div class="tile-body">
                         <div class="tile-title">${escapeHTML(c.name)}</div>
                         <div class="badge-row">
+                            ${status === 'sold' ? '<span class="badge status-sold">Sold</span>' : status === 'wishlist' ? '<span class="badge status-wishlist">Wishlist</span>' : ''}
                             <span class="badge gold">${escapeHTML(c.year)} ${c.mint ? '· ' + escapeHTML(c.mint) : ''}</span>
                             ${fullGradeBadge ? `<span class="badge">${escapeHTML(fullGradeBadge)}</span>` : ''}
                             ${c.country ? `<span class="badge">${escapeHTML(c.country)}</span>` : ''}
                             ${activeCollectionId === 'all' && col ? `<span class="badge">${escapeHTML(col.name)}</span>` : ''}
                         </div>
                         <div class="tile-financials">
-                            <div class="fin-item"><label>Paid</label><span>${c.paidPrice ? '$' + Number(c.paidPrice).toFixed(2) : '—'}</span></div>
-                            <div class="fin-item" style="text-align: right;"><label>Est. Value</label><span>${c.value ? '$' + Number(c.value).toFixed(2) : '—'}</span></div>
+                            ${financials}
                         </div>
                     </div>
                     <div class="tile-actions">
@@ -3165,17 +3648,22 @@
             }
 
             // Details table
+            const status = statusOf(coin);
             const fields = [
                 ['Grading service', coin.gradingCompany || 'Raw / ungraded'],
                 ['Grade', coin.grade],
+                ['Cert number', coin.cert],
                 ['Year', coin.year],
                 ['Mint mark', coin.mint],
                 ['Country', coin.country],
-                ['Price paid', coin.paidPrice ? formatMoney(coin.paidPrice) : ''],
-                ['Estimated value', coin.value ? formatMoney(coin.value) : ''],
-                ['Gain / loss', coin.paidPrice && coin.value ? (coin.value - coin.paidPrice >= 0 ? '+' : '\u2013') + formatMoney(Math.abs(coin.value - coin.paidPrice)) : ''],
-                ['Date acquired', formatDateLabel(coin.purchaseDate)],
-                ['Bought from', coin.source]
+                ['Status', status === 'sold' ? 'Sold' : status === 'wishlist' ? 'Wishlist' : ''],
+                ['Price paid', status !== 'wishlist' && coin.paidPrice ? formatMoney(coin.paidPrice) : ''],
+                [status === 'wishlist' ? 'Target price' : 'Estimated value', status !== 'sold' && coin.value ? formatMoney(coin.value) : ''],
+                ['Gain / loss', status === 'owned' && coin.paidPrice && coin.value ? (coin.value - coin.paidPrice >= 0 ? '+' : '\u2013') + formatMoney(Math.abs(coin.value - coin.paidPrice)) : ''],
+                ['Sold for', status === 'sold' && coin.soldPrice ? formatMoney(coin.soldPrice) : ''],
+                ['Date sold', status === 'sold' ? formatDateLabel(coin.soldDate) : ''],
+                ['Date acquired', status !== 'wishlist' ? formatDateLabel(coin.purchaseDate) : ''],
+                [status === 'wishlist' ? 'Where to buy' : 'Bought from', coin.source]
             ].filter(([, v]) => v);
 
             ensureSpace(30);
@@ -3259,6 +3747,179 @@
             }
         });
 
+        // ----- Whole-collection exports (current collection, or everything under All coins) -----
+        const scopeName = () => (getCollection(activeCollectionId) || { name: 'All coins' }).name;
+        const fileSlug = str => String(str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'coins';
+
+        document.getElementById('exportCsvBtn').addEventListener('click', () => {
+            const coins = coinsIn(activeCollectionId);
+            if (!coins.length) { alert('There are no coins to export yet.'); return; }
+            const statusLabel = { owned: 'In collection', wishlist: 'Wishlist', sold: 'Sold' };
+            const money = v => Number(v) > 0 ? Number(v).toFixed(2) : '';
+            const header = ['Status', 'Collection', 'Coin', 'Year', 'Mint', 'Country', 'Grading service', 'Grade', 'Cert number', 'Cert lookup',
+                'Price paid', 'Estimated value', 'Date acquired', 'Bought from', 'Sold for', 'Date sold', 'Notes'];
+            const rows = coins.map(c => [
+                statusLabel[statusOf(c)], (getCollection(c.collectionId) || {}).name, c.name, c.year, c.mint, c.country,
+                c.gradingCompany || 'Raw', c.grade, c.cert, certLookupUrl(c),
+                money(c.paidPrice), money(c.value), c.purchaseDate, c.source, money(c.soldPrice), c.soldDate, c.notes
+            ]);
+            // Quote when needed; a leading = + - @ is neutralised so spreadsheets don't run it as a formula
+            const cell = v => {
+                let t = String(v == null ? '' : v);
+                if (/^[=+\-@]/.test(t)) t = "'" + t;
+                return /[",\r\n]/.test(t) || t.startsWith("'") ? '"' + t.replace(/"/g, '""') + '"' : t;
+            };
+            const csv = '\ufeff' + [header, ...rows].map(r => r.map(cell).join(',')).join('\r\n');
+            downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `cointrack_${fileSlug(scopeName())}_${toIsoDate(new Date())}.csv`);
+        });
+
+        // Small JPEG thumbnail so a long inventory PDF stays a reasonable size
+        function thumbnail(src, max = 160) {
+            return new Promise(resolve => {
+                if (!src) return resolve(null);
+                const img = new Image();
+                img.onload = () => {
+                    const scale = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+                    canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve({ src: canvas.toDataURL('image/jpeg', 0.8), w: canvas.width, h: canvas.height });
+                };
+                img.onerror = () => resolve(null);
+                img.src = src;
+            });
+        }
+
+        async function exportInventoryPdf() {
+            const coins = sortCoins(coinsIn(activeCollectionId).filter(isOwned), sortSelect.value);
+            if (!coins.length) { alert('There are no coins in your collection to list yet.'); return; }
+            const jsPDF = await loadJsPdf();
+            const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+            const pageW = doc.internal.pageSize.getWidth();
+            const pageH = doc.internal.pageSize.getHeight();
+            const margin = 40;
+            const contentW = pageW - margin * 2;
+            const ink = [15, 23, 42], muted = [100, 116, 139], rule = [226, 232, 240], gold = [217, 119, 6], soft = [248, 250, 252];
+            const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const worth = c => parseFloat(c.value) || 0;
+            const paidSum = coins.reduce((sum, c) => sum + (parseFloat(c.paidPrice) || 0), 0);
+            const valueSum = coins.reduce((sum, c) => sum + worth(c), 0);
+            let y = margin;
+
+            // Header
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...gold);
+            doc.text('CoinTrack.io', margin, y);
+            doc.setFont('helvetica', 'normal'); doc.setTextColor(...muted);
+            doc.text('Generated ' + today, pageW - margin, y, { align: 'right' });
+            y += 32;
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(...ink);
+            doc.text('Collection inventory', margin, y);
+            y += 18;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(11); doc.setTextColor(...muted);
+            doc.text(pdfSafe(scopeName()) + '  \u00B7  ' + coins.length + (coins.length === 1 ? ' coin' : ' coins'), margin, y);
+            y += 20;
+
+            // Summary boxes
+            const boxes = [['Coins', String(coins.length)], ['Total paid', formatMoney(paidSum)], ['Estimated value', formatMoney(valueSum)]];
+            const gap = 12, boxW = (contentW - gap * 2) / 3, boxH = 50;
+            boxes.forEach(([label, value], i) => {
+                const x = margin + i * (boxW + gap);
+                doc.setFillColor(...soft); doc.setDrawColor(...rule);
+                doc.roundedRect(x, y, boxW, boxH, 6, 6, 'FD');
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(...muted);
+                doc.text(label.toUpperCase(), x + 12, y + 17);
+                doc.setFontSize(14); doc.setTextColor(...ink);
+                doc.text(value, x + 12, y + 37);
+            });
+            y += boxH + 24;
+
+            // Table layout
+            const photoW = 40, gradeW = 112, acqW = 70, paidW = 66, valW = 72;
+            const coinX = margin + photoW + 12;
+            const coinW = contentW - (photoW + 12) - gradeW - acqW - paidW - valW;
+            const gradeX = coinX + coinW, acqX = gradeX + gradeW, paidRight = acqX + acqW + paidW, valRight = pageW - margin;
+            const rowH = 50;
+            const tableHeader = () => {
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(...muted);
+                doc.text('COIN', coinX, y);
+                doc.text('GRADE / CERT', gradeX, y);
+                doc.text('ACQUIRED', acqX, y);
+                doc.text('PAID', paidRight, y, { align: 'right' });
+                doc.text('EST. VALUE', valRight, y, { align: 'right' });
+                y += 8;
+                doc.setDrawColor(...rule); doc.setLineWidth(1); doc.line(margin, y, pageW - margin, y);
+            };
+            tableHeader();
+            const fit = (text, width) => doc.splitTextToSize(pdfSafe(text), width)[0] || '';
+
+            for (const c of coins) {
+                if (y + rowH > pageH - margin - 30) { doc.addPage(); y = margin; tableHeader(); }
+                const top = y;
+                const thumb = await thumbnail(c.frontPhoto || c.photo || c.backPhoto);
+                if (thumb) {
+                    const scale = Math.min(photoW / thumb.w, (rowH - 10) / thumb.h);
+                    const w = thumb.w * scale, h = thumb.h * scale;
+                    doc.addImage(thumb.src, 'JPEG', margin + (photoW - w) / 2, top + (rowH - h) / 2, w, h);
+                }
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...ink);
+                doc.text(fit(c.name || 'Untitled coin', coinW - 10), coinX, top + 21);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(...muted);
+                doc.text(fit([c.year, c.mint, c.country].filter(Boolean).join(' \u00B7 '), coinW - 10), coinX, top + 34);
+
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(...ink);
+                const gradeLine = c.gradingCompany ? [c.gradingCompany, c.grade].filter(Boolean).join(' ') : ['Raw', c.grade].filter(Boolean).join(' \u00B7 ');
+                doc.text(fit(gradeLine, gradeW - 8), gradeX, top + 21);
+                if (c.cert) {
+                    doc.setFontSize(8.5); doc.setTextColor(...muted);
+                    doc.text(fit('Cert ' + c.cert, gradeW - 8), gradeX, top + 34);
+                }
+                doc.setFontSize(9.5); doc.setTextColor(...ink);
+                doc.text(c.purchaseDate ? formatDateLabel(c.purchaseDate) : '\u2014', acqX, top + 21);
+                doc.text(Number(c.paidPrice) ? formatMoney(c.paidPrice) : '\u2014', paidRight, top + 21, { align: 'right' });
+                doc.setFont('helvetica', 'bold');
+                doc.text(worth(c) ? formatMoney(worth(c)) : '\u2014', valRight, top + 21, { align: 'right' });
+                y += rowH;
+                doc.setDrawColor(...rule); doc.line(margin, y, pageW - margin, y);
+            }
+
+            // Totals
+            if (y + 40 > pageH - margin - 30) { doc.addPage(); y = margin; }
+            y += 20;
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...ink);
+            doc.text('Total', coinX, y);
+            doc.text(formatMoney(paidSum), paidRight, y, { align: 'right' });
+            doc.text(formatMoney(valueSum), valRight, y, { align: 'right' });
+            y += 26;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...muted);
+            const note = 'Estimated values are the owner\'s own estimates as recorded in CoinTrack. Graded coins can be checked against the grading service\'s records using the cert numbers listed.';
+            doc.text(doc.splitTextToSize(note, contentW), margin, y);
+
+            const pages = doc.getNumberOfPages();
+            for (let i = 1; i <= pages; i++) {
+                doc.setPage(i);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...muted);
+                doc.text('CoinTrack.io inventory \u00B7 ' + pdfSafe(scopeName()) + ' \u00B7 ' + today, margin, pageH - 24);
+                doc.text(`Page ${i} of ${pages}`, pageW - margin, pageH - 24, { align: 'right' });
+            }
+            doc.save(`cointrack_inventory_${fileSlug(scopeName())}_${toIsoDate(new Date())}.pdf`);
+        }
+
+        document.getElementById('exportInventoryBtn').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            btn.disabled = true;
+            btn.textContent = 'Preparing…';
+            try {
+                await exportInventoryPdf();
+            } catch (err) {
+                console.error(err);
+                alert('Could not create the PDF. Check your internet connection and try again.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Inventory PDF';
+            }
+        });
+
         let viewedCoinId = null;
 
         window.viewCoin = (id) => {
@@ -3271,15 +3932,30 @@
 
             const fullGrade = target.gradingCompany && target.grade ? `${target.gradingCompany} - ${target.grade}` : (target.gradingCompany || target.grade || 'Raw');
 
-            document.getElementById('viewDetailsGrid').innerHTML = `
-                <div class="view-detail-item"><label>Grade / Holder</label><span>${escapeHTML(fullGrade)}</span></div>
-                <div class="view-detail-item"><label>Country</label><span>${escapeHTML(target.country || '—')}</span></div>
-                <div class="view-detail-item"><label>Purchase Price</label><span>${target.paidPrice ? '$' + Number(target.paidPrice).toFixed(2) : '—'}</span></div>
-                <div class="view-detail-item"><label>Estimated Value</label><span>${target.value ? '$' + Number(target.value).toFixed(2) : '—'}</span></div>
-                <div class="view-detail-item"><label>Acquisition Date</label><span>${escapeHTML(target.purchaseDate || '—')}</span></div>
-                <div class="view-detail-item"><label>Source / Vendor</label><span>${escapeHTML(target.source || '—')}</span></div>
-                <div class="view-detail-item"><label>Collection</label><span>${escapeHTML((getCollection(target.collectionId) || {}).name || '—')}${highlightCoinOf(getCollection(target.collectionId)) === target ? ' · ★ Highlight' : ''}</span></div>
-            `;
+            const status = statusOf(target);
+            const money = n => Number(n) ? '$' + Number(n).toFixed(2) : '—';
+            const item = (label, html) => `<div class="view-detail-item"><label>${label}</label><span>${html}</span></div>`;
+            const verifyUrl = certLookupUrl(target);
+            const certHtml = target.cert
+                ? escapeHTML(target.cert) + (verifyUrl ? `<a class="verify-link" href="${escapeHTML(verifyUrl)}" target="_blank" rel="noopener">Verify on ${escapeHTML(target.gradingCompany)}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>` : '')
+                : '';
+            const statusLabel = { owned: 'In collection', wishlist: 'Wishlist', sold: 'Sold' }[status];
+            document.getElementById('viewDetailsGrid').innerHTML = [
+                item('Grade / Holder', escapeHTML(fullGrade)),
+                target.cert ? item('Cert Number', certHtml) : '',
+                item('Country', escapeHTML(target.country || '—')),
+                status !== 'owned' ? item('Status', statusLabel) : '',
+                status === 'wishlist'
+                    ? item('Target Price', money(target.value))
+                    : item('Purchase Price', money(target.paidPrice)),
+                status === 'owned' ? item('Estimated Value', money(target.value)) : '',
+                status === 'sold' ? item('Sold For', money(target.soldPrice)) : '',
+                status === 'sold' ? item('Date Sold', escapeHTML(target.soldDate ? formatDateLabel(target.soldDate) : '—')) : '',
+                status !== 'wishlist' ? item('Acquisition Date', escapeHTML(target.purchaseDate ? formatDateLabel(target.purchaseDate) : '—')) : '',
+                item(status === 'wishlist' ? 'Where to Buy' : 'Source / Vendor', escapeHTML(target.source || '—')),
+                item('Collection', escapeHTML((getCollection(target.collectionId) || {}).name || '—') + (highlightCoinOf(getCollection(target.collectionId)) === target ? ' · ★ Highlight' : ''))
+            ].join('');
+            renderValueHistory(target);
 
             document.getElementById('viewCoinNotes').innerText = target.notes || 'No notes added.';
 
@@ -3305,6 +3981,32 @@
             toggleViewModal(true);
         };
 
+        function renderValueHistory(coin) {
+            const el = document.getElementById('viewValueHistory');
+            const points = statusOf(coin) === 'wishlist' ? [] : valueHistoryOf(coin);
+            if (!points.length) { el.innerHTML = ''; return; }
+            if (points.length < 2) {
+                el.innerHTML = `
+                    <div class="vh-head"><label>Value history</label></div>
+                    <p class="vh-empty">Valued at <strong>${formatMoney(points[0].value)}</strong> since ${escapeHTML(formatDateLabel(points[0].date))}. Each time you update the estimated value, it's added here so you can see the trend.</p>`;
+                return;
+            }
+            const first = points[0], last = points[points.length - 1];
+            const diff = last.value - first.value;
+            const pct = first.value ? (diff / first.value) * 100 : 0;
+            const cls = diff > 0 ? 'pos' : diff < 0 ? 'neg' : '';
+            const sign = diff > 0 ? '+' : diff < 0 ? '−' : '';
+            el.innerHTML = `
+                <div class="vh-head">
+                    <label>Value history</label>
+                    <span class="vh-change ${cls}">${sign}${formatMoney(Math.abs(diff))} (${sign}${Math.abs(pct).toFixed(1)}%) <small>since ${escapeHTML(formatDateLabel(first.date))}</small></span>
+                </div>
+                ${sparklineSvg(points)}
+                <ul class="vh-list">
+                    ${points.slice(-5).reverse().map(p => `<li><span>${escapeHTML(formatDateLabel(p.date))}</span><span>${formatMoney(p.value)}</span></li>`).join('')}
+                </ul>`;
+        }
+
         window.editCoin = (id) => {
             const target = coinInventory.find(c => c.id === id);
             if (!target) return;
@@ -3320,6 +4022,10 @@
             document.getElementById('inputDate').value = target.purchaseDate || '';
             document.getElementById('inputSource').value = target.source || '';
             document.getElementById('inputNotes').value = target.notes || '';
+            document.getElementById('inputCert').value = target.cert || '';
+            document.getElementById('inputSoldPrice').value = target.soldPrice ? Number(target.soldPrice).toFixed(2) : '';
+            document.getElementById('inputSoldDate').value = target.soldDate || '';
+            setCoinStatus(statusOf(target));
             fillCollectionSelect(target.collectionId);
 
             clearAllPreviews();
@@ -3346,7 +4052,7 @@
 
         window.toggleHighlight = async (id) => {
             const coin = coinInventory.find(c => c.id === id);
-            const col = coin && getCollection(coin.collectionId);
+            const col = coin && isOwned(coin) && getCollection(coin.collectionId);
             if (!col) return;
             const previous = col.highlightCoinId;
             col.highlightCoinId = previous === id ? null : id;
@@ -3384,7 +4090,7 @@
             document.getElementById('collectionName').value = col ? col.name : '';
             document.getElementById('collectionDesc').value = col ? (col.description || '') : '';
             document.getElementById('collectionStarted').value = col ? (col.startedAt || '') : toIsoDate(new Date());
-            const members = col ? coinsIn(col.id) : [];
+            const members = col ? ownedIn(col.id) : [];
             collectionHighlight.innerHTML = '<option value="">None</option>' +
                 members.map(c => `<option value="${c.id}">${escapeHTML(`${c.year || ''} ${c.name || ''}`.trim())}${c.grade ? ' · ' + escapeHTML(c.grade) : ''}</option>`).join('');
             collectionHighlight.value = col && highlightCoinOf(col) ? String(col.highlightCoinId) : '';
@@ -3476,16 +4182,23 @@
         });
 
         // Backup Export / Import
-        document.getElementById('sidebarExportBtn').addEventListener('click', () => {
-            const backup = { app: 'CoinTrack', version: 2, exportedAt: new Date().toISOString(), collections, coins: coinInventory };
-            const jsonBlob = new Blob([JSON.stringify(backup, null, 2)], { type: 'text/json' });
-            const fileUrl = URL.createObjectURL(jsonBlob);
+        function downloadBlob(blob, fileName) {
+            const fileUrl = URL.createObjectURL(blob);
             const downloadLink = document.createElement('a');
             downloadLink.href = fileUrl;
-            downloadLink.download = `cointrack_ledger_${new Date().toISOString().slice(0,10)}.json`;
+            downloadLink.download = fileName;
+            document.body.appendChild(downloadLink);
             downloadLink.click();
-            URL.revokeObjectURL(fileUrl);
-        });
+            downloadLink.remove();
+            setTimeout(() => URL.revokeObjectURL(fileUrl), 1000);
+        }
+        function exportBackup() {
+            const backup = { app: 'CoinTrack', version: 2, exportedAt: new Date().toISOString(), collections, coins: coinInventory };
+            downloadBlob(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' }), `cointrack_ledger_${toIsoDate(new Date())}.json`);
+            noteBackupDone();
+            renderBackupStatus();
+        }
+        document.getElementById('sidebarExportBtn').addEventListener('click', exportBackup);
 
         document.getElementById('sidebarImportBtn').addEventListener('click', () => document.getElementById('importFileInput').click());
         document.getElementById('importFileInput').addEventListener('change', (e) => {
@@ -3507,7 +4220,12 @@
                         activeCollectionId = 'all';
                         normalizeCollections();
                         persistAndRender().then(ok => {
-                            if (ok) alert('Collection restored successfully!');
+                            if (ok) {
+                                // The collection now matches a backup file
+                                noteBackupDone();
+                                renderBackupStatus();
+                                alert('Collection restored successfully!');
+                            }
                             else { coinInventory = before.coins; collections = before.cols; activeCollectionId = before.active; renderInterface(); }
                         });
                     }
