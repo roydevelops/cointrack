@@ -1520,8 +1520,23 @@
             overflow: hidden;
             transition: var(--transition-smooth);
             margin-bottom: -4px;
+            position: relative;
         }
-        a.sponsor-banner:hover { border-color: rgba(245, 158, 11, 0.5); }
+        .sponsor-banner:has(.sponsor-hit):hover { border-color: rgba(245, 158, 11, 0.5); }
+        /* Whole banner clicks through to the sponsor; "More about" sits above it */
+        .sponsor-hit { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+        .sponsor-hit:focus-visible { outline: 2px solid var(--accent-gold); outline-offset: 2px; }
+        .sponsor-more {
+            position: relative;
+            z-index: 2;
+            align-self: flex-start;
+            margin-top: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-subtle);
+            text-decoration: none;
+        }
+        .sponsor-more:hover { color: var(--accent-gold); text-decoration: underline; }
         /* Logo panel: the whole logo is shown (contain), never cropped */
         .sponsor-logo {
             flex: 0 0 280px;
@@ -1578,7 +1593,7 @@
             white-space: nowrap;
             transition: var(--transition-smooth);
         }
-        a.sponsor-banner:hover .sponsor-cta { background: var(--accent-gold-hover); }
+        .sponsor-banner:hover .sponsor-cta { background: var(--accent-gold-hover); }
         @media (max-width: 760px) {
             .sponsor-banner { flex-direction: column; min-height: 0; }
             .sponsor-logo { flex: none; min-height: 110px; border-right: none; border-bottom: 1px solid var(--border-color); }
@@ -1783,7 +1798,7 @@
         <!-- Active collection header -->
         <section class="collection-hero" id="collectionHero"></section>
 
-        <!-- Sponsor banner (filled from SPONSOR config in the script; hidden when SPONSOR is null) -->
+        <!-- Sponsor banner (filled from sponsors.js; see that file to change sponsors) -->
         <aside class="sponsor-banner hidden" id="sponsorBanner" aria-label="Sponsor"></aside>
 
         <!-- Dynamic Grid View -->
@@ -1796,6 +1811,8 @@
                 <a href="#" id="footerGuideLink">Guide</a>
                 <span>&bull;</span>
                 <a href="#" id="footerFaqLink">FAQ</a>
+                <span>&bull;</span>
+                <a href="sponsors.html">Sponsors</a>
             </div>
         </footer>
     </main>
@@ -2127,49 +2144,46 @@
     </div>
 </div>
 
+<script src="sponsors.js"></script>
 <script>
         // ----- Sponsor banner -----
-        // Edit this to change the sponsor. Set SPONSOR = null to hide the banner.
-        // logo:   image URL (PNG/SVG/JPG). Shown in full, scaled to fit, never cropped.
-        //         Leave empty to show the sponsor name as a text wordmark instead.
-        // logoBg: background behind the logo. Use white for dark logos, a dark color
-        //         (e.g. '#0f172a') for light/white logos, or 'transparent'.
-        const SPONSOR = {
-            name: 'Your brand here',
-            tagline: 'Reach collectors who track every coin they own. Sponsor CoinTrack.',
-            cta: 'Advertise',
-            url: 'mailto:support@cointrack.io?subject=Sponsoring%20CoinTrack',
-            logo: '',
-            logoBg: ''
-        };
-
+        // Sponsors are listed in sponsors.js (shared with sponsors.html).
         (function renderSponsor() {
             const slot = document.getElementById('sponsorBanner');
-            if (!slot || !SPONSOR) return;
+            if (!slot) return;
+            const list = Array.isArray(window.COINTRACK_SPONSORS) ? window.COINTRACK_SPONSORS.filter(s => s && s.name) : [];
             const esc = v => String(v || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-            const banner = document.createElement(SPONSOR.url ? 'a' : 'div');
+            const sponsor = list.find(s => s.featured) || list[0];
+            const isHouseAd = !sponsor;
+            const s = sponsor || {
+                name: 'Your brand here',
+                tagline: 'Reach collectors who track every coin they own. Sponsor CoinTrack.',
+                cta: 'Learn more',
+                url: 'sponsors.html#become'
+            };
+            const banner = document.createElement('aside');
             banner.className = 'sponsor-banner';
             banner.id = 'sponsorBanner';
-            banner.setAttribute('aria-label', `Sponsor: ${SPONSOR.name}`);
-            if (SPONSOR.url) {
-                banner.href = SPONSOR.url;
-                if (!SPONSOR.url.startsWith('mailto:')) {
-                    banner.target = '_blank';
-                    banner.rel = 'sponsored noopener';
-                }
-            }
-            if (SPONSOR.logoBg) banner.style.setProperty('--sponsor-logo-bg', SPONSOR.logoBg);
-            const logo = SPONSOR.logo
-                ? `<span class="sponsor-logo"><img src="${esc(SPONSOR.logo)}" alt="${esc(SPONSOR.name)} logo"></span>`
-                : `<span class="sponsor-logo wordmark">${esc(SPONSOR.name)}</span>`;
+            banner.setAttribute('aria-label', isHouseAd ? 'Sponsorship' : `Sponsor: ${s.name}`);
+            if (s.logoBg) banner.style.setProperty('--sponsor-logo-bg', s.logoBg);
+            const external = s.url && /^https?:/i.test(s.url);
+            const hit = s.url
+                ? `<a class="sponsor-hit" href="${esc(s.url)}"${external ? ' target="_blank" rel="sponsored noopener"' : ''} aria-label="${esc(isHouseAd ? 'Become a CoinTrack sponsor' : `Visit ${s.name}`)}"></a>`
+                : '';
+            const more = isHouseAd ? '' : `<a class="sponsor-more" href="sponsors.html${s.id ? '#' + encodeURIComponent(s.id) : ''}">More about ${esc(s.name)} &rarr;</a>`;
+            const logo = s.logo
+                ? `<span class="sponsor-logo"><img src="${esc(s.logo)}" alt="${esc(s.name)} logo"></span>`
+                : `<span class="sponsor-logo wordmark">${esc(s.name)}</span>`;
             banner.innerHTML = `
+                ${hit}
                 ${logo}
                 <span class="sponsor-copy">
-                    <span class="sponsor-label">Sponsored</span>
-                    <span class="sponsor-name">${esc(SPONSOR.name)}</span>
-                    <span class="sponsor-tagline">${esc(SPONSOR.tagline)}</span>
+                    <span class="sponsor-label">${isHouseAd ? 'Sponsorship' : 'Sponsored'}</span>
+                    <span class="sponsor-name">${esc(s.name)}</span>
+                    <span class="sponsor-tagline">${esc(s.tagline)}</span>
+                    ${more}
                 </span>
-                ${SPONSOR.cta ? `<span class="sponsor-cta-wrap"><span class="sponsor-cta">${esc(SPONSOR.cta)} &rarr;</span></span>` : ''}`;
+                ${s.cta ? `<span class="sponsor-cta-wrap"><span class="sponsor-cta">${esc(s.cta)} &rarr;</span></span>` : ''}`;
             slot.replaceWith(banner);
         })();
 

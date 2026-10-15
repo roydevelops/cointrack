@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsors — CoinTrack.io</title>
+    <meta name="description" content="Meet the sponsors who keep CoinTrack.io free, and learn how to put your brand in front of coin collectors.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪙</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-base: #020617;
+            --bg-surface: #0f172a;
+            --bg-elevated: #1e293b;
+            --border-color: #334155;
+            --border-soft: rgba(51, 65, 85, 0.5);
+            --accent-gold: #f59e0b;
+            --accent-gold-hover: #d97706;
+            --accent-gold-soft: rgba(245, 158, 11, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-subtle: #64748b;
+            --success-green: #10b981;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background:
+                radial-gradient(ellipse 60% 40% at 50% -10%, rgba(245, 158, 11, 0.12), transparent 70%),
+                var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        a { color: inherit; }
+        .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+        /* Top bar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 24px 0;
+        }
+        .brand-cluster { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .brand-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent-gold), #b45309);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            line-height: 1;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            flex-shrink: 0;
+        }
+        .brand-cluster strong { display: block; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+        .brand-cluster small { display: block; font-size: 0.72rem; color: var(--text-muted); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 18px;
+            border-radius: var(--radius-sm);
+            font: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: var(--transition-smooth);
+            white-space: nowrap;
+        }
+        .btn-primary { background: var(--accent-gold); color: #0f172a; font-weight: 700; }
+        .btn-primary:hover { background: var(--accent-gold-hover); }
+        .btn-secondary { background: var(--bg-surface); border-color: var(--border-color); color: var(--text-main); }
+        .btn-secondary:hover { background: var(--bg-elevated); }
+
+        /* Hero */
+        .hero { padding: 48px 0 40px; text-align: center; }
+        .eyebrow {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+        .hero h1 {
+            font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            max-width: 680px;
+            margin: 0 auto 14px;
+        }
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .hero .eyebrow, .become-intro .eyebrow { font-size: 0.72rem; color: var(--accent-gold); margin-bottom: 10px; }
+
+        /* Sponsor spotlight cards */
+        .sponsor-list { display: flex; flex-direction: column; gap: 24px; }
+        .spot {
+            display: grid;
+            grid-template-columns: minmax(260px, 380px) 1fr;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            background: var(--bg-surface);
+            overflow: hidden;
+            scroll-margin-top: 24px;
+        }
+        .spot:target, .spot.is-target { border-color: var(--accent-gold); box-shadow: 0 0 0 4px var(--accent-gold-soft); }
+        .spot-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 36px;
+            min-height: 240px;
+            background: var(--sponsor-logo-bg, #ffffff);
+            border-right: 1px solid var(--border-color);
+        }
+        .spot-logo img {
+            display: block;
+            max-width: 100%;
+            max-height: 160px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+        .spot-logo.wordmark {
+            background: var(--sponsor-logo-bg, var(--bg-elevated));
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .spot-body { padding: 32px 36px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+        .spot-head .eyebrow { margin-bottom: 6px; }
+        .spot-head h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
+        .spot-tagline { font-size: 1rem; color: var(--text-muted); margin-top: 4px; }
+        .spot-meta { display: flex; flex-wrap: wrap; gap: 8px; }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+        .chip svg { width: 13px; height: 13px; }
+        .spot-about { font-size: 0.95rem; color: var(--text-muted); line-height: 1.65; }
+        .spot-about p + p { margin-top: 10px; }
+        .highlights { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+        .highlights li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.9rem; }
+        .highlights svg { flex-shrink: 0; width: 18px; height: 18px; color: var(--accent-gold); margin-top: 2px; }
+        .offer {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            border: 1px dashed rgba(245, 158, 11, 0.5);
+            background: rgba(245, 158, 11, 0.07);
+        }
+        .offer-text { flex: 1; min-width: 0; }
+        .offer-text strong { display: block; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-gold); }
+        .offer-text span { font-size: 0.9rem; color: var(--text-main); }
+        .offer-code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-base);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .offer-code:hover { border-color: var(--accent-gold); }
+        .offer-code small { font-family: 'Outfit', sans-serif; font-weight: 600; letter-spacing: 0; font-size: 0.72rem; color: var(--text-subtle); }
+        .offer-code.copied small { color: var(--success-green); }
+        .spot-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: auto; }
+        .spot-actions .host { font-size: 0.8rem; color: var(--text-subtle); }
+
+        /* Empty state */
+        .open-spot {
+            text-align: center;
+            padding: 48px 24px;
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .open-spot .badge {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 16px;
+            border-radius: 16px;
+            background: var(--accent-gold-soft);
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .open-spot .badge svg { width: 26px; height: 26px; }
+        .open-spot h2 { font-size: 1.35rem; margin-bottom: 6px; }
+        .open-spot p { color: var(--text-muted); max-width: 440px; margin: 0 auto 20px; }
+
+        /* Become a sponsor */
+        .become {
+            margin: 72px 0 0;
+            padding: 44px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.09), transparent 55%), var(--bg-surface);
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            gap: 44px;
+            scroll-margin-top: 24px;
+        }
+        .become h2 { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 12px; }
+        .become-intro p { color: var(--text-muted); margin-bottom: 22px; }
+        .become-intro .fine { font-size: 0.82rem; color: var(--text-subtle); margin-top: 14px; margin-bottom: 0; }
+        .perks { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+        .perks li { display: flex; gap: 14px; align-items: flex-start; }
+        .perk-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: var(--accent-gold-soft);
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .perk-icon svg { width: 20px; height: 20px; }
+        .perks strong { display: block; font-size: 0.98rem; margin-bottom: 2px; }
+        .perks div > span { display: block; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* Footer */
+        .site-footer {
+            margin-top: 64px;
+            padding: 24px 0 40px;
+            border-top: 1px solid var(--border-soft);
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--text-subtle);
+        }
+        .site-footer nav { display: flex; gap: 10px; }
+        .site-footer a { color: var(--text-muted); text-decoration: none; }
+        .site-footer a:hover { color: var(--accent-gold); }
+
+        @media (max-width: 860px) {
+            .spot { grid-template-columns: 1fr; }
+            .spot-logo { border-right: none; border-bottom: 1px solid var(--border-color); min-height: 180px; padding: 28px; }
+            .spot-logo img { max-height: 120px; }
+            .become { grid-template-columns: 1fr; gap: 32px; padding: 32px 28px; }
+        }
+        @media (max-width: 560px) {
+            .wrap { padding: 0 16px; }
+            .topbar .btn span { display: none; }
+            .hero { padding: 28px 0 28px; }
+            .hero p:not(.eyebrow) { font-size: 0.95rem; }
+            .spot-body { padding: 22px 20px; gap: 16px; }
+            .spot-head h2 { font-size: 1.35rem; }
+            .highlights { grid-template-columns: 1fr; }
+            .offer { flex-direction: column; align-items: stretch; text-align: left; }
+            .offer-code { justify-content: space-between; }
+            .spot-actions .btn { flex: 1; }
+            .become { padding: 26px 20px; margin-top: 48px; }
+            .become h2 { font-size: 1.45rem; }
+            .become-intro .btn { width: 100%; }
+            .site-footer { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header class="topbar">
+        <a class="brand-cluster" href="index.html">
+            <span class="brand-logo">🪙</span>
+            <span><strong>CoinTrack.io</strong><small>Numismatic Ledger</small></span>
+        </a>
+        <a class="btn btn-secondary" href="index.html">&larr; <span>Back to my collection</span></a>
+    </header>
+
+    <section class="hero">
+        <p class="eyebrow">Our sponsors</p>
+        <h1>The partners who keep CoinTrack free</h1>
+        <p>CoinTrack has no subscriptions and no fees. Our sponsors make that possible, so give them a look when you're buying your next coin.</p>
+    </section>
+
+    <main class="sponsor-list" id="sponsorList"></main>
+
+    <section class="become" id="become">
+        <div class="become-intro">
+            <p class="eyebrow">Become a sponsor</p>
+            <h2>Put your brand in front of collectors</h2>
+            <p>CoinTrack is used by people who log every coin they own: what they paid, what it's graded and what it's worth. If you sell to collectors, this is where they spend their time.</p>
+            <a class="btn btn-primary" id="becomeEmailBtn" href="mailto:support@cointrack.io?subject=Sponsoring%20CoinTrack">Email us about sponsoring &rarr;</a>
+            <p class="fine">We look for partners collectors will find useful: dealers, grading services, supplies, shows and clubs.</p>
+        </div>
+        <ul class="perks">
+            <li>
+                <span class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></span>
+                <div><strong>A banner on every collection</strong><span>Your logo, shown in full, sits right above the coin grid, the screen collectors use most.</span></div>
+            </li>
+            <li>
+                <span class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg></span>
+                <div><strong>A spotlight on this page</strong><span>Tell your story with a description, highlights and an exclusive offer code for CoinTrack users.</span></div>
+            </li>
+            <li>
+                <span class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></span>
+                <div><strong>Straight to your site</strong><span>Clicks go directly to the link you choose. Add UTM tags and track the visits in your own analytics.</span></div>
+            </li>
+            <li>
+                <span class="perk-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.2 8 9 4.6-.8 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+                <div><strong>Trusted, privacy-first placement</strong><span>CoinTrack has no accounts and no tracking. Collectors see your brand next to a tool they trust with their collection.</span></div>
+            </li>
+        </ul>
+    </section>
+
+    <footer class="site-footer">
+        <span>&copy; 2026 CoinTrack.io</span>
+        <nav>
+            <a href="index.html">My collection</a>
+            <span>&bull;</span>
+            <a href="#become">Become a sponsor</a>
+        </nav>
+    </footer>
+</div>
+
+<script src="sponsors.js"></script>
+<script>
+    (function () {
+        const list = Array.isArray(window.COINTRACK_SPONSORS) ? window.COINTRACK_SPONSORS.filter(s => s && s.name) : [];
+        const contact = window.COINTRACK_SPONSOR_CONTACT || 'support@cointrack.io';
+        const mailto = `mailto:${contact}?subject=${encodeURIComponent('Sponsoring CoinTrack')}`;
+        document.getElementById('becomeEmailBtn').href = mailto;
+
+        const esc = v => String(v || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        const slug = s => (s.id || s.name).toString().toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const host = url => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
+        const icon = {
+            check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>',
+            pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+            clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+            plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'
+        };
+
+        const root = document.getElementById('sponsorList');
+
+        if (!list.length) {
+            root.innerHTML = `
+                <div class="open-spot">
+                    <div class="badge">${icon.plus}</div>
+                    <h2>This spot is open</h2>
+                    <p>CoinTrack doesn't have a sponsor yet. Your brand could be the first one collectors see.</p>
+                    <a class="btn btn-primary" href="#become">Become our first sponsor &rarr;</a>
+                </div>`;
+            return;
+        }
+
+        // Featured sponsor first, others in the order listed
+        const ordered = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+        root.innerHTML = ordered.map(s => {
+            const external = s.url && /^https?:/i.test(s.url);
+            const linkAttrs = external ? ' target="_blank" rel="sponsored noopener"' : '';
+            const logo = s.logo
+                ? `<div class="spot-logo"><img src="${esc(s.logo)}" alt="${esc(s.name)} logo"></div>`
+                : `<div class="spot-logo wordmark">${esc(s.name)}</div>`;
+            const about = s.about
+                ? `<div class="spot-about">${String(s.about).split(/\n\s*\n/).map(p => `<p>${esc(p)}</p>`).join('')}</div>`
+                : '';
+            const highlights = Array.isArray(s.highlights) && s.highlights.length
+                ? `<ul class="highlights">${s.highlights.map(h => `<li>${icon.check}<span>${esc(h)}</span></li>`).join('')}</ul>`
+                : '';
+            const meta = [
+                s.location ? `<span class="chip">${icon.pin}${esc(s.location)}</span>` : '',
+                s.since ? `<span class="chip">${icon.clock}Sponsor since ${esc(s.since)}</span>` : ''
+            ].join('');
+            const offer = s.offer && (s.offer.code || s.offer.details)
+                ? `<div class="offer">
+                        <div class="offer-text"><strong>CoinTrack offer</strong><span>${esc(s.offer.details || 'Use this code at checkout')}</span></div>
+                        ${s.offer.code ? `<button type="button" class="offer-code" data-code="${esc(s.offer.code)}">${esc(s.offer.code)} <small>Copy</small></button>` : ''}
+                   </div>`
+                : '';
+            const actions = s.url
+                ? `<div class="spot-actions">
+                        <a class="btn btn-primary" href="${esc(s.url)}"${linkAttrs}>${esc(s.cta || 'Visit website')} &rarr;</a>
+                        ${host(s.url) ? `<span class="host">${esc(host(s.url))}</span>` : ''}
+                   </div>`
+                : '';
+            const style = s.logoBg ? ` style="--sponsor-logo-bg:${esc(s.logoBg)}"` : '';
+            return `
+                <article class="spot" id="${esc(slug(s))}"${style}>
+                    ${logo}
+                    <div class="spot-body">
+                        <div class="spot-head">
+                            <p class="eyebrow">${s.featured ? 'Featured sponsor' : 'Sponsor'}</p>
+                            <h2>${esc(s.name)}</h2>
+                            ${s.tagline ? `<p class="spot-tagline">${esc(s.tagline)}</p>` : ''}
+                        </div>
+                        ${meta ? `<div class="spot-meta">${meta}</div>` : ''}
+                        ${about}
+                        ${highlights}
+                        ${offer}
+                        ${actions}
+                    </div>
+                </article>`;
+        }).join('');
+
+        root.addEventListener('click', e => {
+            const btn = e.target.closest('.offer-code');
+            if (!btn) return;
+            const label = btn.querySelector('small');
+            const done = ok => {
+                label.textContent = ok ? 'Copied' : 'Select & copy';
+                btn.classList.toggle('copied', ok);
+                setTimeout(() => { label.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+            };
+            if (navigator.clipboard) navigator.clipboard.writeText(btn.dataset.code).then(() => done(true), () => done(false));
+            else done(false);
+        });
+
+        // Re-apply the #anchor once cards exist (links like sponsors.html#heritage-mint)
+        if (location.hash) {
+            const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+            if (el) { el.classList.add('is-target'); el.scrollIntoView(); }
+        }
+    })();
+</script>
+</body>
+</html>
