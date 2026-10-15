@@ -40,9 +40,13 @@
             --bg-surface: #0f172a;
             --bg-elevated: #1e293b;
             --border-color: #334155;
-            --accent-gold: #f59e0b;
-            --accent-gold-hover: #d97706;
-            --accent-gold-soft: rgba(245, 158, 11, 0.15);
+            --accent-gold: #60a5fa;
+            --accent-gold-hover: #3b82f6;
+            --accent-gold-soft: rgba(var(--accent-rgb), 0.15);
+            /* Accent color (Sapphire): change these together to re-theme the app */
+            --accent-rgb: 96, 165, 250;
+            --accent-deep: #1d4ed8;
+            --accent-ink: #020617;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --text-subtle: #64748b;
@@ -116,14 +120,14 @@
         .brand-logo {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, var(--accent-gold), #b45309);
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-deep));
             border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.6rem;
             line-height: 1;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
             flex-shrink: 0;
         }
 
@@ -400,7 +404,7 @@
             padding: 0 5px;
             border-radius: 9px;
             background-color: var(--accent-gold);
-            color: #020617;
+            color: var(--accent-ink);
             font-size: 0.7rem;
             font-weight: 700;
             line-height: 18px;
@@ -495,7 +499,7 @@
             justify-content: center;
             gap: 8px;
             background-color: var(--accent-gold);
-            color: #020617;
+            color: var(--accent-ink);
             border: none;
             padding: 11px 20px;
             border-radius: var(--radius-sm);
@@ -504,7 +508,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition-smooth);
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+            box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.2);
             white-space: nowrap;
         }
 
@@ -759,7 +763,8 @@
             flex-direction: column;
         }
         .guide-card .modal-close,
-        .wizard-card .modal-close {
+        .wizard-card .modal-close,
+        .collection-card .modal-close {
             top: 14px;
             right: 14px;
             width: 32px;
@@ -772,7 +777,8 @@
             z-index: 1;
         }
         .guide-card .modal-close:hover,
-        .wizard-card .modal-close:hover {
+        .wizard-card .modal-close:hover,
+        .collection-card .modal-close:hover {
             background: var(--bg-elevated);
             color: var(--text-main);
             transform: none;
@@ -781,7 +787,7 @@
         .guide-steps {
             display: grid;
             background:
-                radial-gradient(ellipse 70% 60% at 50% 0%, rgba(245, 158, 11, 0.14), transparent 70%);
+                radial-gradient(ellipse 70% 60% at 50% 0%, rgba(var(--accent-rgb), 0.14), transparent 70%);
         }
         .guide-step {
             grid-area: 1 / 1;
@@ -803,8 +809,8 @@
             height: 72px;
             margin: 0 auto 18px;
             border-radius: 20px;
-            background: linear-gradient(135deg, var(--accent-gold), #b45309);
-            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-deep));
+            box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -901,8 +907,8 @@
             align-items: flex-start;
             padding: 12px 14px;
             border-radius: var(--radius-md);
-            background: rgba(245, 158, 11, 0.07);
-            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: rgba(var(--accent-rgb), 0.07);
+            border: 1px solid rgba(var(--accent-rgb), 0.3);
             text-align: left;
         }
         .guide-notice-icon {
@@ -1361,7 +1367,7 @@
 
         .collection-link.active {
             background-color: var(--accent-gold-soft);
-            border-color: rgba(245, 158, 11, 0.35);
+            border-color: rgba(var(--accent-rgb), 0.35);
             color: var(--accent-gold);
         }
 
@@ -1412,7 +1418,7 @@
             grid-template-columns: 168px 1fr;
             gap: 24px;
             align-items: center;
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), transparent 60%), var(--bg-surface);
+            background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08), transparent 60%), var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             padding: 22px;
@@ -1526,14 +1532,20 @@
         .highlight-btn.on {
             background: var(--accent-gold);
             border-color: var(--accent-gold);
-            color: #020617;
+            color: var(--accent-ink);
         }
 
-        .coin-tile.featured { border-color: rgba(245, 158, 11, 0.6); }
+        .coin-tile.featured { border-color: rgba(var(--accent-rgb), 0.6); }
 
         .empty-display button { margin-top: 18px; }
 
         .modal-card.collection-card { max-width: 520px; }
+        /* Safari sizes a select or date box to its longest option/value; minmax(0, 1fr) keeps both
+           columns inside the card instead of stretching the grid past its edge */
+        .collection-card .form-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+        .collection-card .form-field { min-width: 0; }
+        .collection-card input, .collection-card select, .collection-card textarea { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
+        .collection-card .opt { font-weight: 400; color: var(--text-subtle); text-transform: none; margin-left: 2px; }
         .collection-card h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 20px; padding-right: 40px; }
         .collection-card textarea { resize: vertical; }
         .collection-card .form-actions { display: flex; gap: 10px; }
@@ -1553,7 +1565,7 @@
             align-items: stretch;
             min-height: 112px;
             border-radius: var(--radius-md);
-            background: linear-gradient(90deg, rgba(245, 158, 11, 0.06), transparent 55%), var(--bg-surface);
+            background: linear-gradient(90deg, rgba(var(--accent-rgb), 0.06), transparent 55%), var(--bg-surface);
             border: 1px solid var(--border-color);
             color: inherit;
             text-decoration: none;
@@ -1562,7 +1574,7 @@
             margin-bottom: -4px;
             position: relative;
         }
-        .sponsor-banner:has(.sponsor-hit):hover { border-color: rgba(245, 158, 11, 0.5); }
+        .sponsor-banner:has(.sponsor-hit):hover { border-color: rgba(var(--accent-rgb), 0.5); }
         /* Whole banner clicks through to the sponsor; "More about" sits above it */
         .sponsor-hit { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
         .sponsor-hit:focus-visible { outline: 2px solid var(--accent-gold); outline-offset: 2px; }
@@ -1627,7 +1639,7 @@
             padding: 10px 18px;
             border-radius: var(--radius-sm);
             background: var(--accent-gold);
-            color: #0f172a;
+            color: var(--accent-ink);
             font-size: 0.85rem;
             font-weight: 700;
             white-space: nowrap;
@@ -1672,8 +1684,8 @@
             gap: 14px;
             padding: 14px 16px;
             border-radius: var(--radius-md);
-            background: rgba(245, 158, 11, 0.08);
-            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: rgba(var(--accent-rgb), 0.08);
+            border: 1px solid rgba(var(--accent-rgb), 0.35);
         }
         .backup-nudge > svg { width: 22px; height: 22px; color: var(--accent-gold); flex-shrink: 0; }
         .backup-nudge-text { flex: 1; min-width: 0; font-size: 0.86rem; color: var(--text-muted); line-height: 1.45; }
@@ -1865,6 +1877,134 @@
         .metal-palladium { --metal-a: #e7e5e4; --metal-b: #a8a29e; }
         .metal-copper { --metal-a: #fdba74; --metal-b: #b45309; }
 
+
+        /* ================= Top-bar layout ================= */
+        .workspace { display: block; }
+        .app-bar {
+            position: relative;
+            z-index: 90;
+            background: linear-gradient(180deg, var(--bg-surface), rgba(15, 23, 42, 0.4));
+            border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+        }
+        .app-bar-inner {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 14px 40px;
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+        .app-bar .brand-cluster { flex-shrink: 0; }
+        .app-bar .brand-logo { width: 40px; height: 40px; font-size: 2.15rem; }
+        .app-bar .brand-cluster h1 { font-size: 1.1rem; }
+        .app-bar .brand-cluster p { font-size: 0.7rem; }
+
+        /* Collections as tabs */
+        .collection-tabs { flex: 1; min-width: 0; }
+        .collection-tabs .collection-list {
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 2px;
+        }
+        .collection-tabs .collection-list::-webkit-scrollbar { display: none; }
+        .collection-tabs .collection-link {
+            width: auto;
+            flex-shrink: 0;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 0.86rem;
+        }
+        .collection-tabs .collection-link .cl-count {
+            min-width: 20px;
+            padding: 1px 6px;
+            border-radius: 999px;
+            background: var(--bg-elevated);
+            text-align: center;
+        }
+        .collection-tabs .collection-link.active .cl-count { background: rgba(var(--accent-rgb), 0.18); }
+        .collection-tabs .collection-link.add { margin-top: 0; padding: 7px 14px; }
+
+        /* Menu (backup, export, help) */
+        .app-menu-wrap { position: relative; }
+        .app-menu-btn { gap: 8px; padding: 10px 14px; position: relative; }
+        .app-menu-btn svg { width: 18px; height: 18px; }
+        .app-menu-btn .side-dot { position: absolute; top: 6px; right: 6px; box-shadow: 0 0 0 2px var(--bg-elevated); }
+        .app-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            z-index: 95;
+            width: 290px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-elevation);
+            animation: fadeIn 0.15s ease-out;
+        }
+        .app-menu .btn-secondary { background: var(--bg-surface); }
+        .app-menu-title {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-subtle);
+            font-weight: 700;
+        }
+        .app-menu-divider { height: 1px; background: var(--border-color); margin: 4px 0; }
+        .app-menu-links { display: flex; justify-content: center; gap: 18px; font-size: 0.86rem; }
+        .app-menu-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; }
+        .app-menu-links a:hover { color: var(--accent-gold); }
+
+        /* Main column */
+        .main-content {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 28px 40px 36px;
+            min-height: 0;
+            overflow: visible;
+        }
+        .content-header { padding-top: 12px; padding-bottom: 14px; }
+
+        /* Overview: collection header + stats side by side */
+        .overview {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+            gap: 20px;
+            align-items: stretch;
+        }
+        .overview .collection-hero { height: 100%; }
+        /* All coins: slim header across the top, the four stats in one row below */
+        .overview.compact { grid-template-columns: 1fr; gap: 14px; }
+        .overview.compact .stats-title { display: none; }
+        .overview.compact .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        @media (max-width: 760px) { .overview.compact .stats-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+        .stats-panel { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+        .stats-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-subtle);
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .stats-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; flex: 1; }
+        .stats-grid .metric-widget { padding: 14px 16px; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+        .stats-grid .metric-widget .label { font-size: 0.68rem; letter-spacing: 0.02em; }
+        .stats-grid .stat-main .value { font-size: 1.45rem; }
+        .stats-grid .stat-main .trend { margin-top: 6px; }
+        .stats-grid .stat-main .trend .sparkline { height: 28px; }
+        .stats-grid .stat-main .trend-label { display: none; }
+        .stats-grid .metric-widget.small .value { font-size: 1.1rem; }
+
         .hidden { display: none !important; }
 
         /* Media Query for Mobile & Tablet viewports */
@@ -1934,93 +2074,84 @@
                 grid-column: 1 / -1;
             }
         }
+
+        /* Top-bar layout on tablets and phones */
+        @media (max-width: 1100px) {
+            .overview { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            /* Collection tabs get their own row */
+            .app-bar-inner { flex-wrap: wrap; row-gap: 12px; }
+            .app-bar .header-action-group { margin-left: auto; }
+            .collection-tabs { order: 3; flex-basis: 100%; }
+        }
+        @media (max-width: 760px) {
+            .stats-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+            /* Fade the right edge so it's clear the tabs scroll */
+            .collection-tabs .collection-list {
+                -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+                mask-image: linear-gradient(90deg, #000 85%, transparent);
+                padding-right: 32px;
+            }
+        }
+        @media (max-width: 900px) {
+            .app-bar-inner { padding: 12px 16px; gap: 12px; }
+            .app-menu-label { display: none; }
+            .app-menu-btn { padding: 10px 12px; }
+            .main-content { padding: 16px 16px 20px; }
+            .content-header { padding-top: 10px; }
+        }
+        @media (max-width: 420px) {
+            .app-bar .brand-cluster p { display: none; }
+            .stats-grid .metric-widget { padding: 12px 13px; }
+            .stats-grid .stat-main .value { font-size: 1.2rem; }
+            .stats-grid .metric-widget.small .value { font-size: 0.98rem; }
+        }
     </style>
 </head>
 <body>
 
 <div class="workspace">
-    <!-- Mobile Sidebar Backdrop Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- Sidebar Control Center -->
-    <aside class="sidebar" id="appSidebar">
-        <div class="brand-cluster">
-            <div class="brand-logo">🪙</div>
-            <div>
-                <h1>CoinTrack.io</h1>
-                <p>Numismatic Ledger</p>
-            </div>
-        </div>
-
-        <!-- Sidebar sections collapse; open/closed state is remembered per browser -->
-        <details class="side-section" data-section="collections" open>
-            <summary class="nav-section-title"><span>Collections</span><svg class="side-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-            <div class="collection-list" id="collectionList"></div>
-        </details>
-
-        <details class="side-section" data-section="analytics" open>
-            <summary class="nav-section-title"><span id="statsScopeLabel">Portfolio Analytics</span><svg class="side-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-            <div class="side-section-body">
-                <div class="metric-widget">
-                    <div class="label-row">
-                        <div class="label">Estimated Portfolio</div>
-                        <div class="holdings" id="statTotalCoins">0 coins</div>
-                    </div>
-                    <div class="value" id="statTotalValue">$0.00</div>
-                    <div class="trend hidden" id="statTrend"></div>
-                </div>
-                <div class="metric-row">
-                    <div class="metric-widget small">
-                        <div class="label">Cost Basis</div>
-                        <div class="value" id="statTotalPaid">$0.00</div>
-                    </div>
-                    <div class="metric-widget small">
-                        <div class="label">Gain / Loss</div>
-                        <div class="value" id="statGain">$0.00</div>
-                    </div>
-                </div>
-                <div class="metric-widget small facts">
-                    <div class="fact">
-                        <div class="label">Most Valuable</div>
-                        <div class="value" id="statTopValue">—</div>
-                        <div class="sub" id="statTopName"></div>
-                    </div>
-                    <div class="fact">
-                        <div class="label" id="statStartedLabel">Started</div>
-                        <div class="value" id="statStarted">—</div>
-                        <div class="sub" id="statStartedSub"></div>
-                    </div>
+    <!-- Top bar: brand, collection tabs, Menu and + New -->
+    <header class="app-bar">
+        <div class="app-bar-inner">
+            <div class="brand-cluster">
+                <div class="brand-logo">🪙</div>
+                <div>
+                    <h1>CoinTrack.io</h1>
+                    <p>Numismatic Ledger</p>
                 </div>
             </div>
-        </details>
 
-        <details class="side-section sidebar-actions" data-section="data">
-            <summary class="nav-section-title"><span>Backup &amp; Export</span><span class="side-dot" id="backupSummaryDot"></span><svg class="side-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-            <div class="side-section-body">
-                <div class="backup-status" id="backupStatus"><span class="dot"></span><span id="backupStatusText">No backup yet</span></div>
-                <button id="sidebarExportBtn" class="btn-secondary">Export JSON Backup</button>
-                <button id="sidebarImportBtn" class="btn-secondary">Import Backup</button>
-                <input type="file" id="importFileInput" class="hidden" accept=".json">
-                <div class="export-more">
-                    <span>Download</span>
-                    <button type="button" class="link-btn" id="exportCsvBtn">CSV</button>
-                    <span aria-hidden="true">&middot;</span>
-                    <button type="button" class="link-btn" id="exportInventoryBtn">Inventory PDF</button>
-                </div>
-                <a class="sidebar-support" href="mailto:support@cointrack.io">Questions? <strong>support@cointrack.io</strong></a>
-            </div>
-        </details>
-    </aside>
+            <nav class="collection-tabs" aria-label="Collections">
+                <div class="collection-list" id="collectionList"></div>
+            </nav>
 
-    <!-- Main Workspace Content -->
-    <main class="main-content">
-        <header class="content-header">
-            <div class="header-top-row">
-                <div class="header-left-group">
-                    <button class="hamburger-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Sidebar"><span></span><span></span><span></span></button>
-                    <div class="mobile-brand">🪙 CoinTrack.io</div>
+            <div class="header-action-group">
+                <div class="app-menu-wrap">
+                    <button type="button" class="btn-secondary app-menu-btn" id="appMenuBtn" aria-haspopup="true" aria-expanded="false" aria-controls="appMenu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="app-menu-label">Menu</span><span class="side-dot none" id="backupSummaryDot"></span>
+                    </button>
+                    <div class="app-menu hidden" id="appMenu">
+                        <p class="app-menu-title">Backup &amp; export</p>
+                        <div class="backup-status" id="backupStatus"><span class="dot"></span><span id="backupStatusText">No backup yet</span></div>
+                        <button id="sidebarExportBtn" class="btn-secondary">Export JSON Backup</button>
+                        <button id="sidebarImportBtn" class="btn-secondary">Import Backup</button>
+                        <input type="file" id="importFileInput" class="hidden" accept=".json">
+                        <div class="export-more">
+                            <span>Download</span>
+                            <button type="button" class="link-btn" id="exportCsvBtn">CSV</button>
+                            <span aria-hidden="true">&middot;</span>
+                            <button type="button" class="link-btn" id="exportInventoryBtn">Inventory PDF</button>
+                        </div>
+                        <div class="app-menu-divider"></div>
+                        <div class="app-menu-links">
+                            <a href="#" id="menuGuideLink">Guide</a>
+                            <a href="#" id="menuFaqLink">FAQ</a>
+                            <a href="sponsors.html">Sponsors</a>
+                        </div>
+                        <a class="sidebar-support" href="mailto:support@cointrack.io">Questions? <strong>support@cointrack.io</strong></a>
+                    </div>
                 </div>
-                <div class="header-action-group">
                     <div class="new-menu-wrap">
                         <button id="openModalBtn" aria-haspopup="menu" aria-expanded="false" aria-controls="newMenu"><span>+</span> New</button>
                         <div class="new-menu hidden" id="newMenu" role="menu">
@@ -2035,7 +2166,47 @@
                         </div>
                     </div>
                 </div>
-            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Content -->
+    <main class="main-content">
+        <!-- Backup reminder (only shown when a backup is due) -->
+        <div class="backup-nudge hidden" id="backupNudge" role="status"></div>
+
+        <!-- Collection header and stats, side by side -->
+        <section class="overview">
+            <section class="collection-hero" id="collectionHero"></section>
+            <section class="stats-panel" aria-labelledby="statsScopeLabel">
+                <p class="stats-title" id="statsScopeLabel">Portfolio Analytics</p>
+                <div class="stats-grid">
+                    <div class="metric-widget stat-main">
+                        <div class="label-row">
+                            <div class="label">Estimated Portfolio</div>
+                            <div class="holdings" id="statTotalCoins">0 coins</div>
+                        </div>
+                        <div class="value" id="statTotalValue">$0.00</div>
+                        <div class="trend hidden" id="statTrend"></div>
+                    </div>
+                    <div class="metric-widget small">
+                        <div class="label">Cost Basis</div>
+                        <div class="value" id="statTotalPaid">$0.00</div>
+                    </div>
+                    <div class="metric-widget small">
+                        <div class="label">Most Valuable</div>
+                        <div class="value" id="statTopValue">—</div>
+                        <div class="sub" id="statTopName"></div>
+                    </div>
+                    <div class="metric-widget small">
+                        <div class="label" id="statStartedLabel">Started</div>
+                        <div class="value" id="statStarted">—</div>
+                        <div class="sub" id="statStartedSub"></div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <header class="content-header">
             <div class="search-filter-bar">
                 <div class="search-wrapper">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -2079,12 +2250,6 @@
                 <button type="button" class="link-btn" id="clearFiltersBtn">Clear filters</button>
             </div>
         </header>
-
-        <!-- Backup reminder (only shown when a backup is due) -->
-        <div class="backup-nudge hidden" id="backupNudge" role="status"></div>
-
-        <!-- Active collection header -->
-        <section class="collection-hero" id="collectionHero"></section>
 
         <!-- Sponsor banner (filled from sponsors.js; see that file to change sponsors) -->
         <aside class="sponsor-banner hidden" id="sponsorBanner" aria-label="Sponsor"></aside>
@@ -2134,7 +2299,7 @@
                 <ul class="guide-features">
                     <li>
                         <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h7l2 2h9v10H3z"/><path d="M3 7V5h6l2 2"/></svg></span>
-                        <div><strong>Sort into collections</strong><span>Group coins into collections in the side panel, or view All coins. Tap <em>+ New collection</em> to start another.</span></div>
+                        <div><strong>Sort into collections</strong><span>Switch collections with the tabs at the top, or view All coins. Tap <em>+ New collection</em> to start another.</span></div>
                     </li>
                     <li>
                         <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/></svg></span>
@@ -2170,7 +2335,7 @@
                 <ul class="guide-features">
                     <li>
                         <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-6"/></svg></span>
-                        <div><strong>Know what it&#39;s worth</strong><span>Side panel stats follow the collection you pick: coin count, value, gain, top coin and how long you&#39;ve been collecting.</span></div>
+                        <div><strong>Know what it&#39;s worth</strong><span>The stats next to each collection show its value, cost, top coin and how long you&#39;ve been collecting.</span></div>
                     </li>
                     <li>
                         <span class="guide-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg></span>
@@ -2191,7 +2356,7 @@
                 <p class="guide-final-text">No account and no servers. That also means your collection won't follow you to other devices, and clearing your browser data erases it.</p>
                 <div class="guide-notice">
                     <span class="guide-notice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg></span>
-                    <p>Use <em>Export JSON Backup</em> in the side menu regularly, and <em>Import Backup</em> to restore or move it.</p>
+                    <p>Use <em>Export JSON Backup</em> in the <em>Menu</em> at the top regularly, and <em>Import Backup</em> to restore or move it.</p>
                 </div>
                 <button type="button" id="welcomeFaqBtn" class="link-btn guide-faq-link">Read the FAQ</button>
             </section>
@@ -2226,7 +2391,7 @@
             </details>
             <details class="faq-item">
                 <summary class="faq-question">How do I backup my collection?</summary>
-                <div class="faq-answer">Click <strong>Export JSON Backup</strong> in the side menu to download a single backup file containing all your coin records and images. The side menu shows when you last backed up, and CoinTrack reminds you when a new backup is due.</div>
+                <div class="faq-answer">Open <strong>Menu</strong> at the top right and click <strong>Export JSON Backup</strong> to download a single backup file containing all your coin records and images. The Menu shows when you last backed up, and CoinTrack reminds you when a new backup is due.</div>
             </details>
             <details class="faq-item">
                 <summary class="faq-question">Can I install CoinTrack like an app?</summary>
@@ -2242,11 +2407,11 @@
             </details>
             <details class="faq-item">
                 <summary class="faq-question">What are the Wishlist and Sold lists?</summary>
-                <div class="faq-answer">When adding or editing a coin, choose whether it's <strong>in your collection</strong>, <strong>on your wishlist</strong> or <strong>sold</strong>. Wishlist coins track a target price; sold coins keep what you paid and what you sold for, so you can see your realized gain. Only coins in your collection count toward the totals in the side panel.</div>
+                <div class="faq-answer">When adding or editing a coin, choose whether it's <strong>in your collection</strong>, <strong>on your wishlist</strong> or <strong>sold</strong>. Wishlist coins track a target price; sold coins keep what you paid and what you sold for, so you can see your realized gain. Only coins in your collection count toward the collection stats.</div>
             </details>
             <details class="faq-item">
                 <summary class="faq-question">How do I give my collection to an insurer or open it in a spreadsheet?</summary>
-                <div class="faq-answer">At the bottom of the side menu, <strong>Download CSV</strong> opens in Excel, Numbers or Google Sheets, and <strong>Inventory PDF</strong> creates a printable list with photos, grades, cert numbers and values. Both cover the collection you have selected, or everything when All coins is selected.</div>
+                <div class="faq-answer">In the <strong>Menu</strong> at the top right, <strong>Download CSV</strong> opens in Excel, Numbers or Google Sheets, and <strong>Inventory PDF</strong> creates a printable list with photos, grades, cert numbers and values. Both cover the collection you have selected, or everything when All coins is selected.</div>
             </details>
         </div>
     </div>
@@ -2801,9 +2966,9 @@
             const area = `${line} L${X(xs[xs.length - 1])},${h} L${X(xs[0])},${h} Z`;
             const id = 'spark' + (++sparkId);
             return `<svg class="sparkline" viewBox="0 0 ${W} ${h}" preserveAspectRatio="none" aria-hidden="true">
-                <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f59e0b" stop-opacity="0.35"/><stop offset="1" stop-color="#f59e0b" stop-opacity="0"/></linearGradient></defs>
+                <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--accent-gold)" stop-opacity="0.35"/><stop offset="1" style="stop-color: var(--accent-gold)" stop-opacity="0"/></linearGradient></defs>
                 <path d="${area}" fill="url(#${id})"/>
-                <path d="${line}" fill="none" stroke="#f59e0b" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+                <path d="${line}" fill="none" style="stroke: var(--accent-gold)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
             </svg>`;
         }
 
@@ -2847,9 +3012,17 @@
             if (savedSort && sortSelect.querySelector(`option[value="${savedSort}"]`)) sortSelect.value = savedSort;
         } catch (e) {}
 
-        const appSidebar = document.getElementById('appSidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const hamburgerToggleBtn = document.getElementById('hamburgerToggleBtn');
+        // Top-bar Menu: backup, export and help links
+        const appMenuBtn = document.getElementById('appMenuBtn');
+        const appMenu = document.getElementById('appMenu');
+        function toggleAppMenu(open) {
+            open = open === undefined ? appMenu.classList.contains('hidden') : open;
+            appMenu.classList.toggle('hidden', !open);
+            appMenuBtn.setAttribute('aria-expanded', String(open));
+        }
+        appMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleAppMenu(); });
+        document.addEventListener('click', (e) => { if (!e.target.closest('.app-menu-wrap')) toggleAppMenu(false); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !appMenu.classList.contains('hidden')) { toggleAppMenu(false); appMenuBtn.focus(); } });
 
         // ----- Welcome tour -----
         const guideSteps = [...welcomeModal.querySelectorAll('.guide-step')];
@@ -2945,14 +3118,11 @@
             openFaq();
         });
 
-        function toggleMobileSidebar(open) {
-            const isOpen = open !== undefined ? open : !appSidebar.classList.contains('mobile-open');
-            appSidebar.classList.toggle('mobile-open', isOpen);
-            sidebarOverlay.classList.toggle('active', isOpen);
-        }
+        // There is no sidebar any more; opening a window just closes the Menu
+        function toggleMobileSidebar() { toggleAppMenu(false); }
 
-        hamburgerToggleBtn.addEventListener('click', () => toggleMobileSidebar());
-        sidebarOverlay.addEventListener('click', () => toggleMobileSidebar(false));
+        document.getElementById('menuGuideLink').addEventListener('click', (e) => { e.preventDefault(); openWelcome(); });
+        document.getElementById('menuFaqLink').addEventListener('click', (e) => { e.preventDefault(); openFaq(); });
 
         // ----- Add / Edit Coin Wizard -----
         const wizardSteps = [...document.querySelectorAll('#coinRecordForm .wizard-step')];
@@ -3572,17 +3742,11 @@
             const worth = c => parseFloat(c.value) || parseFloat(c.paidPrice) || 0;
             const valueSum = scope.reduce((sum, c) => sum + worth(c), 0);
             const paidSum = scope.reduce((sum, c) => sum + (parseFloat(c.paidPrice) || 0), 0);
-            // Gain only counts coins with both a price paid and an estimated value
-            const gain = scope.reduce((sum, c) => (parseFloat(c.value) && parseFloat(c.paidPrice)) ? sum + (parseFloat(c.value) - parseFloat(c.paidPrice)) : sum, 0);
 
             document.getElementById('statsScopeLabel').textContent = col ? `${col.name} · Analytics` : 'Portfolio Analytics';
             document.getElementById('statTotalCoins').innerText = `${scope.length} coin${scope.length === 1 ? '' : 's'}`;
             document.getElementById('statTotalValue').innerText = money(valueSum);
             document.getElementById('statTotalPaid').innerText = money(paidSum);
-            const gainEl = document.getElementById('statGain');
-            gainEl.innerText = (gain > 0 ? '+' : '') + money(gain);
-            gainEl.classList.toggle('pos', gain > 0);
-            gainEl.classList.toggle('neg', gain < 0);
 
             // Value over time (needs at least two dates to draw)
             const series = portfolioSeries(scope);
@@ -3619,13 +3783,14 @@
 
         function renderCollectionHero(scope, col) {
             const hero = document.getElementById('collectionHero');
+            hero.closest('.overview').classList.toggle('compact', !col);
             if (!col) {
                 hero.className = 'collection-hero compact';
                 hero.innerHTML = `
                     <div>
                         <p class="hero-eyebrow">Everything</p>
                         <div class="hero-title-row"><h2>All coins</h2></div>
-                        <p class="hero-desc">Every coin across your ${collections.length} collection${collections.length === 1 ? '' : 's'}. Pick a collection in the side panel to focus on it.</p>
+                        <p class="hero-desc">Every coin across your ${collections.length} collection${collections.length === 1 ? '' : 's'}. Pick a collection above to focus on it.</p>
                     </div>`;
                 return;
             }
@@ -3934,7 +4099,7 @@
             const pageH = doc.internal.pageSize.getHeight();
             const margin = 48;
             const contentW = pageW - margin * 2;
-            const ink = [15, 23, 42], muted = [100, 116, 139], rule = [226, 232, 240], gold = [217, 119, 6];
+            const ink = [15, 23, 42], muted = [100, 116, 139], rule = [226, 232, 240], gold = [37, 99, 235];
             let y = margin;
 
             const ensureSpace = (needed) => {
@@ -4151,7 +4316,7 @@
             const pageH = doc.internal.pageSize.getHeight();
             const margin = 40;
             const contentW = pageW - margin * 2;
-            const ink = [15, 23, 42], muted = [100, 116, 139], rule = [226, 232, 240], gold = [217, 119, 6], soft = [248, 250, 252];
+            const ink = [15, 23, 42], muted = [100, 116, 139], rule = [226, 232, 240], gold = [37, 99, 235], soft = [248, 250, 252];
             const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             const worth = c => parseFloat(c.value) || 0;
             const paidSum = coins.reduce((sum, c) => sum + (parseFloat(c.paidPrice) || 0), 0);
