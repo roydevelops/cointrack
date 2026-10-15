@@ -1048,23 +1048,6 @@
             line-height: 1.4;
         }
 
-        .dz-paste {
-            margin-top: 6px;
-            width: 100%;
-            padding: 5px 8px;
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            background: transparent;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-        }
-
-        .dz-paste:hover {
-            color: var(--accent-gold);
-            border-color: var(--accent-gold);
-        }
-
         .preview-img {
             max-height: 75px;
             max-width: 100px;
@@ -2301,7 +2284,6 @@
                         <p id="textFront"><span class="dz-plus">+</span>Add</p>
                         <img id="prevFront" class="preview-img hidden" alt="">
                     </div>
-                    <button type="button" class="dz-paste hidden" id="pasteFront">Paste photo</button>
                     <input type="file" id="fileFront" class="hidden" accept="image/*">
                     <input type="hidden" id="dataFront">
                 </div>
@@ -2311,7 +2293,6 @@
                         <p id="textBack"><span class="dz-plus">+</span>Add</p>
                         <img id="prevBack" class="preview-img hidden" alt="">
                     </div>
-                    <button type="button" class="dz-paste hidden" id="pasteBack">Paste photo</button>
                     <input type="file" id="fileBack" class="hidden" accept="image/*">
                     <input type="hidden" id="dataBack">
                 </div>
@@ -2321,7 +2302,6 @@
                         <p id="textReceipt"><span class="dz-plus">+</span>Add</p>
                         <img id="prevReceipt" class="preview-img hidden" alt="">
                     </div>
-                    <button type="button" class="dz-paste hidden" id="pasteReceipt">Paste photo</button>
                     <input type="file" id="fileReceipt" class="hidden" accept="image/*">
                     <input type="hidden" id="dataReceipt">
                 </div>
@@ -3055,7 +3035,7 @@
         const photoZones = [];
         let activePhotoZone = null;
 
-        function initPhotoZone(zoneEl, fileEl, dataEl, prevEl, textEl, pasteBtn) {
+        function initPhotoZone(zoneEl, fileEl, dataEl, prevEl, textEl) {
             const zone = { zoneEl, dataEl, prevEl, textEl };
             photoZones.push(zone);
             zoneEl.addEventListener('click', () => { activePhotoZone = zone; fileEl.click(); });
@@ -3065,27 +3045,6 @@
                 if (e.target.files[0]) readImageFile(e.target.files[0], dataEl, prevEl, textEl);
                 e.target.value = '';
             });
-            // Explicit button: reads the clipboard directly, which works in Safari without a paste event
-            if (navigator.clipboard && navigator.clipboard.read) {
-                pasteBtn.classList.remove('hidden');
-                pasteBtn.addEventListener('click', async () => {
-                    activePhotoZone = zone;
-                    try {
-                        const items = await navigator.clipboard.read();
-                        for (const item of items) {
-                            const type = item.types.find(t => t.startsWith('image/'));
-                            if (type) {
-                                const blob = await item.getType(type);
-                                readImageFile(blob, dataEl, prevEl, textEl);
-                                return;
-                            }
-                        }
-                        alert('There is no photo on the clipboard. Copy a photo first, then try again.');
-                    } catch (err) {
-                        alert('Could not read the clipboard. Try Cmd+V instead, or click the box to choose a file.');
-                    }
-                });
-            }
         }
 
         function imageFromClipboard(e) {
@@ -3136,9 +3095,9 @@
             reader.readAsDataURL(file);
         }
 
-        initPhotoZone(document.getElementById('dropFront'), document.getElementById('fileFront'), document.getElementById('dataFront'), document.getElementById('prevFront'), document.getElementById('textFront'), document.getElementById('pasteFront'));
-        initPhotoZone(document.getElementById('dropBack'), document.getElementById('fileBack'), document.getElementById('dataBack'), document.getElementById('prevBack'), document.getElementById('textBack'), document.getElementById('pasteBack'));
-        initPhotoZone(document.getElementById('dropReceipt'), document.getElementById('fileReceipt'), document.getElementById('dataReceipt'), document.getElementById('prevReceipt'), document.getElementById('textReceipt'), document.getElementById('pasteReceipt'));
+        initPhotoZone(document.getElementById('dropFront'), document.getElementById('fileFront'), document.getElementById('dataFront'), document.getElementById('prevFront'), document.getElementById('textFront'));
+        initPhotoZone(document.getElementById('dropBack'), document.getElementById('fileBack'), document.getElementById('dataBack'), document.getElementById('prevBack'), document.getElementById('textBack'));
+        initPhotoZone(document.getElementById('dropReceipt'), document.getElementById('fileReceipt'), document.getElementById('dataReceipt'), document.getElementById('prevReceipt'), document.getElementById('textReceipt'));
 
         function clearAllPreviews() {
             ['Front', 'Back', 'Receipt'].forEach(p => {
