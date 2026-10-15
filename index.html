@@ -1206,6 +1206,224 @@
             color: var(--accent-gold);
         }
 
+        /* Collections list in the sidebar */
+        .collection-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .collection-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+            padding: 9px 12px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            box-shadow: none;
+            font-weight: 600;
+            font-size: 0.88rem;
+            text-align: left;
+        }
+
+        .collection-link:hover {
+            background-color: var(--bg-elevated);
+            color: var(--text-main);
+            transform: none;
+        }
+
+        .collection-link.active {
+            background-color: var(--accent-gold-soft);
+            border-color: rgba(245, 158, 11, 0.35);
+            color: var(--accent-gold);
+        }
+
+        .collection-link .cl-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .collection-link .cl-count {
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+            font-weight: 700;
+        }
+
+        .collection-link.active .cl-count { color: var(--accent-gold); }
+
+        .collection-link.add {
+            color: var(--text-subtle);
+            border-style: dashed;
+            border-color: var(--border-color);
+            justify-content: center;
+            margin-top: 4px;
+        }
+
+        .metric-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .metric-widget.small { padding: 12px 14px; }
+        .metric-widget.small .value { font-size: 1.05rem; color: var(--text-main); }
+        .metric-widget .value.pos { color: var(--success-green); }
+        .metric-widget .value.neg { color: var(--danger-red); }
+        .metric-widget .sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Collection header above the grid */
+        .collection-hero {
+            display: grid;
+            grid-template-columns: 168px 1fr;
+            gap: 24px;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), transparent 60%), var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 22px;
+        }
+
+        .collection-hero.compact { grid-template-columns: 1fr; padding: 18px 22px; }
+        .collection-hero.compact .hero-feature { display: none; }
+
+        .hero-feature {
+            position: relative;
+            width: 168px;
+            height: 168px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--accent-gold);
+            box-shadow: 0 0 0 6px var(--accent-gold-soft), 0 12px 28px rgba(0, 0, 0, 0.45);
+            background: var(--bg-elevated);
+            cursor: pointer;
+        }
+
+        .hero-feature img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .hero-feature.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            border-style: dashed;
+            border-color: var(--border-color);
+            box-shadow: none;
+            font-size: 0.78rem;
+            color: var(--text-subtle);
+            cursor: default;
+            line-height: 1.4;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-gold);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .hero-title-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .hero-title-row h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+
+        .hero-title-row button { padding: 7px 14px; font-size: 0.8rem; flex-shrink: 0; }
+
+        .hero-desc {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            line-height: 1.55;
+            margin-top: 8px;
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+        }
+
+        .hero-desc.placeholder { color: var(--text-subtle); font-style: italic; }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .hero-feature-name {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: var(--text-subtle);
+        }
+
+        .hero-feature-name strong { color: var(--text-main); font-weight: 600; }
+
+        /* Highlight star on coin tiles */
+        .tile-image-strip { position: relative; }
+
+        .highlight-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 50%;
+            background: rgba(2, 6, 23, 0.75);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 1rem;
+            box-shadow: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .highlight-btn:hover { background: rgba(2, 6, 23, 0.9); color: var(--accent-gold); transform: none; }
+
+        .highlight-btn.on {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            color: #020617;
+        }
+
+        .coin-tile.featured { border-color: rgba(245, 158, 11, 0.6); }
+
+        .empty-display button { margin-top: 18px; }
+
+        .modal-card.collection-card { max-width: 520px; }
+        .collection-card h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 20px; padding-right: 40px; }
+        .collection-card textarea { resize: vertical; }
+        .collection-card .form-actions { display: flex; gap: 10px; }
+        .collection-card .form-actions button { flex: 1; }
+        .collection-card .form-actions #collectionSaveBtn { flex: 2; }
+        .collection-card #deleteCollectionBtn { width: 100%; margin-top: 12px; }
+
+        @media (max-width: 900px) {
+            .collection-hero { grid-template-columns: 1fr; text-align: left; padding: 18px; }
+            .hero-feature { width: 120px; height: 120px; }
+            .hero-title-row h2 { font-size: 1.3rem; }
+        }
+
         .hidden { display: none !important; }
 
         /* Media Query for Mobile & Tablet viewports */
@@ -1294,7 +1512,12 @@
         </div>
 
         <div class="sidebar-nav">
-            <div class="nav-section-title">Portfolio Analytics</div>
+            <div class="nav-section-title">Collections</div>
+            <div class="collection-list" id="collectionList"></div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-section-title" id="statsScopeLabel">Portfolio Analytics</div>
             <div class="metric-widget">
                 <div class="label">Total Holdings</div>
                 <div class="value" id="statTotalCoins">0</div>
@@ -1302,6 +1525,26 @@
             <div class="metric-widget">
                 <div class="label">Estimated Portfolio</div>
                 <div class="value" id="statTotalValue">$0.00</div>
+            </div>
+            <div class="metric-row">
+                <div class="metric-widget small">
+                    <div class="label">Cost Basis</div>
+                    <div class="value" id="statTotalPaid">$0.00</div>
+                </div>
+                <div class="metric-widget small">
+                    <div class="label">Gain / Loss</div>
+                    <div class="value" id="statGain">$0.00</div>
+                </div>
+            </div>
+            <div class="metric-widget small">
+                <div class="label">Most Valuable</div>
+                <div class="value" id="statTopValue">—</div>
+                <div class="sub" id="statTopName"></div>
+            </div>
+            <div class="metric-widget small">
+                <div class="label" id="statStartedLabel">Started</div>
+                <div class="value" id="statStarted">—</div>
+                <div class="sub" id="statStartedSub"></div>
             </div>
         </div>
 
@@ -1372,6 +1615,9 @@
                 <button type="button" class="link-btn" id="clearFiltersBtn">Clear filters</button>
             </div>
         </header>
+
+        <!-- Active collection header -->
+        <section class="collection-hero" id="collectionHero"></section>
 
         <!-- Dynamic Grid View -->
         <section class="inventory-grid" id="coinGridContainer"></section>
@@ -1501,6 +1747,10 @@
                         <label for="inputCountry">Country <span class="opt">optional</span></label>
                         <input type="text" id="inputCountry" placeholder="e.g. United States">
                     </div>
+                    <div class="form-field full">
+                        <label for="inputCollection">Collection</label>
+                        <select id="inputCollection"></select>
+                    </div>
                 </div>
             </section>
 
@@ -1626,6 +1876,40 @@
     </div>
 </div>
 
+<!-- New / Edit Collection Modal -->
+<div id="collectionModal" class="modal-container hidden">
+    <div class="modal-card collection-card" role="dialog" aria-modal="true" aria-labelledby="collectionModalTitle">
+        <button class="modal-close" id="closeCollectionModalBtn" aria-label="Close">✕</button>
+        <h2 id="collectionModalTitle">New collection</h2>
+        <form id="collectionForm" novalidate>
+            <input type="hidden" id="collectionId">
+            <div class="form-grid">
+                <div class="form-field full">
+                    <label for="collectionName">Collection name</label>
+                    <input type="text" id="collectionName" required maxlength="80" placeholder="e.g. Morgan Dollars">
+                </div>
+                <div class="form-field full">
+                    <label for="collectionDesc">Description <span class="opt">optional</span></label>
+                    <textarea id="collectionDesc" rows="4" placeholder="What ties these coins together? Goals, set registry, the story behind it..."></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="collectionStarted">Date started</label>
+                    <input type="date" id="collectionStarted">
+                </div>
+                <div class="form-field">
+                    <label for="collectionHighlight">Highlight coin</label>
+                    <select id="collectionHighlight"></select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" id="cancelCollectionBtn">Cancel</button>
+                <button type="submit" id="collectionSaveBtn">Create Collection</button>
+            </div>
+            <button type="button" class="btn-danger hidden" id="deleteCollectionBtn">Delete collection</button>
+        </form>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         // Coins and photos live in IndexedDB: localStorage caps at ~5 MB in Safari, which a
@@ -1655,9 +1939,57 @@
             }
             return {
                 get: () => run('readonly', s => s.get('collection')),
-                set: (value) => run('readwrite', s => s.put(value, 'collection'))
+                getCollections: () => run('readonly', s => s.get('collections')),
+                set: (value) => run('readwrite', s => s.put(value, 'collection')),
+                // Coins and collections are written in one transaction so they never drift apart
+                setAll: (coins, collections) => run('readwrite', s => { s.put(collections, 'collections'); return s.put(coins, 'collection'); })
             };
         })();
+
+        // Collections group coins. Each coin carries a collectionId; coins without a valid one
+        // (everything saved before collections existed) are put in a default collection.
+        let collections = [];
+        let activeCollectionId = 'all';
+        const LEGACY_COLLECTIONS_KEY = 'cointrack_collections';
+        try { activeCollectionId = localStorage.getItem('cointrack_active_collection') || 'all'; } catch (e) {}
+
+        const newCollectionId = () => 'col_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+        function toIsoDate(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        // Best guess at when a set of coins was started: earliest acquisition date, else earliest added
+        function guessStartDate(coins) {
+            const dates = coins.map(c => c.purchaseDate).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d || '')).sort();
+            if (dates.length) return dates[0];
+            const added = coins.map(c => Number(c.id)).filter(n => n > 946684800000 && n < Date.now() + 864e5);
+            return toIsoDate(added.length ? new Date(Math.min(...added)) : new Date());
+        }
+
+        // Returns true when anything had to be fixed up, so the caller can save the result
+        function normalizeCollections() {
+            let changed = false;
+            if (!Array.isArray(collections)) { collections = []; changed = true; }
+            collections = collections.filter(c => c && c.id && typeof c.name === 'string');
+            const ids = new Set(collections.map(c => c.id));
+            const orphans = coinInventory.filter(c => !ids.has(c.collectionId));
+            if (collections.length === 0 || orphans.length) {
+                let home = collections[0];
+                if (!home) {
+                    home = { id: newCollectionId(), name: 'My Collection', description: '', startedAt: guessStartDate(coinInventory), highlightCoinId: null, createdAt: Date.now() };
+                    collections.push(home);
+                }
+                orphans.forEach(c => { c.collectionId = home.id; });
+                changed = true;
+            }
+            if (activeCollectionId !== 'all' && !collections.some(c => c.id === activeCollectionId)) activeCollectionId = 'all';
+            return changed;
+        }
+
+        const getCollection = id => collections.find(c => c.id === id);
+        const coinsIn = id => id === 'all' ? coinInventory : coinInventory.filter(c => c.collectionId === id);
+        const highlightCoinOf = col => col && coinInventory.find(c => c.id === col.highlightCoinId && c.collectionId === col.id);
 
         async function loadCollection() {
             let legacy = null;
@@ -1672,11 +2004,14 @@
                 }
                 // Only clear the old copy once IndexedDB holds the data
                 if (legacy) try { localStorage.removeItem(LEGACY_KEY); } catch (e) {}
+                collections = (await collectionStore.getCollections()) || [];
             } catch (err) {
                 // IndexedDB unavailable (e.g. some private windows): fall back to localStorage
                 useLegacyStorage = true;
                 coinInventory = Array.isArray(legacy) ? legacy : [];
+                try { collections = JSON.parse(localStorage.getItem(LEGACY_COLLECTIONS_KEY)) || []; } catch (e) { collections = []; }
             }
+            if (normalizeCollections()) await saveData().catch(() => {});
             if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
         }
         let useLegacyStorage = false;
@@ -1857,13 +2192,21 @@
         setupCurrencyInput(document.getElementById('inputPaid'));
         setupCurrencyInput(document.getElementById('inputValue'));
 
-        document.getElementById('openModalBtn').addEventListener('click', () => {
+        const inputCollection = document.getElementById('inputCollection');
+        function fillCollectionSelect(selectedId) {
+            inputCollection.innerHTML = collections.map(c => `<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)}</option>`).join('');
+            inputCollection.value = getCollection(selectedId) ? selectedId : collections[0].id;
+        }
+
+        const openNewCoin = () => {
             coinRecordForm.reset();
             document.getElementById('recordId').value = '';
             document.getElementById('modalHeading').innerText = 'New coin';
+            fillCollectionSelect(activeCollectionId);
             clearAllPreviews();
             toggleModal(true);
-        });
+        };
+        document.getElementById('openModalBtn').addEventListener('click', openNewCoin);
 
         document.getElementById('closeModalBtn').addEventListener('click', () => toggleModal(false));
         document.getElementById('closeViewModalBtn').addEventListener('click', () => toggleViewModal(false));
@@ -2001,6 +2344,7 @@
                 purchaseDate: document.getElementById('inputDate').value,
                 source: document.getElementById('inputSource').value.trim(),
                 notes: document.getElementById('inputNotes').value.trim(),
+                collectionId: getCollection(inputCollection.value) ? inputCollection.value : (targetExisting ? targetExisting.collectionId : collections[0].id),
                 frontPhoto: document.getElementById('dataFront').value || (targetExisting ? (targetExisting.frontPhoto || targetExisting.photo) : ''),
                 backPhoto: document.getElementById('dataBack').value || (targetExisting ? targetExisting.backPhoto : ''),
                 receiptPhoto: document.getElementById('dataReceipt').value || (targetExisting ? targetExisting.receiptPhoto : '')
@@ -2028,10 +2372,18 @@
             toggleModal(false);
         });
 
+        async function saveData() {
+            if (useLegacyStorage) {
+                localStorage.setItem(LEGACY_KEY, JSON.stringify(coinInventory));
+                localStorage.setItem(LEGACY_COLLECTIONS_KEY, JSON.stringify(collections));
+            } else {
+                await collectionStore.setAll(coinInventory, collections);
+            }
+        }
+
         async function persistAndRender() {
             try {
-                if (useLegacyStorage) localStorage.setItem(LEGACY_KEY, JSON.stringify(coinInventory));
-                else await collectionStore.set(coinInventory);
+                await saveData();
             } catch (err) {
                 alert('Could not save: your browser\'s storage for CoinTrack is full. Export a backup, then remove some photos or coins and try again.');
                 return false;
@@ -2041,9 +2393,9 @@
         }
 
         // Rebuild the coin-type dropdown from names in the collection, keeping the current choice
-        function refreshCoinTypeOptions() {
+        function refreshCoinTypeOptions(scope) {
             const counts = {};
-            coinInventory.forEach(c => {
+            scope.forEach(c => {
                 const n = (c.name || '').trim();
                 if (n) counts[n] = (counts[n] || 0) + 1;
             });
@@ -2087,14 +2439,114 @@
             return list;
         }
 
+        function renderCollectionNav() {
+            const link = (id, name, count) => `
+                <button type="button" class="collection-link${activeCollectionId === id ? ' active' : ''}" data-collection="${escapeHTML(id)}">
+                    <span class="cl-name">${escapeHTML(name)}</span><span class="cl-count">${count}</span>
+                </button>`;
+            const sorted = [...collections].sort((a, b) => a.name.localeCompare(b.name));
+            document.getElementById('collectionList').innerHTML =
+                link('all', 'All coins', coinInventory.length) +
+                sorted.map(c => link(c.id, c.name, coinsIn(c.id).length)).join('') +
+                '<button type="button" class="collection-link add" id="newCollectionBtn">+ New collection</button>';
+        }
+
+        function renderSidebarStats(scope, col) {
+            const money = n => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const worth = c => parseFloat(c.value) || parseFloat(c.paidPrice) || 0;
+            const valueSum = scope.reduce((sum, c) => sum + worth(c), 0);
+            const paidSum = scope.reduce((sum, c) => sum + (parseFloat(c.paidPrice) || 0), 0);
+            // Gain only counts coins with both a price paid and an estimated value
+            const gain = scope.reduce((sum, c) => (parseFloat(c.value) && parseFloat(c.paidPrice)) ? sum + (parseFloat(c.value) - parseFloat(c.paidPrice)) : sum, 0);
+
+            document.getElementById('statsScopeLabel').textContent = col ? `${col.name} · Analytics` : 'Portfolio Analytics';
+            document.getElementById('statTotalCoins').innerText = scope.length;
+            document.getElementById('statTotalValue').innerText = money(valueSum);
+            document.getElementById('statTotalPaid').innerText = money(paidSum);
+            const gainEl = document.getElementById('statGain');
+            gainEl.innerText = (gain > 0 ? '+' : '') + money(gain);
+            gainEl.classList.toggle('pos', gain > 0);
+            gainEl.classList.toggle('neg', gain < 0);
+
+            const top = scope.reduce((best, c) => (worth(c) > (best ? worth(best) : 0) ? c : best), null);
+            document.getElementById('statTopValue').innerText = top ? money(worth(top)) : '—';
+            document.getElementById('statTopName').innerText = top ? `${top.year || ''} ${top.name || ''}`.trim() : 'No valued coins yet';
+
+            if (col) {
+                const days = Math.floor((Date.now() - new Date(col.startedAt + 'T00:00:00')) / 864e5);
+                document.getElementById('statStartedLabel').innerText = 'Started';
+                document.getElementById('statStarted').innerText = col.startedAt ? formatDateLabel(col.startedAt) : '—';
+                document.getElementById('statStartedSub').innerText = col.startedAt && days >= 0 ? collectingFor(days) : '';
+            } else {
+                const earliest = collections.map(c => c.startedAt).filter(Boolean).sort()[0];
+                document.getElementById('statStartedLabel').innerText = 'Collecting Since';
+                document.getElementById('statStarted').innerText = earliest ? formatDateLabel(earliest) : '—';
+                document.getElementById('statStartedSub').innerText = `${collections.length} collection${collections.length === 1 ? '' : 's'}`;
+            }
+        }
+
+        function collectingFor(days) {
+            if (days < 1) return 'Started today';
+            if (days < 31) return `${days} day${days === 1 ? '' : 's'} of collecting`;
+            const months = Math.floor(days / 30.44);
+            if (months < 12) return `${months} month${months === 1 ? '' : 's'} of collecting`;
+            const years = Math.floor(months / 12), rem = months % 12;
+            return `${years} yr${years === 1 ? '' : 's'}${rem ? ` ${rem} mo` : ''} of collecting`;
+        }
+
+        function renderCollectionHero(scope, col) {
+            const hero = document.getElementById('collectionHero');
+            if (!col) {
+                hero.className = 'collection-hero compact';
+                hero.innerHTML = `
+                    <div>
+                        <p class="hero-eyebrow">Everything</p>
+                        <div class="hero-title-row"><h2>All coins</h2></div>
+                        <p class="hero-desc">Every coin across your ${collections.length} collection${collections.length === 1 ? '' : 's'}. Pick a collection in the side panel to focus on it.</p>
+                    </div>`;
+                return;
+            }
+            const feature = highlightCoinOf(col);
+            const featureImg = feature ? (feature.frontPhoto || feature.photo || feature.backPhoto || '') : '';
+            const valueSum = scope.reduce((sum, c) => sum + (parseFloat(c.value) || parseFloat(c.paidPrice) || 0), 0);
+            hero.className = 'collection-hero';
+            hero.innerHTML = `
+                ${feature && featureImg
+                    ? `<div class="hero-feature" id="heroFeature" title="View highlight coin"><img src="${featureImg}" alt="${escapeHTML(feature.name)}"></div>`
+                    : `<div class="hero-feature empty">${feature ? escapeHTML(feature.name) + '<br>(no photo)' : (scope.length ? 'Tap ☆ on a coin to make it this collection\'s highlight' : 'Add coins, then pick a highlight')}</div>`}
+                <div>
+                    <p class="hero-eyebrow">Collection</p>
+                    <div class="hero-title-row">
+                        <h2>${escapeHTML(col.name)}</h2>
+                        <button type="button" class="btn-secondary" id="editCollectionBtn">Edit</button>
+                    </div>
+                    <p class="hero-desc${col.description ? '' : ' placeholder'}">${col.description ? escapeHTML(col.description) : 'No description yet. Use Edit to add one.'}</p>
+                    <div class="hero-meta">
+                        <span class="badge gold">Started ${col.startedAt ? escapeHTML(formatDateLabel(col.startedAt)) : '—'}</span>
+                        <span class="badge">${scope.length} coin${scope.length === 1 ? '' : 's'}</span>
+                        <span class="badge">$${valueSum.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} est.</span>
+                    </div>
+                    ${feature ? `<p class="hero-feature-name">★ Highlight: <strong>${escapeHTML(`${feature.year || ''} ${feature.name || ''}`.trim())}</strong></p>` : ''}
+                </div>`;
+            const heroFeature = document.getElementById('heroFeature');
+            if (heroFeature) heroFeature.addEventListener('click', () => viewCoin(feature.id));
+        }
+
         function renderInterface() {
             const query = searchInput.value.toLowerCase();
             const filterService = gradeServiceFilter.value;
-            refreshCoinTypeOptions();
+            const activeCol = getCollection(activeCollectionId) || null;
+            if (!activeCol) activeCollectionId = 'all';
+            const scope = coinsIn(activeCollectionId);
+            renderCollectionNav();
+            renderSidebarStats(scope, activeCol);
+            renderCollectionHero(scope, activeCol);
+            searchInput.placeholder = activeCol ? `Search ${activeCol.name}...` : 'Search collection...';
+            refreshCoinTypeOptions(scope);
             const filterType = coinTypeFilter.value;
 
-            const matches = coinInventory.filter(c => {
-                const textMatch = Object.values(c).some(val => String(val).toLowerCase().includes(query));
+            const matches = scope.filter(c => {
+                const textMatch = Object.entries(c).some(([key, val]) => key !== 'collectionId' && String(val).toLowerCase().includes(query));
                 const namedServices = ['PCGS', 'NGC', 'ANACS', 'ICG'];
                 const serviceMatch = !filterService
                     || (filterService === 'Raw' ? !c.gradingCompany
@@ -2114,20 +2566,19 @@
             document.getElementById('filterToggleBtn').classList.toggle('active', activeFilterCount > 0);
             document.getElementById('resultsSummary').classList.toggle('hidden', !isFiltered);
             document.getElementById('resultsCount').textContent =
-                `Showing ${matches.length} of ${coinInventory.length} coin${coinInventory.length === 1 ? '' : 's'}`;
-
-            // Update Sidebar Analytics
-            document.getElementById('statTotalCoins').innerText = coinInventory.length;
-            const portfolioSum = coinInventory.reduce((sum, c) => sum + (parseFloat(c.value) || parseFloat(c.paidPrice) || 0), 0);
-            document.getElementById('statTotalValue').innerText = '$' + portfolioSum.toLocaleString('en-US', {minimumFractionDigits: 2});
+                `Showing ${matches.length} of ${scope.length} coin${scope.length === 1 ? '' : 's'}`;
 
             if (matches.length === 0) {
+                const emptyCollection = scope.length === 0;
                 coinGridContainer.innerHTML = `
                     <div class="empty-display">
                         <div style="font-size: 2.5rem;">🪙</div>
-                        <h3>No matching coins</h3>
-                        <p>Adjust your search criteria or add new items to your portfolio ledger.</p>
+                        <h3>${emptyCollection ? (activeCol ? 'No coins in this collection yet' : 'No coins yet') : 'No matching coins'}</h3>
+                        <p>${emptyCollection ? 'Add your first coin and it will be filed here.' : 'Adjust your search criteria or add new items to your portfolio ledger.'}</p>
+                        ${emptyCollection ? '<button type="button" id="emptyAddCoinBtn"><span>+</span> Add a coin</button>' : ''}
                     </div>`;
+                const addBtn = document.getElementById('emptyAddCoinBtn');
+                if (addBtn) addBtn.addEventListener('click', openNewCoin);
                 return;
             }
 
@@ -2135,12 +2586,17 @@
                 const frontImg = c.frontPhoto || c.photo || '';
                 const backImg = c.backPhoto || '';
                 const fullGradeBadge = c.gradingCompany && c.grade ? `${c.gradingCompany} ${c.grade}` : (c.gradingCompany || c.grade || '');
+                const col = getCollection(c.collectionId);
+                const featured = highlightCoinOf(col) === c;
 
                 return `
-                <div class="coin-tile">
+                <div class="coin-tile${featured ? ' featured' : ''}">
                     <div class="tile-image-strip">
                         ${frontImg ? `<img src="${frontImg}" onclick="openLightbox('${frontImg}')">` : '<div class="no-img">No Obverse</div>'}
                         ${backImg ? `<img src="${backImg}" onclick="openLightbox('${backImg}')">` : '<div class="no-img">No Reverse</div>'}
+                        <button type="button" class="highlight-btn${featured ? ' on' : ''}" onclick="toggleHighlight(${c.id})"
+                            title="${featured ? 'Remove as highlight' : 'Make this the highlight of ' + escapeHTML(col ? col.name : 'its collection')}"
+                            aria-label="${featured ? 'Remove as collection highlight' : 'Make collection highlight'}" aria-pressed="${featured}">${featured ? '★' : '☆'}</button>
                     </div>
                     <div class="tile-body">
                         <div class="tile-title">${escapeHTML(c.name)}</div>
@@ -2148,6 +2604,7 @@
                             <span class="badge gold">${escapeHTML(c.year)} ${c.mint ? '· ' + escapeHTML(c.mint) : ''}</span>
                             ${fullGradeBadge ? `<span class="badge">${escapeHTML(fullGradeBadge)}</span>` : ''}
                             ${c.country ? `<span class="badge">${escapeHTML(c.country)}</span>` : ''}
+                            ${activeCollectionId === 'all' && col ? `<span class="badge">${escapeHTML(col.name)}</span>` : ''}
                         </div>
                         <div class="tile-financials">
                             <div class="fin-item"><label>Paid</label><span>${c.paidPrice ? '$' + Number(c.paidPrice).toFixed(2) : '—'}</span></div>
@@ -2392,6 +2849,7 @@
                 <div class="view-detail-item"><label>Estimated Value</label><span>${target.value ? '$' + Number(target.value).toFixed(2) : '—'}</span></div>
                 <div class="view-detail-item"><label>Acquisition Date</label><span>${escapeHTML(target.purchaseDate || '—')}</span></div>
                 <div class="view-detail-item"><label>Source / Vendor</label><span>${escapeHTML(target.source || '—')}</span></div>
+                <div class="view-detail-item"><label>Collection</label><span>${escapeHTML((getCollection(target.collectionId) || {}).name || '—')}${highlightCoinOf(getCollection(target.collectionId)) === target ? ' · ★ Highlight' : ''}</span></div>
             `;
 
             document.getElementById('viewCoinNotes').innerText = target.notes || 'No notes added.';
@@ -2433,6 +2891,7 @@
             document.getElementById('inputDate').value = target.purchaseDate || '';
             document.getElementById('inputSource').value = target.source || '';
             document.getElementById('inputNotes').value = target.notes || '';
+            fillCollectionSelect(target.collectionId);
 
             clearAllPreviews();
             const fPhoto = target.frontPhoto || target.photo || '';
@@ -2455,6 +2914,103 @@
             document.getElementById('modalHeading').innerText = 'Edit coin';
             toggleModal(true);
         };
+
+        window.toggleHighlight = async (id) => {
+            const coin = coinInventory.find(c => c.id === id);
+            const col = coin && getCollection(coin.collectionId);
+            if (!col) return;
+            const previous = col.highlightCoinId;
+            col.highlightCoinId = previous === id ? null : id;
+            if (!(await persistAndRender())) { col.highlightCoinId = previous; renderInterface(); }
+        };
+
+        function selectCollection(id) {
+            activeCollectionId = id;
+            try { localStorage.setItem('cointrack_active_collection', id); } catch (e) {}
+            coinTypeFilter.value = '';
+            renderInterface();
+            toggleMobileSidebar(false);
+            window.scrollTo({ top: 0 });
+            mainContent.scrollTo({ top: 0 });
+        }
+
+        document.getElementById('collectionList').addEventListener('click', (e) => {
+            if (e.target.closest('#newCollectionBtn')) { openCollectionModal(null); return; }
+            const link = e.target.closest('[data-collection]');
+            if (link) selectCollection(link.dataset.collection);
+        });
+        document.getElementById('collectionHero').addEventListener('click', (e) => {
+            if (e.target.closest('#editCollectionBtn')) openCollectionModal(getCollection(activeCollectionId));
+        });
+
+        const collectionModal = document.getElementById('collectionModal');
+        const collectionForm = document.getElementById('collectionForm');
+        const collectionHighlight = document.getElementById('collectionHighlight');
+
+        function openCollectionModal(col) {
+            collectionForm.reset();
+            document.getElementById('collectionId').value = col ? col.id : '';
+            document.getElementById('collectionModalTitle').innerText = col ? 'Edit collection' : 'New collection';
+            document.getElementById('collectionSaveBtn').innerText = col ? 'Save Changes' : 'Create Collection';
+            document.getElementById('collectionName').value = col ? col.name : '';
+            document.getElementById('collectionDesc').value = col ? (col.description || '') : '';
+            document.getElementById('collectionStarted').value = col ? (col.startedAt || '') : toIsoDate(new Date());
+            const members = col ? coinsIn(col.id) : [];
+            collectionHighlight.innerHTML = '<option value="">None</option>' +
+                members.map(c => `<option value="${c.id}">${escapeHTML(`${c.year || ''} ${c.name || ''}`.trim())}${c.grade ? ' · ' + escapeHTML(c.grade) : ''}</option>`).join('');
+            collectionHighlight.value = col && highlightCoinOf(col) ? String(col.highlightCoinId) : '';
+            collectionHighlight.disabled = members.length === 0;
+            document.getElementById('deleteCollectionBtn').classList.toggle('hidden', !col || collections.length < 2);
+            collectionModal.classList.remove('hidden');
+            toggleMobileSidebar(false);
+            if (window.matchMedia('(hover: hover)').matches) document.getElementById('collectionName').focus();
+        }
+        const closeCollectionModal = () => collectionModal.classList.add('hidden');
+        document.getElementById('closeCollectionModalBtn').addEventListener('click', closeCollectionModal);
+        document.getElementById('cancelCollectionBtn').addEventListener('click', closeCollectionModal);
+        collectionModal.addEventListener('click', (e) => { if (e.target === collectionModal) closeCollectionModal(); });
+
+        collectionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nameEl = document.getElementById('collectionName');
+            if (!nameEl.value.trim()) { nameEl.setCustomValidity('Give the collection a name'); nameEl.reportValidity(); nameEl.setCustomValidity(''); return; }
+            const snapshot = JSON.parse(JSON.stringify(collections));
+            const existing = getCollection(document.getElementById('collectionId').value);
+            const fields = {
+                name: nameEl.value.trim(),
+                description: document.getElementById('collectionDesc').value.trim(),
+                startedAt: document.getElementById('collectionStarted').value || toIsoDate(new Date()),
+                highlightCoinId: collectionHighlight.value ? Number(collectionHighlight.value) : null
+            };
+            let target = existing;
+            if (existing) Object.assign(existing, fields);
+            else { target = { id: newCollectionId(), createdAt: Date.now(), ...fields }; collections.push(target); }
+            if (!(await persistAndRender())) { collections = snapshot; renderInterface(); return; }
+            closeCollectionModal();
+            if (!existing) selectCollection(target.id);
+        });
+
+        document.getElementById('deleteCollectionBtn').addEventListener('click', async () => {
+            const col = getCollection(document.getElementById('collectionId').value);
+            if (!col || collections.length < 2) return;
+            const home = collections.find(c => c.id !== col.id);
+            const members = coinsIn(col.id);
+            const msg = members.length
+                ? `Delete "${col.name}"? Its ${members.length} coin${members.length === 1 ? '' : 's'} will move to "${home.name}". No coins are deleted.`
+                : `Delete the empty collection "${col.name}"?`;
+            if (!confirm(msg)) return;
+            const snapshotCols = JSON.parse(JSON.stringify(collections));
+            members.forEach(c => { c.collectionId = home.id; });
+            collections = collections.filter(c => c.id !== col.id);
+            if (!(await persistAndRender())) {
+                collections = snapshotCols;
+                members.forEach(c => { c.collectionId = col.id; });
+                renderInterface();
+                return;
+            }
+            closeCollectionModal();
+            selectCollection('all');
+        });
 
         window.deleteCoin = (id) => {
             if (confirm('Permanently remove this coin from your inventory?')) {
@@ -2492,7 +3048,8 @@
 
         // Backup Export / Import
         document.getElementById('sidebarExportBtn').addEventListener('click', () => {
-            const jsonBlob = new Blob([JSON.stringify(coinInventory, null, 2)], { type: 'text/json' });
+            const backup = { app: 'CoinTrack', version: 2, exportedAt: new Date().toISOString(), collections, coins: coinInventory };
+            const jsonBlob = new Blob([JSON.stringify(backup, null, 2)], { type: 'text/json' });
             const fileUrl = URL.createObjectURL(jsonBlob);
             const downloadLink = document.createElement('a');
             downloadLink.href = fileUrl;
@@ -2509,11 +3066,21 @@
             fileReader.onload = (event) => {
                 try {
                     const parsedData = JSON.parse(event.target.result);
-                    if (Array.isArray(parsedData)) {
-                        if (confirm(`Replace active ledger with ${parsedData.length} records from backup?`)) {
-                            coinInventory = parsedData;
-                            persistAndRender().then(ok => { if (ok) alert('Collection restored successfully!'); });
-                        }
+                    // Older backups are a bare array of coins; newer ones also carry collections
+                    const coins = Array.isArray(parsedData) ? parsedData : (parsedData && Array.isArray(parsedData.coins) ? parsedData.coins : null);
+                    if (!coins) { alert('That file is not a CoinTrack backup.'); return; }
+                    const cols = Array.isArray(parsedData.collections) ? parsedData.collections : [];
+                    const colNote = cols.length ? ` in ${cols.length} collection${cols.length === 1 ? '' : 's'}` : '';
+                    if (confirm(`Replace active ledger with ${coins.length} records${colNote} from backup?`)) {
+                        const before = { coins: coinInventory, cols: collections, active: activeCollectionId };
+                        coinInventory = coins;
+                        collections = cols;
+                        activeCollectionId = 'all';
+                        normalizeCollections();
+                        persistAndRender().then(ok => {
+                            if (ok) alert('Collection restored successfully!');
+                            else { coinInventory = before.coins; collections = before.cols; activeCollectionId = before.active; renderInterface(); }
+                        });
                     }
                 } catch (error) { alert('Failed to parse backup file.'); }
             };
